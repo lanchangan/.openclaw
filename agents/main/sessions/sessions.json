@@ -1,7 +1,7 @@
 {
   "agent:main:main": {
     "sessionId": "959a3065-9a59-4095-8282-5f3ae1541905",
-    "updatedAt": 1774657092088,
+    "updatedAt": 1774686580220,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -515,7 +515,7 @@
     "model": "doubao-seed-2.0-pro",
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1774657087731,
+      "generatedAt": 1774686561003,
       "sessionId": "959a3065-9a59-4095-8282-5f3ae1541905",
       "sessionKey": "agent:main:main",
       "provider": "custom-llm-chudian-site",
@@ -535,9 +535,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 51073,
-        "projectContextChars": 20156,
-        "nonProjectContextChars": 30917
+        "chars": 48497,
+        "projectContextChars": 19035,
+        "nonProjectContextChars": 29462
       },
       "injectedWorkspaceFiles": [
         {
@@ -600,20 +600,8 @@
           "name": "MEMORY.md",
           "path": "C:\\Users\\LWS\\.openclaw\\workspace\\MEMORY.md",
           "missing": false,
-          "rawChars": 729,
-          "injectedChars": 729,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
+          "rawChars": 906,
+          "injectedChars": 906,
           "truncated": false
         },
         {
@@ -841,8 +829,8 @@
         ]
       },
       "tools": {
-        "listChars": 4695,
-        "schemaChars": 28954,
+        "listChars": 3217,
+        "schemaChars": 20562,
         "entries": [
           {
             "name": "read",
@@ -959,84 +947,6 @@
             "propertiesCount": 3
           },
           {
-            "name": "feishu_doc",
-            "summaryChars": 321,
-            "schemaChars": 2898,
-            "propertiesCount": 27
-          },
-          {
-            "name": "feishu_app_scopes",
-            "summaryChars": 102,
-            "schemaChars": 33,
-            "propertiesCount": 0
-          },
-          {
-            "name": "feishu_chat",
-            "summaryChars": 59,
-            "schemaChars": 606,
-            "propertiesCount": 6
-          },
-          {
-            "name": "feishu_wiki",
-            "summaryChars": 83,
-            "schemaChars": 971,
-            "propertiesCount": 10
-          },
-          {
-            "name": "feishu_drive",
-            "summaryChars": 81,
-            "schemaChars": 486,
-            "propertiesCount": 5
-          },
-          {
-            "name": "feishu_bitable_get_meta",
-            "summaryChars": 114,
-            "schemaChars": 170,
-            "propertiesCount": 1
-          },
-          {
-            "name": "feishu_bitable_list_fields",
-            "summaryChars": 76,
-            "schemaChars": 255,
-            "propertiesCount": 2
-          },
-          {
-            "name": "feishu_bitable_list_records",
-            "summaryChars": 64,
-            "schemaChars": 462,
-            "propertiesCount": 4
-          },
-          {
-            "name": "feishu_bitable_get_record",
-            "summaryChars": 46,
-            "schemaChars": 335,
-            "propertiesCount": 3
-          },
-          {
-            "name": "feishu_bitable_create_record",
-            "summaryChars": 44,
-            "schemaChars": 549,
-            "propertiesCount": 3
-          },
-          {
-            "name": "feishu_bitable_update_record",
-            "summaryChars": 50,
-            "schemaChars": 473,
-            "propertiesCount": 4
-          },
-          {
-            "name": "feishu_bitable_create_app",
-            "summaryChars": 57,
-            "schemaChars": 243,
-            "propertiesCount": 2
-          },
-          {
-            "name": "feishu_bitable_create_field",
-            "summaryChars": 46,
-            "schemaChars": 911,
-            "propertiesCount": 5
-          },
-          {
             "name": "memory_search",
             "summaryChars": 334,
             "schemaChars": 139,
@@ -1077,7 +987,7 @@
     },
     "totalTokensFresh": true,
     "status": "done",
-    "startedAt": 1774657087775,
+    "startedAt": 1774686561015,
     "deliveryContext": {
       "to": "heartbeat"
     },
@@ -1085,11 +995,11 @@
     "cacheRead": 0,
     "cacheWrite": 0,
     "contextTokens": 200000,
-    "inputTokens": 26060,
-    "outputTokens": 133,
-    "totalTokens": 26060,
-    "endedAt": 1774657092012,
-    "runtimeMs": 4237
+    "inputTokens": 22367,
+    "outputTokens": 226,
+    "totalTokens": 22367,
+    "endedAt": 1774686580157,
+    "runtimeMs": 19142
   },
   "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e": {
     "sessionId": "0ea3de13-c884-4d99-9684-c2fa06abc575",
