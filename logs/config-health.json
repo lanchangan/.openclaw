@@ -4,11 +4,11 @@
       "lastKnownGood": {
         "hash": "0777e462221203f4a5ce6ac1684028dfb5048d66992011fe44a71f2ea229db29",
         "bytes": 9936,
-        "mtimeMs": 1774673924067.8706,
-        "ctimeMs": 1774673924067.8706,
+        "mtimeMs": 1774690777812.0725,
+        "ctimeMs": 1774690777812.0725,
         "hasMeta": true,
         "gatewayMode": "local",
-        "observedAt": "2026-03-28T04:58:44.783Z"
+        "observedAt": "2026-03-28T09:39:38.472Z"
       },
       "lastObservedSuspiciousSignature": null
     }

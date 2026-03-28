@@ -1031,7 +1031,7 @@
   },
   "agent:my_xiaohongshu:feishu:direct:ou_edfe9c0ba9bdcca895bd217189daa682": {
     "sessionId": "c6428025-c9b2-4edf-a76b-cf9ba228d094",
-    "updatedAt": 1774670864472,
+    "updatedAt": 1774703391547,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -1541,16 +1541,14 @@
       ],
       "version": 0
     },
-    "status": "done",
-    "startedAt": 1774670856787,
-    "endedAt": 1774670864460,
-    "runtimeMs": 7673,
+    "status": "failed",
+    "startedAt": 1774703274412,
     "modelProvider": "custom-llm-chudian-site",
     "model": "minimax-m2.7",
     "contextTokens": 200000,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1774670856769,
+      "generatedAt": 1774703274401,
       "sessionId": "c6428025-c9b2-4edf-a76b-cf9ba228d094",
       "sessionKey": "agent:my_xiaohongshu:feishu:direct:ou_edfe9c0ba9bdcca895bd217189daa682",
       "provider": "custom-llm-chudian-site",
@@ -1570,8 +1568,8 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 43077,
-        "projectContextChars": 12546,
+        "chars": 46971,
+        "projectContextChars": 16440,
         "nonProjectContextChars": 30531
       },
       "injectedWorkspaceFiles": [
@@ -1629,6 +1627,42 @@
           "missing": true,
           "rawChars": 0,
           "injectedChars": 83,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
           "truncated": false
         },
         {
@@ -2050,6 +2084,12 @@
         ]
       }
     },
-    "totalTokensFresh": false
+    "totalTokensFresh": false,
+    "inputTokens": 41084,
+    "outputTokens": 1214,
+    "cacheRead": 0,
+    "cacheWrite": 0,
+    "endedAt": 1774703391531,
+    "runtimeMs": 117119
   }
 }

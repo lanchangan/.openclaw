@@ -1,7 +1,7 @@
 {
   "agent:zx_jiankangxia:feishu:direct:ou_76a468d307f38f9bf61d3a8081345d02": {
     "sessionId": "0657ca86-e869-4fe9-91e6-36905c1a89ee",
-    "updatedAt": 1774676696734,
+    "updatedAt": 1774702707207,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -512,13 +512,13 @@
       "version": 0
     },
     "status": "done",
-    "startedAt": 1774676685974,
+    "startedAt": 1774702299372,
     "modelProvider": "custom-llm-chudian-site",
     "model": "doubao-seed-2.0-pro",
     "contextTokens": 200000,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1774676685956,
+      "generatedAt": 1774702299324,
       "sessionId": "0657ca86-e869-4fe9-91e6-36905c1a89ee",
       "sessionKey": "agent:zx_jiankangxia:feishu:direct:ou_76a468d307f38f9bf61d3a8081345d02",
       "provider": "custom-llm-chudian-site",
@@ -538,9 +538,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 51455,
-        "projectContextChars": 22749,
-        "nonProjectContextChars": 28706
+        "chars": 47453,
+        "projectContextChars": 16908,
+        "nonProjectContextChars": 30545
       },
       "injectedWorkspaceFiles": [
         {
@@ -597,60 +597,6 @@
           "missing": true,
           "rawChars": 0,
           "injectedChars": 83,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
           "truncated": false
         },
         {
@@ -874,8 +820,8 @@
         ]
       },
       "tools": {
-        "listChars": 3217,
-        "schemaChars": 20562,
+        "listChars": 4695,
+        "schemaChars": 28942,
         "entries": [
           {
             "name": "read",
@@ -921,8 +867,8 @@
           },
           {
             "name": "message",
-            "summaryChars": 197,
-            "schemaChars": 5796,
+            "summaryChars": 203,
+            "schemaChars": 5784,
             "propertiesCount": 105
           },
           {
@@ -992,6 +938,84 @@
             "propertiesCount": 3
           },
           {
+            "name": "feishu_doc",
+            "summaryChars": 321,
+            "schemaChars": 2898,
+            "propertiesCount": 27
+          },
+          {
+            "name": "feishu_app_scopes",
+            "summaryChars": 102,
+            "schemaChars": 33,
+            "propertiesCount": 0
+          },
+          {
+            "name": "feishu_chat",
+            "summaryChars": 59,
+            "schemaChars": 606,
+            "propertiesCount": 6
+          },
+          {
+            "name": "feishu_wiki",
+            "summaryChars": 83,
+            "schemaChars": 971,
+            "propertiesCount": 10
+          },
+          {
+            "name": "feishu_drive",
+            "summaryChars": 81,
+            "schemaChars": 486,
+            "propertiesCount": 5
+          },
+          {
+            "name": "feishu_bitable_get_meta",
+            "summaryChars": 114,
+            "schemaChars": 170,
+            "propertiesCount": 1
+          },
+          {
+            "name": "feishu_bitable_list_fields",
+            "summaryChars": 76,
+            "schemaChars": 255,
+            "propertiesCount": 2
+          },
+          {
+            "name": "feishu_bitable_list_records",
+            "summaryChars": 64,
+            "schemaChars": 462,
+            "propertiesCount": 4
+          },
+          {
+            "name": "feishu_bitable_get_record",
+            "summaryChars": 46,
+            "schemaChars": 335,
+            "propertiesCount": 3
+          },
+          {
+            "name": "feishu_bitable_create_record",
+            "summaryChars": 44,
+            "schemaChars": 549,
+            "propertiesCount": 3
+          },
+          {
+            "name": "feishu_bitable_update_record",
+            "summaryChars": 50,
+            "schemaChars": 473,
+            "propertiesCount": 4
+          },
+          {
+            "name": "feishu_bitable_create_app",
+            "summaryChars": 57,
+            "schemaChars": 243,
+            "propertiesCount": 2
+          },
+          {
+            "name": "feishu_bitable_create_field",
+            "summaryChars": 46,
+            "schemaChars": 911,
+            "propertiesCount": 5
+          },
+          {
             "name": "memory_search",
             "summaryChars": 334,
             "schemaChars": 139,
@@ -1030,13 +1054,13 @@
         ]
       }
     },
-    "inputTokens": 75851,
-    "outputTokens": 327,
-    "cacheRead": 20280,
+    "inputTokens": 624521,
+    "outputTokens": 2819,
+    "cacheRead": 0,
     "cacheWrite": 0,
-    "totalTokens": 96131,
+    "totalTokens": 125398,
     "totalTokensFresh": true,
-    "endedAt": 1774676696724,
-    "runtimeMs": 10750
+    "endedAt": 1774702707197,
+    "runtimeMs": 407825
   }
 }

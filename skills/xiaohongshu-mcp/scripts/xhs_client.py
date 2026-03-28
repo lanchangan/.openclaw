@@ -11,6 +11,7 @@ Commands:
     detail <feed_id> <xsec_token>   Get note details
     feeds               Get recommended feed list
     publish <title> <content> <images>  Publish a note
+    delete <note_id>    Delete an existing note by ID
 
 Examples:
     python xhs_client.py status
@@ -180,14 +181,48 @@ def publish_note(title, content, images, tags=None):
         data = resp.json()
         
         if data.get("success"):
-            print(f"✅ Note published successfully!")
+            print(f"Note published successfully!")
             print(f"   Post ID: {data.get('data', {}).get('post_id', 'Unknown')}")
         else:
-            print(f"❌ Publish failed: {data.get('error', 'Unknown error')}")
+            print(f"Publish failed: {data.get('error', 'Unknown error')}")
         
         return data
     except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to MCP server.")
+        print("Cannot connect to MCP server.")
+        sys.exit(1)
+
+
+def delete_note(note_id):
+    """Delete an existing note by ID."""
+    try:
+        payload = {
+            "note_id": note_id
+        }
+        resp = requests.post(
+            f"{BASE_URL}/api/v1/note/delete",
+            json=payload,
+            timeout=60
+        )
+        data = resp.json()
+        
+        if data.get("success"):
+            print(f"Note deleted successfully!")
+        else:
+            # 尝试另一个常见端点
+            resp = requests.post(
+                f"{BASE_URL}/api/v1/delete",
+                json=payload,
+                timeout=60
+            )
+            data = resp.json()
+            if data.get("success"):
+                print(f"Note deleted successfully!")
+            else:
+                print(f"Delete failed: {data.get('error', 'Unknown error')}")
+        
+        return data
+    except requests.exceptions.ConnectionError:
+        print("Cannot connect to MCP server.")
         sys.exit(1)
 
 
@@ -234,6 +269,10 @@ def main():
     publish_parser.add_argument("images", help="Image URLs (comma-separated)")
     publish_parser.add_argument("--tags", help="Tags (comma-separated)")
     
+    # delete command
+    delete_parser = subparsers.add_parser("delete", help="Delete a note")
+    delete_parser.add_argument("note_id", help="ID of the note to delete")
+    
     args = parser.parse_args()
     
     if not args.command:
@@ -258,6 +297,8 @@ def main():
         images = args.images.split(",")
         tags = args.tags.split(",") if args.tags else None
         result = publish_note(args.title, args.content, images, tags)
+    elif args.command == "delete":
+        result = delete_note(args.note_id)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1774658222516,
+      "updatedAtMs": 1774738803154,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -30,14 +30,16 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1774738800000,
-        "lastRunAtMs": 1774657972287,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 250229,
+        "nextRunAtMs": 1774825200000,
+        "lastRunAtMs": 1774738800023,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 3131,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ custom-llm-chudian-site (doubao-seed-2.0-pro) returned a billing error — your API key has run out of credits or has an insufficient balance. Check your custom-llm-chudian-site billing dashboard and top up or switch to a different API key.",
+        "lastErrorReason": "billing"
       },
       "deleteAfterRun": false
     },

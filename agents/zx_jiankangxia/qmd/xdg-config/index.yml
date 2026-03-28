@@ -2,3 +2,9 @@ collections:
   memory-dir-zx-jiankangxia:
     path: C:\Users\LWS\.openclaw\workspace-zx_jiankangxia\memory
     pattern: "**/*.md"
+  memory-root-zx-jiankangxia:
+    path: C:\Users\LWS\.openclaw\workspace-zx_jiankangxia
+    pattern: MEMORY.md
+  memory-alt-zx-jiankangxia:
+    path: C:\Users\LWS\.openclaw\workspace-zx_jiankangxia
+    pattern: memory.md
