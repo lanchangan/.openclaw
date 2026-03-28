@@ -1,0 +1,10 @@
+collections:
+  memory-root-my-robot-01:
+    path: C:\Users\LWS\.openclaw\workspace-my_robot_01
+    pattern: MEMORY.md
+  memory-alt-my-robot-01:
+    path: C:\Users\LWS\.openclaw\workspace-my_robot_01
+    pattern: memory.md
+  memory-dir-my-robot-01:
+    path: C:\Users\LWS\.openclaw\workspace-my_robot_01\memory
+    pattern: "**/*.md"

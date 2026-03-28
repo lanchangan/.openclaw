@@ -1,0 +1,34 @@
+# OpenClaw 配置文件
+# 生成时间: 2026-03-16
+
+# ====================
+# 搜索 API 配置
+# ====================
+web:
+  # 默认使用的搜索提供商 (brave 或 tavily)
+  default_provider: tavily
+  
+  # Brave Search 配置 (可选)
+  # 如需使用 Brave, 取消注释并填入 API Key
+  # brave:
+  #   api_key: "BSAxxxxxxxxxxxxxxxx"
+  #   max_results: 10
+  
+  # Tavily Search 配置 (已启用)
+  tavily:
+    api_key: "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"
+    max_results: 10
+    search_depth: "advanced"  # 可选: basic 或 advanced
+
+# ====================
+# 其他配置项
+# ====================
+# 模型配置
+# model:
+#   default: "gpt-4"
+#   temperature: 0.7
+
+# 日志配置
+# logging:
+#   level: "info"
+#   file: "~/.openclaw/logs/openclaw.log"

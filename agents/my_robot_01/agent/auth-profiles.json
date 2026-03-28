@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "profiles": {
+    "volcengine:default": {
+      "type": "api_key",
+      "provider": "volcengine",
+      "key": "ae32e8ff-3bdc-42ae-97b5-01fb27264f7e"
+    }
+  },
+  "usageStats": {
+    "volcengine:default": {
+      "errorCount": 0,
+      "lastUsed": 1774048972651,
+      "lastFailureAt": 1773589605771
+    }
+  }
+}

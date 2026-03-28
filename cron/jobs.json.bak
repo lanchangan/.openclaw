@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "8ecc8a2f-8c0c-47da-b813-78ecc92e2cd5",
+      "agentId": "main",
+      "sessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "name": "每日新闻与市场早报",
+      "enabled": true,
+      "createdAtMs": 1774099033259,
+      "updatedAtMs": 1774652620459,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 7 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行每日新闻与市场早报任务：\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 伊朗-美国战争最新消息：搜索\"伊朗 美国 战争 最新消息\"、\"霍尔木兹海峡\"、\"伊朗战争 全球经济\"，输出10条重要新闻摘要\n\n2. 半导体行业新闻：搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n3. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n4. 国内新闻TOP10：搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n5. 国际新闻TOP10：搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n6. 股票推荐TOP10：搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n7. 基金推荐TOP10：搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接，格式：📰 [新闻标题] - [一句话摘要]\\n🔗 来源：[网站名称] | [链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
+        "model": "volcengine-plan/ark-code-latest",
+        "thinking": "low",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "bestEffort": true
+      },
+      "state": {
+        "nextRunAtMs": 1774738800000,
+        "lastRunAtMs": 1774652400015,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 220444,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
+      },
+      "deleteAfterRun": false
+    },
+    {
+      "id": "91f2a567-eeac-4a4c-bbf9-403f8b03c0d9",
+      "agentId": "main",
+      "sessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "name": "装修任务检查-周五",
+      "enabled": true,
+      "createdAtMs": 1774099033274,
+      "updatedAtMs": 1774605681643,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 18 * * 5",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行装修任务检查：\n\n1. 读取装修遗留事项清单（在工作区 memory 或指定文件中）\n2. 统计本周完成情况（已完成的打勾，未完成的标记）\n3. 列出未处理事项清单\n4. 生成本周任务完成进度报告\n5. 提醒主人处理未完成的装修事项\n\n输出格式：\n- 使用飞书卡片格式\n- 标题：装修任务周报\n- 统计数字：已完成X项 / 共Y项 (完成率Z%)\n- 分两部分：✅ 已完成事项、⏳ 待处理事项\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
+        "model": "volcengine-plan/kimi-k2.5",
+        "thinking": "off",
+        "timeoutSeconds": 180
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "ou_e7a32d874706bf82f2d409b0427b7e9e"
+      },
+      "state": {
+        "nextRunAtMs": 1775210400000,
+        "lastRunAtMs": 1774605600017,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 81626,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
+      }
+    },
+    {
+      "id": "cd6f41c7-41a3-4abf-865f-5f01e6beb397",
+      "agentId": "main",
+      "sessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "name": "装修任务检查-周一",
+      "enabled": true,
+      "createdAtMs": 1774099033292,
+      "updatedAtMs": 1774224022156,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 8 * * 1",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行装修任务检查（周一版）：\n\n1. 读取装修遗留事项清单\n2. 统计上周完成情况及本周待办\n3. 生成本周装修任务计划\n4. 提醒主人本周需要完成的装修事项\n\n输出格式：\n- 使用飞书卡片格式\n- 标题：本周装修任务计划\n- 列出本周需要完成的3-5项重点任务\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
+        "model": "volcengine-plan/kimi-k2.5",
+        "thinking": "off",
+        "timeoutSeconds": 180
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "feishu",
+        "to": "ou_e7a32d874706bf82f2d409b0427b7e9e"
+      },
+      "state": {
+        "nextRunAtMs": 1774828800000,
+        "lastRunAtMs": 1774224000019,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 22137,
+        "lastErrorReason": "rate_limit",
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 3,
+        "lastError": "⚠️ API rate limit reached. Please try again later.",
+        "lastDelivered": true
+      }
+    }
+  ]
+}

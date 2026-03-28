@@ -1,0 +1,10 @@
+collections:
+  memory-dir-my-xiaohongshu:
+    path: C:\Users\LWS\.openclaw\workspace-my_xiaohongshu\memory
+    pattern: "**/*.md"
+  memory-root-my-xiaohongshu:
+    path: C:\Users\LWS\.openclaw\workspace-my_xiaohongshu
+    pattern: MEMORY.md
+  memory-alt-my-xiaohongshu:
+    path: C:\Users\LWS\.openclaw\workspace-my_xiaohongshu
+    pattern: memory.md

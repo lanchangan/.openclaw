@@ -1,0 +1,435 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.13",
+    "lastTouchedAt": "2026-03-25T14:09:20.775Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-25T13:08:14.702Z",
+    "lastRunVersion": "2026.3.23-2",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "browser": {
+    "enabled": true,
+    "defaultProfile": "openclaw"
+  },
+  "auth": {
+    "profiles": {
+      "volcengine:default": {
+        "provider": "volcengine",
+        "mode": "api_key"
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "custom-llm-chudian-site": {
+        "baseUrl": "https://llm.chudian.site/v1",
+        "apiKey": "sk-ag-409a12b98c07a25dc7efc587468e1a6e",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "minimax-m2.5",
+            "name": "minimax-m2.5 (Custom Provider)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 190000,
+            "maxTokens": 16000
+          }
+        ]
+      },
+      "custom-customll": {
+        "baseUrl": "https://llm.chudian.site/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "custom-llm-chudian-site/minimax-m2.5",
+            "name": "custom-llm-chudian-site/minimax-m2.5"
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "custom-customll/custom-llm-chudian-site/minimax-m2.7",
+        "fallbacks": []
+      },
+      "models": {
+        "custom-llm-chudian-site/minimax-m2.7": {
+          "alias": "minimax2.7"
+        },
+        "custom-llm-chudian-site/qwen3.5-plus": {
+          "alias": "qwen"
+        },
+        "custom-llm-chudian-site/glm-5": {
+          "alias": "glm5"
+        },
+        "custom-llm-chudian-site/doubao-seed-2.0-pro": {
+          "alias": "doubao-pro"
+        },
+        "custom-llm-chudian-site/deepseek-v3.2": {
+          "alias": "deepseek"
+        },
+        "custom-llm-chudian-site/kimi-k2.5": {
+          "alias": "kimi"
+        },
+        "custom-llm-chudian-site/doubao-seed-2.0-code": {
+          "alias": "doubao-code"
+        },
+        "custom-llm-chudian-site/glm-4.7": {
+          "alias": "glm4.7"
+        },
+        "custom-llm-chudian-site/minimax-m2.5": {
+          "alias": "minimax2.5"
+        }
+      },
+      "workspace": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "compaction": {
+        "mode": "safeguard",
+        "keepRecentTokens": 20000
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
+      },
+      {
+        "id": "my_robot_01",
+        "name": "my_robot_01",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_robot_01",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_robot_01\\agent",
+        "model": "volcengine-plan/ark-code-latest"
+      },
+      {
+        "id": "my_work_robot",
+        "name": "my_work_robot",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_work_robot",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_work_robot\\agent",
+        "model": "volcengine-plan/ark-code-latest"
+      },
+      {
+        "id": "zx_assistant_01",
+        "name": "zx_assistant_01",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_assistant_01",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_assistant_01\\agent",
+        "model": "volcengine-plan/ark-code-latest"
+      },
+      {
+        "id": "zx_robot_01",
+        "name": "zx_robot_01",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_robot_01",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_robot_01\\agent",
+        "model": "volcengine-plan/ark-code-latest"
+      }
+    ]
+  },
+  "tools": {
+    "profile": "full",
+    "sessions": {
+      "visibility": "all"
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "default"
+      }
+    },
+    {
+      "agentId": "my_robot_01",
+      "match": {
+        "channel": "feishu",
+        "accountId": "my_robot_01"
+      }
+    },
+    {
+      "agentId": "my_work_robot",
+      "match": {
+        "channel": "feishu",
+        "accountId": "my_work_robot"
+      }
+    },
+    {
+      "agentId": "zx_assistant_01",
+      "match": {
+        "channel": "feishu",
+        "accountId": "zx_assistant_01"
+      }
+    },
+    {
+      "agentId": "zx_robot_01",
+      "match": {
+        "channel": "feishu",
+        "accountId": "zx_robot_01"
+      }
+    },
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "default"
+      }
+    }
+  ],
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer",
+    "idleMinutes": 10080
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        },
+        "self-improvement": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "connectionMode": "websocket",
+      "domain": "feishu",
+      "groupPolicy": "open",
+      "requireMention": true,
+      "accounts": {
+        "default": {                          // app_for_ai
+          "appId": "cli_a92dc000da789cc2",
+          "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ"
+        },
+        "my_robot_01": {                      // 勤劳虾
+          "appId": "cli_a93fd3bce2785cd5",
+          "appSecret": "vnKlxTFj2pPTDS6cSh6nMhlM53ckMOAm"
+        },
+        "my_work_robot": {                    // 工作虾
+          "appId": "cli_a9340a6fd922dcc6",
+          "appSecret": "iEXatjRUBk8cCfedbOBlibZ6ZkYCJeN1"
+        },
+        "zx_assistant_01": {
+          "appId": "cli_a934126ad938dbc6",
+          "appSecret": "NtEtldiM70PtctsIvp4v2efIOL4iGrLQ"
+        },
+        "zx_robot_01": {
+          "appId": "cli_a93fc496a2b89bde",
+          "appSecret": "jUjnf9I9LKkG2GhXHGsPWc1z0hbM4JkJ"
+        }
+      },
+      "groupAllowFrom": "[oc_959ee261398abd06dd44199eb5ec0f82]",
+      "appId": "cli_a92dc000da789cc2",
+      "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ"
+    },
+    "openclaw-weixin": {
+      "accounts": {}
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "controlUi": {
+      "allowedOrigins": [
+        "file://"
+      ]
+    },
+    "auth": {
+      "mode": "token",
+      "token": "clawx-dfe70a3305b6332790cd6c23d9c90ebe"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send"
+      ]
+    }
+  },
+  "memory": {
+    "backend": "qmd",
+    "citations": "auto",
+    "qmd": {
+      "command": "C:/Users/LWS/.bun/bin/qmd-node.mjs",
+      "includeDefaultMemory": true,
+      "update": {
+        "interval": "5m",
+        "debounceMs": 15000
+      },
+      "limits": {
+        "maxResults": 6,
+        "timeoutMs": 4000
+      },
+      "scope": {
+        "default": "deny",
+        "rules": [
+          {
+            "action": "allow",
+            "match": {
+              "chatType": "direct"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "skills": {
+    "entries": {
+      "pdf": {
+        "enabled": true
+      },
+      "xlsx": {
+        "enabled": true
+      },
+      "docx": {
+        "enabled": true
+      },
+      "pptx": {
+        "enabled": true
+      },
+      "tavily-search": {
+        "enabled": true
+      },
+      "brave-web-search": {
+        "enabled": true
+      }
+    }
+  },
+  "plugins": {
+    "allow": [
+      "lossless-claw",
+      "memory-lancedb-pro",
+      "openclaw-lark",
+      "openclaw-weixin"
+    ],
+    "slots": {
+      "memory": "memory-lancedb-pro"
+    },
+    "entries": {
+      "feishu": {
+        "enabled": false
+      },
+      "lossless-claw": {
+        "enabled": true
+      },
+      "memory-lancedb-pro": {
+        "enabled": true,
+        "config": {
+          "embedding": {
+            "apiKey": "dummy",
+            "model": "nomic-embed-text",
+            "baseURL": "http://localhost:11434/v1"
+          },
+          "llm": {
+            "apiKey": "f3edcab4-1a28-4d2c-90ad-56b4fc440ca7",
+            "model": "doubao-seed-1-6-thinking-250615",
+            "baseURL": "https://ark.cn-beijing.volces.com/api/v3"
+          },
+          "autoCapture": true,
+          "autoRecall": true,
+          "autoRecallMinLength": 8,
+          "retrieval": {
+            "candidatePoolSize": 20,
+            "minScore": 0.45,
+            "hardMinScore": 0.55
+          }
+        }
+      },
+      "openclaw-lark": {
+        "enabled": true
+      },
+      "openclaw-weixin": {
+        "enabled": true
+      }
+    },
+    "installs": {
+      "memory-lancedb-pro": {
+        "source": "path",
+        "spec": "memory-lancedb-pro",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\memory-lancedb-pro",
+        "version": "1.1.0-beta.9",
+        "resolvedName": "memory-lancedb-pro",
+        "resolvedVersion": "1.1.0-beta.9",
+        "resolvedSpec": "memory-lancedb-pro@1.1.0-beta.9",
+        "resolvedAt": "2026-03-21T00:00:00.000Z",
+        "installedAt": "2026-03-21T00:00:00.000Z"
+      },
+      "feishu": {
+        "source": "npm",
+        "spec": "@openclaw/feishu",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\feishu",
+        "version": "2026.3.13",
+        "resolvedName": "@openclaw/feishu",
+        "resolvedVersion": "2026.3.13",
+        "resolvedSpec": "@openclaw/feishu@2026.3.13",
+        "integrity": "sha512-D5vPkgGZ9lfCQnDFlGrQN6NCSUYRgYW9k7amW3qlm9zBI4Sp+alRZVqLZ4yZ2eCXHjw9RVp/L75wjJ7NBQyfEw==",
+        "shasum": "39128ff918f8d3387331818cbe3f8b24a82e4c0d",
+        "resolvedAt": "2026-03-14T06:53:23.360Z",
+        "installedAt": "2026-03-14T06:53:25.436Z"
+      },
+      "lossless-claw": {
+        "source": "npm",
+        "spec": "@martian-engineering/lossless-claw",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\lossless-claw",
+        "version": "0.4.0",
+        "resolvedName": "@martian-engineering/lossless-claw",
+        "resolvedVersion": "0.4.0",
+        "resolvedSpec": "@martian-engineering/lossless-claw@0.4.0",
+        "integrity": "sha512-+Est/O8Q07ctravJHaX2UtiRTfPiNUiO4NP2cUn3Uphwb3REE1CMUqU+7z0sF2nwvGC0f5y9wMXrMn+JaV7XIg==",
+        "shasum": "0b552a5c14badddcd93192b7a8d330d2209410da",
+        "resolvedAt": "2026-03-19T14:42:02.225Z",
+        "installedAt": "2026-03-19T14:43:11.013Z"
+      },
+      "openclaw-weixin": {
+        "source": "npm",
+        "spec": "@tencent-weixin/openclaw-weixin@latest",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\openclaw-weixin",
+        "version": "2.0.1",
+        "resolvedName": "@tencent-weixin/openclaw-weixin",
+        "resolvedVersion": "2.0.1",
+        "resolvedSpec": "@tencent-weixin/openclaw-weixin@2.0.1",
+        "integrity": "sha512-Ib7onvLU8a1ox9craMZxPwrN+ffJQJbToZzeMwoYryBOMIoBlVY0oCuQF7BZvZ7GRQQKOSSAdxvFkO47hKu0rg==",
+        "shasum": "06339fdc83226454e1286221889fd62c76ae2463",
+        "resolvedAt": "2026-03-25T04:37:15.316Z",
+        "installedAt": "2026-03-25T04:37:50.103Z"
+      }
+    }
+  }
+}

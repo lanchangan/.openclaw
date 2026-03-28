@@ -1,0 +1,10 @@
+collections:
+  memory-dir-zx-assistant-01:
+    path: C:\Users\LWS\.openclaw\workspace-zx_assistant_01\memory
+    pattern: "**/*.md"
+  memory-root-zx-assistant-01:
+    path: C:\Users\LWS\.openclaw\workspace-zx_assistant_01
+    pattern: MEMORY.md
+  memory-alt-zx-assistant-01:
+    path: C:\Users\LWS\.openclaw\workspace-zx_assistant_01
+    pattern: memory.md

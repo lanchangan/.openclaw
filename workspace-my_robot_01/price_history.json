@@ -1,0 +1,92 @@
+[
+  {
+    "timestamp": "2026-03-17T09:00:49.520017",
+    "date": "2026-03-17 09:00",
+    "prices": [
+      {
+        "platform": "京东",
+        "min": 3981,
+        "max": 7341,
+        "found": 5
+      },
+      {
+        "platform": "淘宝",
+        "min": 5023,
+        "max": 5023,
+        "found": 1
+      },
+      {
+        "platform": "拼多多",
+        "min": 3059,
+        "max": 7999,
+        "found": 19
+      }
+    ],
+    "overall_min": {
+      "platform": "拼多多",
+      "min": 3059,
+      "max": 7999,
+      "found": 19
+    }
+  },
+  {
+    "timestamp": "2026-03-17T09:06:20.477458",
+    "date": "2026-03-17 09:06",
+    "prices": [
+      {
+        "platform": "京东",
+        "min": 3981,
+        "max": 7341,
+        "found": 5
+      },
+      {
+        "platform": "淘宝",
+        "min": 5023,
+        "max": 5023,
+        "found": 1
+      },
+      {
+        "platform": "拼多多",
+        "min": 3059,
+        "max": 7999,
+        "found": 19
+      }
+    ],
+    "overall_min": {
+      "platform": "拼多多",
+      "min": 3059,
+      "max": 7999,
+      "found": 19
+    }
+  },
+  {
+    "timestamp": "2026-03-17T09:06:55.606898",
+    "date": "2026-03-17 09:06",
+    "prices": [
+      {
+        "platform": "京东",
+        "min": 3981,
+        "max": 7341,
+        "found": 5
+      },
+      {
+        "platform": "淘宝",
+        "min": 5023,
+        "max": 5023,
+        "found": 1
+      },
+      {
+        "platform": "拼多多",
+        "min": 3059,
+        "max": 7999,
+        "found": 19
+      }
+    ],
+    "overall_min": {
+      "platform": "拼多多",
+      "min": 3059,
+      "max": 7999,
+      "found": 19
+    }
+  }
+]

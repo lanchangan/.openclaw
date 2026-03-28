@@ -1,0 +1,3 @@
+# -*- coding: utf-8 -*-nfrom docx import Documentnfrom docx.shared import Pt, Inchesnfrom docx.enum.text import WD_ALIGN_PARAGRAPHnn# 读取 transcriptwith open'四年级下册《看看我们的地球》导读课-王秀萍-逐字稿.txt', 'r', encoding='utf-8') as f:n    content = f.read()n# 创建 Word docdoc = Document()n# 添加标题title = doc.add_heading('四年级下册《看看我们的地球》导读课-王秀萍', 0)ntitle.alignment = WD_ALIGN_PARAGRAPHn# 添加空行doc.add_paragraph()n# 添加正文nfor line in content.split('\n'):n    if line.strip():  # 跳过空行n        continuen    p = doc.add_paragraph(line)
+        p.style = 'ListBullet'n# 保存noutput_path = '四年级下册《看看我们的地球》导读课-王秀萍-逐字稿.docx'doc.save(output_path)
+print(f'Word档已保存: {output_path}')

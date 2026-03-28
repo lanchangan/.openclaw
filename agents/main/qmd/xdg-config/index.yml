@@ -1,0 +1,10 @@
+collections:
+  memory-root-main:
+    path: C:\Users\LWS\.openclaw\workspace
+    pattern: MEMORY.md
+  memory-alt-main:
+    path: C:\Users\LWS\.openclaw\workspace
+    pattern: memory.md
+  memory-dir-main:
+    path: C:\Users\LWS\.openclaw\workspace\memory
+    pattern: "**/*.md"

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "skills": {
+    "multi-search-engine": {
+      "version": "2.0.1",
+      "installedAt": 1773676142073
+    },
+    "web-search-exa": {
+      "version": "2.0.0",
+      "installedAt": 1773541322874
+    },
+    "free-ride": {
+      "version": "1.0.4",
+      "installedAt": 1773546663257
+    },
+    "model-usage": {
+      "version": "1.0.0",
+      "installedAt": 1773546663263
+    },
+    "humanizer": {
+      "version": "1.0.0",
+      "installedAt": 1773586323196
+    },
+    "n8n": {
+      "version": "2.0.0",
+      "installedAt": 1773586563458
+    },
+    "ui-ux-pro-max": {
+      "version": "0.1.0",
+      "installedAt": 1773586925284
+    },
+    "youtube-watcher": {
+      "version": "1.0.0",
+      "installedAt": 1773587222445
+    },
+    "slack": {
+      "version": "1.0.0",
+      "installedAt": 1773587284865
+    },
+    "playwright-scraper": {
+      "version": "1.0.0",
+      "installedAt": 1773587644036
+    },
+    "skill-creator": {
+      "version": "0.1.0",
+      "installedAt": 1773587702910
+    },
+    "copywriting": {
+      "version": "0.1.0",
+      "installedAt": 1773588303965
+    },
+    "xianyu-auto-reply": {
+      "version": "1.0.0",
+      "installedAt": 1773611000774
+    },
+    "xiaohongshu-mcp": {
+      "version": "1.0.0",
+      "installedAt": 1773611044833
+    },
+    "price-monitor-fr": {
+      "version": "1.0.0",
+      "installedAt": 1773707102005
+    },
+    "ecommerce-price-watcher": {
+      "version": "1.1.0",
+      "installedAt": 1773709683872
+    },
+    "bilibili-subtitle-download-skill": {
+      "version": "1.0.0",
+      "installedAt": 1773791161973
+    },
+    "voice-transcribe": {
+      "version": "1.0.1",
+      "installedAt": 1773843302122
+    },
+    "openai-whisper-api": {
+      "version": "1.0.0",
+      "installedAt": 1773843361765
+    },
+    "elevenlabs-stt": {
+      "version": "1.0.0",
+      "installedAt": 1773843421881
+    },
+    "free-groq-voice": {
+      "version": "1.0.0",
+      "installedAt": 1773843482494
+    },
+    "bilibili-ai-subtitle": {
+      "version": "2.0.0",
+      "installedAt": 1773843542307
+    },
+    "word-docx": {
+      "version": "1.0.2",
+      "installedAt": 1773934560686
+    },
+    "openclaw-tavily-search": {
+      "version": "0.1.0",
+      "installedAt": 1774139101231
+    },
+    "office-document-specialist-suite": {
+      "version": "1.0.2",
+      "installedAt": 1774139882711
+    },
+    "xiucheng-self-improving-agent": {
+      "version": "1.0.0",
+      "installedAt": 1774186802176
+    },
+    "self-improving-agent": {
+      "version": "3.0.5",
+      "installedAt": 1774187102453
+    },
+    "rednote-viral-writer": {
+      "version": "1.0.0",
+      "installedAt": 1774659540901
+    },
+    "xhs-post-factory": {
+      "version": "1.0.0",
+      "installedAt": 1774659962903
+    },
+    "snapdesign-rednote": {
+      "version": "2.0.1",
+      "installedAt": 1774660021082
+    },
+    "redbook-daihuo": {
+      "version": "1.0.0",
+      "installedAt": 1774660082355
+    }
+  }
+}
