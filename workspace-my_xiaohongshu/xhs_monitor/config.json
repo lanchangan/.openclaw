@@ -1,0 +1,7 @@
+{
+  "wechat_id": "lzab0502",
+  "xiaohongshu_cookie": "",
+  "poll_interval": 30,
+  "auto_reply": true,
+  "log_file": "logs/xhs_monitor.log"
+}
