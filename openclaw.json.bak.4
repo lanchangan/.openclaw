@@ -1,7 +1,7 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-19T14:43:12.160Z"
+    "lastTouchedVersion": "2026.3.23-2",
+    "lastTouchedAt": "2026-03-25T04:37:50.304Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-19T14:12:56.339Z",
@@ -14,28 +14,6 @@
       "volcengine:default": {
         "provider": "volcengine",
         "mode": "api_key"
-      }
-    }
-  },
-  "memory": {
-    "backend": "qmd",
-    "citations": "auto",
-    "qmd": {
-      "command": "C:/Users/LWS/.bun/bin/qmd-node.mjs",
-      "includeDefaultMemory": true,
-      "update": {
-        "interval": "5m",
-        "debounceMs": 15000
-      },
-      "limits": {
-        "maxResults": 6,
-        "timeoutMs": 4000
-      },
-      "scope": {
-        "default": "deny",
-        "rules": [
-          { "action": "allow", "match": { "chatType": "direct" } }
-        ]
       }
     }
   },
@@ -161,6 +139,9 @@
         },
         "session-memory": {
           "enabled": true
+        },
+        "self-improvement": {
+          "enabled": true
         }
       }
     }
@@ -221,8 +202,40 @@
       ]
     }
   },
+  "memory": {
+    "backend": "qmd",
+    "citations": "auto",
+    "qmd": {
+      "command": "C:/Users/LWS/.bun/bin/qmd-node.mjs",
+      "includeDefaultMemory": true,
+      "update": {
+        "interval": "5m",
+        "debounceMs": 15000
+      },
+      "limits": {
+        "maxResults": 6,
+        "timeoutMs": 4000
+      },
+      "scope": {
+        "default": "deny",
+        "rules": [
+          {
+            "action": "allow",
+            "match": {
+              "chatType": "direct"
+            }
+          }
+        ]
+      }
+    }
+  },
   "plugins": {
-    "allow": ["feishu", "lossless-claw", "memory-lancedb-pro"],
+    "allow": [
+      "feishu",
+      "lossless-claw",
+      "memory-lancedb-pro",
+      "openclaw-weixin"
+    ],
     "slots": {
       "memory": "memory-lancedb-pro"
     },
@@ -255,6 +268,9 @@
             "hardMinScore": 0.55
           }
         }
+      },
+      "openclaw-weixin": {
+        "enabled": true
       }
     },
     "installs": {
@@ -294,6 +310,19 @@
         "shasum": "0b552a5c14badddcd93192b7a8d330d2209410da",
         "resolvedAt": "2026-03-19T14:42:02.225Z",
         "installedAt": "2026-03-19T14:43:11.013Z"
+      },
+      "openclaw-weixin": {
+        "source": "npm",
+        "spec": "@tencent-weixin/openclaw-weixin@latest",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\openclaw-weixin",
+        "version": "2.0.1",
+        "resolvedName": "@tencent-weixin/openclaw-weixin",
+        "resolvedVersion": "2.0.1",
+        "resolvedSpec": "@tencent-weixin/openclaw-weixin@2.0.1",
+        "integrity": "sha512-Ib7onvLU8a1ox9craMZxPwrN+ffJQJbToZzeMwoYryBOMIoBlVY0oCuQF7BZvZ7GRQQKOSSAdxvFkO47hKu0rg==",
+        "shasum": "06339fdc83226454e1286221889fd62c76ae2463",
+        "resolvedAt": "2026-03-25T04:37:15.316Z",
+        "installedAt": "2026-03-25T04:37:50.103Z"
       }
     }
   }

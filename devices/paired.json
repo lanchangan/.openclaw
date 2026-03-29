@@ -3,8 +3,8 @@
     "deviceId": "9f2383646c61558463c7ec5d60e3bcbb5ec28ba5feb73bb24404e1819b0b0f48",
     "publicKey": "eL9X2_sQUUAFzC_LxoeysRcortkdv1CZR9U0EdvJ5ZA",
     "platform": "win32",
-    "clientId": "cli",
-    "clientMode": "cli",
+    "clientId": "openclaw-probe",
+    "clientMode": "probe",
     "role": "operator",
     "roles": [
       "operator"
