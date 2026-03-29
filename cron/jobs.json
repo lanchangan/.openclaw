@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1774738803154,
+      "updatedAtMs": 1774747252003,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -19,7 +19,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "执行每日新闻与市场早报任务：\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接，格式：📰 [新闻标题] - [一句话摘要]\\n🔗 来源：[网站名称] | [链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
-        "model": "volcengine-plan/ark-code-latest",
+        "model": "minimax",
         "thinking": "low",
         "timeoutSeconds": 600
       },
@@ -31,15 +31,12 @@
       },
       "state": {
         "nextRunAtMs": 1774825200000,
-        "lastRunAtMs": 1774738800023,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 3131,
-        "lastDelivered": true,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastError": "⚠️ custom-llm-chudian-site (doubao-seed-2.0-pro) returned a billing error — your API key has run out of credits or has an insufficient balance. Check your custom-llm-chudian-site billing dashboard and top up or switch to a different API key.",
-        "lastErrorReason": "billing"
+        "lastRunAtMs": 1774747237920,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 14083,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 0
       },
       "deleteAfterRun": false
     },

@@ -3,8 +3,8 @@
     "deviceId": "9f2383646c61558463c7ec5d60e3bcbb5ec28ba5feb73bb24404e1819b0b0f48",
     "publicKey": "eL9X2_sQUUAFzC_LxoeysRcortkdv1CZR9U0EdvJ5ZA",
     "platform": "win32",
-    "clientId": "openclaw-probe",
-    "clientMode": "probe",
+    "clientId": "cli",
+    "clientMode": "cli",
     "role": "operator",
     "roles": [
       "operator"
@@ -73,7 +73,7 @@
           "operator.pairing"
         ],
         "createdAtMs": 1773471671720,
-        "lastUsedAtMs": 1774660665727
+        "lastUsedAtMs": 1774746643189
       }
     },
     "createdAtMs": 1773471671720,

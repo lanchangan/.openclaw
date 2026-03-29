@@ -162,6 +162,13 @@
         "model": "kimi"
       },
       {
+        "id": "my_kuailexia",
+        "name": "my_kuailexia",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_kuailexia",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_kuailexia\\agent",
+        "model": "kimi"
+      },
+      {
         "id": "my_work_robot",
         "name": "my_work_robot",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_work_robot",
@@ -217,6 +224,13 @@
       "match": {
         "channel": "feishu",
         "accountId": "my_xiaohongshu"
+      }
+    },
+    {
+      "agentId": "my_kuailexia",
+      "match": {
+        "channel": "feishu",
+        "accountId": "my_kuailexia"
       }
     },
     {
@@ -305,6 +319,10 @@
         "my_xiaohongshu": {
           "appId": "cli_a94d96f701385cd3",
           "appSecret": "THGGJtd687mOc5O2uSq8neg4fpSpwc8g"
+        },
+        "my_kuailexia": {
+          "appId": "cli_a921d618c0b85bdf",
+          "appSecret": "ZR6ZHMvKW7HiIfkjl42LfhE1nmBnHRLG"
         },
         "zx_xiaohongshu": {
           "appId": "cli_a94df37921e29cc2",

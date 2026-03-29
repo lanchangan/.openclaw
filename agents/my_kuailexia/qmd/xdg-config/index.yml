@@ -1,0 +1,10 @@
+collections:
+  memory-root-my-kuailexia:
+    path: C:\Users\LWS\.openclaw\workspace-my_kuailexia
+    pattern: MEMORY.md
+  memory-alt-my-kuailexia:
+    path: C:\Users\LWS\.openclaw\workspace-my_kuailexia
+    pattern: memory.md
+  memory-dir-my-kuailexia:
+    path: C:\Users\LWS\.openclaw\workspace-my_kuailexia\memory
+    pattern: "**/*.md"

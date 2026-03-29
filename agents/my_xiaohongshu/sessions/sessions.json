@@ -1,7 +1,7 @@
 {
   "agent:my_xiaohongshu:feishu:direct:ou_37b203a458603438e5676d6868566f74": {
     "sessionId": "9d5b3925-ecac-4c66-8749-8b96dfb68fd2",
-    "updatedAt": 1774746167059,
+    "updatedAt": 1774789458130,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -512,10 +512,10 @@
       "version": 0
     },
     "status": "done",
-    "startedAt": 1774746140547,
+    "startedAt": 1774789411104,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1774746140531,
+      "generatedAt": 1774789411075,
       "sessionId": "9d5b3925-ecac-4c66-8749-8b96dfb68fd2",
       "sessionKey": "agent:my_xiaohongshu:feishu:direct:ou_37b203a458603438e5676d6868566f74",
       "provider": "custom-43-133-33-215-3000",
@@ -535,9 +535,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 42821,
-        "projectContextChars": 12546,
-        "nonProjectContextChars": 30275
+        "chars": 45525,
+        "projectContextChars": 17089,
+        "nonProjectContextChars": 28436
       },
       "injectedWorkspaceFiles": [
         {
@@ -594,6 +594,48 @@
           "missing": true,
           "rawChars": 0,
           "injectedChars": 83,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
+          "truncated": false
+        },
+        {
+          "path": "SELF_IMPROVEMENT_REMINDER.md",
+          "rawChars": 616,
+          "injectedChars": 616,
           "truncated": false
         },
         {
@@ -781,8 +823,8 @@
         ]
       },
       "tools": {
-        "listChars": 4695,
-        "schemaChars": 28942,
+        "listChars": 3217,
+        "schemaChars": 20562,
         "entries": [
           {
             "name": "read",
@@ -828,8 +870,8 @@
           },
           {
             "name": "message",
-            "summaryChars": 203,
-            "schemaChars": 5784,
+            "summaryChars": 197,
+            "schemaChars": 5796,
             "propertiesCount": 105
           },
           {
@@ -899,84 +941,6 @@
             "propertiesCount": 3
           },
           {
-            "name": "feishu_doc",
-            "summaryChars": 321,
-            "schemaChars": 2898,
-            "propertiesCount": 27
-          },
-          {
-            "name": "feishu_app_scopes",
-            "summaryChars": 102,
-            "schemaChars": 33,
-            "propertiesCount": 0
-          },
-          {
-            "name": "feishu_chat",
-            "summaryChars": 59,
-            "schemaChars": 606,
-            "propertiesCount": 6
-          },
-          {
-            "name": "feishu_wiki",
-            "summaryChars": 83,
-            "schemaChars": 971,
-            "propertiesCount": 10
-          },
-          {
-            "name": "feishu_drive",
-            "summaryChars": 81,
-            "schemaChars": 486,
-            "propertiesCount": 5
-          },
-          {
-            "name": "feishu_bitable_get_meta",
-            "summaryChars": 114,
-            "schemaChars": 170,
-            "propertiesCount": 1
-          },
-          {
-            "name": "feishu_bitable_list_fields",
-            "summaryChars": 76,
-            "schemaChars": 255,
-            "propertiesCount": 2
-          },
-          {
-            "name": "feishu_bitable_list_records",
-            "summaryChars": 64,
-            "schemaChars": 462,
-            "propertiesCount": 4
-          },
-          {
-            "name": "feishu_bitable_get_record",
-            "summaryChars": 46,
-            "schemaChars": 335,
-            "propertiesCount": 3
-          },
-          {
-            "name": "feishu_bitable_create_record",
-            "summaryChars": 44,
-            "schemaChars": 549,
-            "propertiesCount": 3
-          },
-          {
-            "name": "feishu_bitable_update_record",
-            "summaryChars": 50,
-            "schemaChars": 473,
-            "propertiesCount": 4
-          },
-          {
-            "name": "feishu_bitable_create_app",
-            "summaryChars": 57,
-            "schemaChars": 243,
-            "propertiesCount": 2
-          },
-          {
-            "name": "feishu_bitable_create_field",
-            "summaryChars": 46,
-            "schemaChars": 911,
-            "propertiesCount": 5
-          },
-          {
             "name": "memory_search",
             "summaryChars": 334,
             "schemaChars": 139,
@@ -1020,13 +984,13 @@
     "totalTokensFresh": true,
     "modelProvider": "custom-43-133-33-215-3000",
     "model": "kimi-k2.5",
-    "endedAt": 1774746157455,
-    "runtimeMs": 16908,
     "contextTokens": 262144,
-    "inputTokens": 18837,
-    "outputTokens": 39,
+    "inputTokens": 63523,
+    "outputTokens": 1108,
     "estimatedCostUsd": 0,
-    "totalTokens": 18837
+    "totalTokens": 33135,
+    "endedAt": 1774789458116,
+    "runtimeMs": 47012
   },
   "agent:my_xiaohongshu:feishu:direct:ou_edfe9c0ba9bdcca895bd217189daa682": {
     "sessionId": "c6428025-c9b2-4edf-a76b-cf9ba228d094",
