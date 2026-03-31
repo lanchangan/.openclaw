@@ -1,0 +1,8097 @@
+# 工作学习资料整理2
+
+文件: D:\飞书\验证书籍\工作学习资料整理2.pdf
+总页数: 326
+
+---
+
+
+## 第 1 页
+
+values("0.06388, 0.1062, 0.2497, 0.5207, 0.9428, 1.538",\
+"0.09521, 0.138, 0.2821, 0.5541, 0.9773, 1.57",\
+"0.195, 0.2546, 0.4023, 0.6765, 1.098, 1.694",\
+"0.3171, 0.422, 0.6301, 0.9061, 1.33, 1.922",\
+"0.4481, 0.6086, 0.9231, 1.267, 1.693, 2.291",\
+"0.5845, 0.8058, 1.245, 1.717, 2.204, 2.802");
+}
+方法与功耗查找方法相同
+rise_transition(delay_template_6x6) {
+……
+}
+cell_fall(delay_template_6x6) {
+……
+}
+fall_transition(delay_template_6x6) {
+…………
+}
+}
+max_capacitance : 0.1147 ;
+}
+cell_leakage_power : 5.987e-08 ;
+leakage_power() { 2种状态下的漏电流（静态电流）
+when : "!A" ; A等于0时的电流
+value : "5.41402384e-08" ;
+}
+leakage_power() {
+when : "A" ; A等于1时的电流
+value : "5.98652351e-08" ;
+}
+}
+Specify 用法（转）
+一般都是在例化的库单元出现。
+specifyblock用来描述从源点（source：input/inoutport）到终点（destination：
+output/inoutport）的路径延时（pathdelay），由specify开始，到endspecify
+结束，并且只能在模块内部声明，具有精确性（accuracy）和模块性（modularity）
+的特点。specify block可以用来执行以下三个任务：
+木秀于林,冲迎风霜 -- 每天积累一点点 901 / 1226
+
+## 第 2 页
+
+一、描述横穿整个模块的各种路径及其延时。（module path delay）
+二、脉冲过滤限制。（pulse filtering limit）
+三、时序检查。（timing check）
+specify block有一个专用的关键字specparam用来进行参数声明，用法和
+parameter一样，不同点是两者的作用域不同：specparam只能在specify block
+内部声明及使用，而parameter只能在specify block外部声明及使用。
+////////////////////////////////////////////////////////////////////////
+////////
+第一个任务：模块路径延时（module path delay）
+一条模块路径可以是一条简单的路径（simplepath），或者是一条边缘敏感的路径
+（edge sensitive path），或者是一条状态依赖的路径（state dependent path）。
+//----------------------------------------------------------------------
+--------
+都是指明input->output的 io延时
+一、simple path，可以由以下两种格式中的任意一种来声明：
+1)、并行连接（patallel connection）：source => destination
+2)、全连接（full connection）： source *> destination
+例： (a, b => q, qn) = 1; 等价于：
+(a => q) = 1; (b => qn) = 1; -- 一 一对应
+而(a, b *> q, qn) = 1; 等价于：
+(a => q) = 1; (b => q) = 1; (a => qn) = 1; (b => qn) = 1;
+//----------------------------------------------------------------------
+--------
+二、edge sensitive path，是那些源点（source）使用边沿触发的路径，并使用边
+缘标示符指明触发条件（posedge/negedge），如果没有指明的话，那么就是任何变
+化都会触发终点（destination）的变化。
+例1：(posedge clk => (out +: in)) = (1,2);
+在clk的上升沿，从clk到out的模块路径，其上升延时是1，下降延时是2，从
+in到out的数据路径是同向传输，即out = in。
+例2：(negedge clk => (out -: in)) = (1,2);
+在clk的下降沿，从clk到out的模块路径，其上升延时是1，下降延时是2，从
+in到out的数据路径是反向传输，即out = ~in。
+例3：(clk => (out : in)) = (1,2);
+clk的任何变化，从clk到out的模块路径，其上升延时是1，下降延时是2，从in
+到out的数据路径的传输是不可预知的，同向或者反向或者不变。
+木秀于林,冲迎风霜 -- 每天积累一点点 902 / 1226
+
+## 第 3 页
+
+Note：模块路径的极性（module path polarity）：未知极性（unknown polarity，
+无），正极性（positive polarity，+），负极性（negative polarity，-）。
+//----------------------------------------------------------------------
+--------
+三、state dependent path，是那些源点（source）以来指定条件状态的路径，使
+用if语句（不带else）。在条件=1 or X or Z的情况下，认为条件成立。如果有
+一条路经，存在多个条件同时成立的情况，那么使用延时最小值的那条限制。
+例1： specify
+if(a) (b => out) = (1,2);
+if(~a) (b => out) = (2,3);
+if(b) (a => out) = (1,2);
+if(~b) (a => out) = (2,3); //上升沿：2，下降沿：3
+endspecify
+例2： specify
+if(rst) (posedge clk => (q +: data)) = (1,2);
+if(~rst) (posedge clk => (q +: data)) = (2,3);
+endspecify
+需要注意的是，所有输入状态（每个信号都有为0，为1两种状态）都应该说明，
+否则没有说明的路径使用分布延时（distributeddelay），如果也没有声明分布延
+时（distributed delay）的话，那么使用零延时（zero delay）。如果路径延时和
+分布延时同时声明的话，则选择最大的延时作为路径延时。另外，也可以使用ifnone
+语句，在其它所有条件都不满足的情况下，说明一个缺省的状态依赖路径延时。
+例3： specify
+(posedge clk => (q +: data)) = (1,2);
+ifnone (clk => q) = (2,3);
+endspecify
+////////////////////////////////////////////////////////////////////////
+////////
+第二个任务，脉冲过滤限制（pulse filtering limit）
+由于每条传播路径都具有一定的电容性和电阻性，电荷无法在一瞬间积累或消散，
+所以信号变化的物理特性是具有惯性的。为了更准确地描述这种能力，使用惯性延
+时（inertial delay），它可以抑制持续信号比传播延时短的输入信号的变化。
+例1：1ns宽度的窄脉宽通过一个传输延时为2ns的BUFFER
+两个脉宽限制值：e-limit（error limit）和r-limit（rejection limit），并且
+要求e-limit >= r-limit，否则报错。当pulse width >= e-limit时，输出相应
+木秀于林,冲迎风霜 -- 每天积累一点点 903 / 1226
+
+## 第 4 页
+
+的逻辑值；当e-limit>pulsewidth>=r-limit时，输出X值；当r-limit>pulse
+width时，输出不发生变化。默认情况下，e-limit = r-limit = module transition
+delay，也可以使用以下3种控制方式中的任意一种改变路径脉冲限制值：
+1、使用verilog提供的PATHPULSE$参数，有些仿真器还要求同时使能相应的选项：
+比如VCS，添加+pathpulse选项。
+PATHPULSE$ = (<reject-limit>, <error-limit>);
+PATHPULSE$<path_source>$<path_destination> = (<reject-limit>,
+<error-limit>);
+例： specify
+(en => q) = 12;
+(data => q) = 10;
+(clr, pre *> q) = 4;
+specparam
+PATHPULSE$ = 3, PATHPULSE$en$q = (2,9), PATHPULSE$clr$q = 1;
+endspecify
+en => q的路径：reject-limit = 2, error-limit =9;
+clr => q和pre => q的路径：reject-limit = error-limit = 1;
+data => q的路径：reject-limit = error-limit = 3;
+2、使用仿真器专用的编译指导。比如VCS，+pulse_r/20（取20%）和+pulse_e/80
+（取80%），需要注意的是，这个选项要求放在读入RTL网表文件之后，否则设置
+无效。即网表仿真才有效
+3、使用SDF文件反标，并且SDF文件中的延时信息具有最高的优先级。SDF文件格
+式将在后面介绍。
+脉冲过滤限制的默认格式存在两个缺点：
+1、X状态的持续时间比较短。
+2、在上升延时和下降延时不相等的情况下，如果脉冲过窄，那么可能出现跟随
+边缘（trailing edge）先于或等于导引边缘（leading edge）的现象，这时就会淹
+没X状态。
+可以通过修改默认格式，加以改善，具体如下：
+on-event vs on-detect：
+negative width pulse detection：
+需要注意的是，showcancelled list_path_of_outputs，必须在模块路径之前使用，
+才可以约束到该模块路径。
+木秀于林,冲迎风霜 -- 每天积累一点点 904 / 1226
+
+## 第 5 页
+
+////////////////////////////////////////////////////////////////////////
+////////
+第三个任务，时序检查（timing check）
+描述设计要求的时序性能，所有的时序检查有一个参考事件（referenceevent）和
+一个数据事件（data event），它们通过一个布尔表达式相联接，还包括一个可选
+的notifier寄存器选项，这个寄存器用来打印错误信息或者传播X状态(如果设置
+为0，则不会打印错误和传播 x态)。
+这里把时序检查分成两组来说明：
+第一组，检查时序窗口的稳定性，包括：setup、hold、recovery和removal。
+setup：$setup (data_event, reference_event, limit, notifier);
+当reference_event time - limit < data_event time < reference_event time
+时，就会报告setup time violations。
+hold： $hold (reference_event, data_event, limit, notifier);
+当reference_event time < data_event time < reference_event time + limit
+时，就会报告hold time violations。
+setup/hold：$setuphold (reference_event, data_event, setup_limit,
+hold_limit, notifier);
+$setuphold是$setup和$hold两者的联合。例如：
+$setuphold (posedge clk, negedge d, 2, 1, notifier); 等于
+$setup (negedge d, posedge clk, 2, notifier); 和 $hold (posedge clk,
+negedge d, 1, notifier);
+数据事件常常是数据信号，而参考事件常常是时钟信号，如下图：
+recovery：$recovery (reference_event, data_event, limit, notifier);
+当data_event time - limit < reference_event time < data_event time时，就
+会报告recovery time violations。
+removal： $removal (reference_event, data_event, limit, notifier);
+当data_event time < reference_event time < data_event time + limit时，就
+会报告removal time violations。
+recovery/removal：$recrem (reference_event, data_event, recovery_limit,
+removal_limit, notifier);
+$recrem是$recovery和$removal两者的联合。
+$recrem (posedge clr, posedge clk, 2, 3, notifier); 等于
+$recovery (posedge clr, posedge clk, 2, notifier); 和 $removal (posedge
+clr, posedge clk, 3, notifier);
+数据事件常常是时钟信号，而参考事件常常是控制信号，比如清除信号或者置位信
+号，如下图：
+木秀于林,冲迎风霜 -- 每天积累一点点 905 / 1226
+
+## 第 6 页
+
+$setuphold和$recrem可以接受负值，同时需要激活仿真器的负值时序检查选项（比
+如VCS：+neg_tchk），同时还有一个限制：
+setup_limit + hold_limit > 仿真精度（simulation unit of precision），
+recovery_limit + removal_limit> 仿真精度（simulationunit of precision），
+否则仿真器会把负值当成0处理。
+所以timescale设置为1ns/1ps比较方便
+第二组，检查时钟和控制信号在指定事件之间的时间间隔，包括：skew、width、period
+和nochange。
+skew：$skew (reference_event, data_event, limit, notifier); 限制最大偏斜
+$skew (posedge clk1, posedge clk2, 1, notifier);
+当data_event time - reference_event > limit，则会报告skew time violations。
+$skew是基于事件（event-based）的，如果监测到一个 reference_event，那么就
+开始评估脉宽，只要监测到一个data_event，就会生成相应的报告，直到监测到下
+一个reference_event，才重新开始新的监测。如果在监测到一个data_event之前，
+又监测到一个reference_event，那么就放弃本次评估，重新开始新的评估。
+width：$width(controlled_reference_event,limit,threshold,notifier); 限
+制最小脉宽
+$width (posedge in, 2, notifier);
+这里data_event是隐含的，它等于reference_event的相反边缘，当width<limit
+时，就会报告width time violations。
+period：$period (controlled_reference_event, limit, notifier); 限制最小
+周期
+$period (negedge clk, 10, notifier);
+这里data_event是隐含的，它等于reference_event的相同边缘，当period<limit
+时，就会报告period time violations。
+nochange：$nochange (reference_event, data_event, start_edge_offset,
+end_edge_offset, notifier);
+当leading reference event time - start_edge_offset < data_event < trailing
+referenceeventtime+end_edge_offset时，就会报告 nochangetimeviolations。
+例如：
+$nochange (posedge clk, data, 0 , 0);
+当在clk高电平期间，data发生任何变化，就会报告nochange time violations。
+有时候，路径上的时序检查是在一定条件成立的前提下进行的，这就需要引入条件
+木秀于林,冲迎风霜 -- 每天积累一点点 906 / 1226
+
+## 第 7 页
+
+操作符：&&&。需要注意的是，当存在两个及以上的条件时，要求这些条件首先在
+specify块外部经过适当的组合逻辑产生一个新的控制信号，然后再引入到specify
+块内部使用。
+例如：
+and u1 (clr_and_set, clr, set);
+specify
+$setup (negedge data, posedge clk &&& clr_and_set, 3, notifier);
+endspecify
+////////////////////////////////////////////////////////////////////////
+////////
+SDF文件简述：
+SDF文件包含指定路径延时（specify path delay），参数值（specparam values），
+时序检查约束（timingcheckconstraints），互连线延时（interconnectdelay），
+以及一些和仿真不相关的说明信息。反标SDF文件的过程，也算是更新specify
+block相对应信息的过程，如果SDF文件没有包含某些信息，则参考specifyblock
+中的相应信息。
+SDF时序信息在 CELL内部描述，可以包含一个或多个DELAY、TIMINGCHECK和LABEL。
+DELAY部分包含指定路径的传播延时（specify path delay）和互连线延时
+（interconnectdelay）；TIMINGCHECK部分包含时序检查约束信息（timingcheck
+constraint）；LABEL部分包含新的参数值（specparam）。
+DELAY部分：
+例1：SDF文件：(IOPATH in out (1.1::1.3) (1.5::1.7));
+verilog specify path：(in => out) = (2, 3);
+例2：SDF文件：(COND en==1'b1 (IOPATH in out (1.2) (1.6));
+verilog specify path：if (en) (in => out) = (1, 2);
+例3：互连线延时：(INTERCONNECT source_port load_port delay_values)
+SDF文件：(INTERCONNECT u1/out u2/in (1.2::1.4) (1.4::1.6));
+TIMINGCHECK部分:
+例4： SDF文件： (SETUP (posedge data) (posedge clk) (3::4));
+(HOLD (posedge data) (posedge clk) (1::2));
+verilog timing checks： $setup (posedge data, posedge clk, 1);
+$hold (posedge clk, posedge data, 2);
+木秀于林,冲迎风霜 -- 每天积累一点点 907 / 1226
+
+## 第 8 页
+
+例5： SDF文件： (SETUP (posedge data) (COND rb==1'b1 (posedge clk)) (3::4));
+(HOLD (posedge data) (COND rb==1'b1 (posedge clk)) (1::2));
+verilog timing checks： $setup (posedge data, posedge clk &&& rb, 1);
+$hold (posedge clk &&& rb, posedge data, 2);
+LABEL部分：
+例6：
+SDF文件：(LABEL
+(ABSOLUTE
+(dh 60)
+(dl 40)))
+verilog文件：specparam dh = 60, dl=40;
+SDF文件反标是一个有序的过程，这就意味着对于同一对source/load，后续的信息可能修改
+（INCREMENT）或者覆盖（ABSOLUTE）前面已经声明过的信息，这在反标（$sdf_annotate）多个
+SDF文件时，就很可能发生的。
+例7：覆盖前面的延时信息
+(DELAY
+(ABSOLUTE
+(IOPATH A Z (1) (2))
+(IOPATH A Z (2) (3))))实际中setuphold可能有合并的情况，如下
+specify
+(posedge CK => (Q+:D)) = 0;
+if (CK == 1 && D == 1)
+(negedge RB => (Q+:1'b0)) = 0;
+if (CK == 1 && D == 0)
+(negedge RB => (Q+:1'b0)) = 0;
+if (CK == 0 && D == 1)
+(negedge RB => (Q+:1'b0)) = 0;
+if (CK == 0 && D == 0)
+(negedge RB => (Q+:1'b0)) = 0;
+ifnone (negedge RB => (Q+:1'b0)) = 0;
+$setuphold (posedge CK &&& RB == 1, posedge D &&& RB == 1, 0, 0,
+notifier,,, delayed_CK, delayed_D);
+$setuphold (posedge CK &&& RB == 1, negedge D &&& RB == 1, 0, 0,
+notifier,,, delayed_CK, delayed_D);
+$recrem (posedge RB &&& D == 1, posedge CK &&& D == 1, 0, 0,
+notifier,,, delayed_RB, delayed_CK);
+$width (posedge CK &&& adacond4, 0, 0, notifier);
+$width (negedge CK &&& adacond4, 0, 0, notifier);
+$width (posedge CK &&& adacond5, 0, 0, notifier);
+$width (negedge CK &&& adacond5, 0, 0, notifier);
+木秀于林,冲迎风霜 -- 每天积累一点点 908 / 1226
+
+## 第 9 页
+
+$width (negedge RB &&& adacond2, 0, 0, notifier);
+$width (negedge RB &&& adacond3, 0, 0, notifier);
+$width (negedge RB &&& adacond1, 0, 0, notifier);
+$width (negedge RB &&& adacond0, 0, 0, notifier);
+endspecify
+XA 混仿
+混仿可以用来观察上电情况,非常有用
+4. XA 混仿四要素
+模拟网表
+包含模拟工艺库，模拟基本单元，模拟激励，一些控制option。
+数字 module
+所有的.v module。
+接口控制文件
+xa 命令以及数模接口转换说明。
+VCS 脚本
+Vcs的编译运行命令，指定与xa的接口控制文件。
+1.1模拟网表
+Pwl指上电形式：从0v到1.8v需要1us
+木秀于林,冲迎风霜 -- 每天积累一点点 909 / 1226
+
+## 第 10 页
+
+.probe命令
+也可以使用.print命令
+1.2接口控制文件
+use_spice -cell PBCSUDSL8_UFLASH_P55;//如果xx.sp有很多cell，则在此
+指定cell
+choose xa –hspice ./x.sp -o xa_wav –c xa_cmd –wavefmt fsdb//会生
+成xa_wav.log 和xa_wav.fsdb波形,如果没有-o选项，则默认xa.log,xa.fsdb
+d2a lov=0v hiv=1.8v rise_time=1ns fall_time=1ns node=tb.u.clk;
+a2d hith=1.26 loth=0.54 node test.u.clkout;
+d2a rf_time=0.1n hiv=1.08 lov=0.0 node=sim_top.rom.AD*; //xa_cmd使
+用set_wildcard_rule -match* all语句时，对总线比较好用
+bus_format <%d>; //当有bus 总线时，需要制定模拟subket bus格式
+指定模拟部分的仿真工具为xa，模拟的网表文件为spice.sp，
+输出波形为fsdb格式。
+约定数模接口以及高低电压，上升时间，下降时间。
+1.3 xa_cmd内容
+set_dc_option –report fail
+set_sim_level 3
+木秀于林,冲迎风霜 -- 每天积累一点点 910 / 1226
+
+## 第 11 页
+
+set_wildcard_rule -match* all //用于对总线的匹配
+set_message_limit 10000
+set_oscilator –subckt osc_top
+set_sim_level 4 subckt vr_osc_top
+probe_waveform_voltage *.* -limit 2
+1.
+2.设定仿真等级
+3.设定信息限制
+4.设定子模块
+5.设定子模块的仿真等级
+6.设定观察电压probe的层次为2层
+1.4 VCS 脚本
+VCS -f filelist.v \
+-full64 –sverilog -timescale=1ns/1ps \
+-lca –Mupdate +vpdports +v2k –Mdir=xaCsrc \
+-o xaVcs –ad=xaVcsMSV.ctrl –l xaVcsLog/xaVcsElab.log \
+xaVcs –l xaVcsLog/xaVcsRun.log
+注：运行脚本中约定与XA配合的option为 –ad=xaVcsMSV.ctrl（此为接
+口控制文件）
+木秀于林,冲迎风霜 -- 每天积累一点点 911 / 1226
+
+## 第 12 页
+
+5. XA 混合仿真流程
+XA 与VCS配合编译网表文件以及数字module
+运行生成的可执行文件
+可以通过Verdi打开Fsdb文件，观察波形
+脚本如下：
+vcs -lca -R -sv -sverilog -debug_all +v2k +define+sim
++lint=TFIPC-L -timescale=1ns/1ps +plusarg_save -Mupdate -I -P
+/ic01/eda/novas/verdi201101/share/PLI/VCS/LINUX/novas.tab
+/ic01/eda/novas/verdi201101/share/PLI/VCS/LINUX/pli.a
++ad=vcsAD.init -f cmd_files -l compile.log
+cmd_files内容如下：
+sim_top.sv //测试tb top
+-v ./cbm_io_model.v //数字模型，只要有端口，内容可以为空
+Finesim 混仿
+1. finesim 混仿要素
+1.1.sp文件 --由模拟方面提供
+1.2 Rtl/netlist文件
+木秀于林,冲迎风霜 -- 每天积累一点点 912 / 1226
+
+## 第 13 页
+
+2. Ncverilog 运行命令
+ncverilog +ncaccess+rwc +loadvpi=finesim.so:finesim_startup
++nc64bit +ncntcnotchks +nowarnCUVWSP +nowarnAGSOPRO +ncprofile
++loadpli1=debpli:novas_pli_boot +nctimescale+1ns/1ps -f cmd_files
+-l sim.log
+说明：
++loadvpi=finesim.so:finesim_startup:nc与finesim接口，仿真过程中
+遇到模拟模块则调用finesim工具
+-f cmd_files :加载RTL或netlist,含testbench及相关model
+3. testbench 需要增加的点
+下面都是finesim工具的配置及连接关系
+initial begin
+$finesim_config(,".resistance r_model 1 3k 4k 5k 50k 70k 90k
+1g");
+$finesim_config(,".a2d v15_a2d vl=0.15 vh=1.35"); //指定数字
+模拟接口的电压阈值
+$finesim_config(,".d2a v15_d2a vl=0 vh=1.5 vx=0.75 tr=0.3n
+tf=0.3n r=r_model");
+$finesim_config(,".output sim_top.uAna_Ldo.VTEST
+xldo.VTEST d2a=v15_d2a");
+$finesim_config(,".output sim_top.uAna_Ldo.VBG_TRIM[1]
+xldo.VBG_TRIM<1> d2a=v15_d2a");
+$finesim_config(,".output sim_top.uAna_Ldo.VBG_SEL
+xldo.VBG_SEL d2a=v15_d2a");
+$finesim_config(,".output sim_top.uAna_Ldo.TURBO_V15
+xldo.TURBO_V15 d2a=v15_d2a");
+木秀于林,冲迎风霜 -- 每天积累一点点 913 / 1226
+
+## 第 14 页
+
+$finesim_config(,".input sim_top.uAna_Ldo.CMP_OUT1
+xldo.CMP_OUT1 a2d=v15_a2d");
+分析
+$finesim_config(,".input sim_top.uAna_Ldo.CMP_OUT2 //
+uAna_Ldo ,testbench中例化ldo的名称
+xldo.CMP_OUT2 a2d=v15_a2d"); // xldo为.sp文件中例
+化ldo的名称
+//用于指定数字和模拟的接口
+end
+initial begin
+$finesim_module("reg_1p5_5vp15_20170622");
+End
+4. Sp 文件格式
+.options post node list probe brief
+.prot
+.lib '/ana /lib/gf013lp.l' tt
+.lib '/ana /lib/gf013lp.l' tt_hv
+.lib '/ana /lib/gf013lp.l' res_tt
+.lib '/ana /lib/gf013lp.l' cap_tt
+.lib '/ana/lib/gf013lp.l' bip_tt
+.lib '/ana/lib/gf013lp.l' dio_tt //模拟的基本单元库
+.option post
+.option finesim_mode=fast
+.option finesim_tflush=10u //各种选项配置
+*.option SIM_ACCURACY=100 //配置精度
+*.param vd12=vd
+*.param vd33=`vd*5/1.5`//配置参数 *用来屏蔽
+.inc "/ana /netlist/fnet/reg_1p5_5vp15/netlist" //模拟模块网表
+x1 //例化名称
++ CMP_OUT1 CMP_OUT2 VREF_1V VREF_ADC AVS ENREG
+木秀于林,冲迎风霜 -- 每天积累一点点 914 / 1226
+
+## 第 15 页
+
++I1UA I1UB I1UCI1UD I1UE I1UF I1UG IC0P5UA IC0P5UB IC1UA IC4UA VBG VDD15
+VDD50
++VSS VTEST ENADCBUF ENTRIMBUF1 ENTRIMBUF2 ENVREFTEST LDO_M_V15<1>
+LDO_M_V15<0>
++VREF_TRIM<4> VREF_TRIM<3> VREF_TRIM<2> VREF_TRIM<1> VREF_TRIM<0>
++ reg_1p5_5vp15_20170622 //模拟模块名称
+//接口列表
+.inc "/ana /netlist/fnet/saradc_10bit_5vp15/netlist" //模拟模块网表
+x2 //例化名称
++ DOUT<9> DOUT<8> DOUT<7> DOUT<6> DOUT<5>
++DOUT<4> DOUT<3> DOUT<2> DOUT<1> DOUT<0> AVS IB_ADC VDD VDD50 VREF VSS
++ saradc_10bit_5vp15_20160823//模拟模块名称
+VDD50 VDD50 0 5 //给VDD50施加5v电源激励
+vss vss 0 0 //给VDD50施加5v电源激励
+VAVS AVS 0 0 //给VDD50施加5v电源激励
+CVDD15 VDD15 0 1000p //给VDD15接一个1000p的电容
+*VREF VREF 0 pwl(0 0 10n 5)
+IB_ADC VDD50 IB_ADC 1u
+rload VDD15 0 50 //给VDD15接一个50欧的负载
+VANA_INPUT0 ANA_INPUT0 0 1.0 //给ANA_INPUT0接一个1v的电压，注意电压
+前需要字符”v”
+.probe v(x1.*)
+.probe v(*)
+.probe v(x1.*.*)
+.probe v(x2.*) //dump时的内容
+Finesim用户手册介绍的很详细。
+5. 注意点
+a.只能有一个sp文件，通过$finesim_config(,".finesim -o
+saradc_10bit_5vp15_20160823 ./sp/saradc_10bit_5vp15/tran.sp");来关联
+例化与模拟网表之间的连接
+b. 多个模拟网表则把它们合并到一个sp文件中，如下
+.inc "/ project_path
+/project/circuit/CBM7316/netlist/fnet/ldo/netlist"
+x1
++ CMP_OUT1 CMP_OUT2 VREF_1V VREF_ADC AVS ENREG
+木秀于林,冲迎风霜 -- 每天积累一点点 915 / 1226
+
+## 第 16 页
+
++I1UA I1UB I1UCI1UD I1UE I1UF I1UG IC0P5UA IC0P5UB IC1UA IC4UA VBG VDD15
+VDD50
++VSS VTEST ENADCBUF ENTRIMBUF1 ENTRIMBUF2 ENVREFTEST LDO_M_V15<1>
+LDO_M_V15<0>
++LDO_S_V15<1> LDO_S_V15<0> TURBO_V15 V27_V15 VBG_POR VBG_SEL
+VBG_TRIM<2>
++VBG_TRIM<1> VBG_TRIM<0> VO1_TRIM<4> VO1_TRIM<3> VO1_TRIM<2>
+VO1_TRIM<1>
++VO1_TRIM<0> VO2_TRIM<4> VO2_TRIM<3> VO2_TRIM<2> VO2_TRIM<1>
+VO2_TRIM<0>
++VREF_TRIM<4> VREF_TRIM<3> VREF_TRIM<2> VREF_TRIM<1> VREF_TRIM<0>
++ reg_1p5_5vp15_20170622
+.inc "/project_path /netlist/fnet/saradc/netlist"
+x2
++ DOUT<9> DOUT<8> DOUT<7> DOUT<6> DOUT<5>
++DOUT<4> DOUT<3> DOUT<2> DOUT<1> DOUT<0> AVS IB_ADC VDD VDD50 VREF VSS
++ANA_INPUT0 ANA_INPUT1 ANA_INPUT2 ANA_INPUT3 ANA_INPUT4 ANA_INPUT5
+ANA_INPUT6
++ANA_INPUT7 ANA_INPUT_SEL<9> ANA_INPUT_SEL<8> ANA_INPUT_SEL<7>
+ANA_INPUT_SEL<6>
++ANA_INPUT_SEL<5> ANA_INPUT_SEL<4> ANA_INPUT_SEL<3> ANA_INPUT_SEL<2>
++ANA_INPUT_SEL<1> ANA_INPUT_SEL<0> CLK I_TRIM PD RST SH_EN VREFS
+VREF_ADC
++ saradc_10bit_5vp15_20160823
+c. 虽然合并到一个sp文件，但在tb需要有各自的finesim_module
+initial begin
+$finesim_module("reg_1p5_5vp15_20170622");
+End
+d. dump波形时，$finesim_config(,".finesim -o
+reg_1p5_5vp15_20170622 ./sp/ldo/tran.sp");自动会生成
+reg_1p5_5vp15_20170622.fsdb文件，其dump波形的内容在sp中通过
+probe指定，如下
+.tran 10p 1000000u //精度及仿真结束时间
+.probe v(x1.*)
+.probe v(*)
+.probe v(x1.*.*)
+.probe v(x2.*) //dump波形的信号
+e. 当两个模拟模块模拟信号要连接时，可以通过数字定义wire变量把他们连
+接起来，然后在配置中通过a2d,d2a来实现
+$finesim_config(,".inout sim_top.uAna_ldo.VDD15
+x1.VDD15 d2a=v15_d2a");
+$finesim_config(,".inout sim_top.uAdc.VDD15
+x2.VDD a2d=v15_a2d");
+木秀于林,冲迎风霜 -- 每天积累一点点 916 / 1226
+
+## 第 17 页
+
+其中uAna_ldo.VDD15和.uAdc.VDD15在sim_top中通过一个wire vdd15
+连接起来
+f. 不支持总线方式，需要按照下面方法书写
+saradc_10bit_5vp15_20160823 uAdc(
+.VDD50 ( ),
+.VDD15 ( vdd15 ),
+.VSS ( ),
+.DOUT ( {
+adc_out_o[4],
+adc_out_o[3],
+adc_out_o[2],
+adc_out_o[1],
+adc_out_o[0]
+})
+);
+这是因为在fine_config中是单线连接方式，adc_out_o[4]，adc_out_o[3]
+代表是2根wire；
+g. 例化的模拟模型最好使用空模型，这样就不会引起一些干扰—主要是防止
+verilog模型写的时序不对而导致一些异常
+常见 soc 系统架构
+1. C8051 架构
+说明：
+1. 上图构架一个主host（8051），三个副host(debug,test_ctrl);
+木秀于林,冲迎风霜 -- 每天积累一点点 917 / 1226
+
+## 第 18 页
+
+8051核主要用于在用户模式下执行程序；
+debug是在调试模式控制8051运行，但debug时的一些读写功能（通过memory
+窗口操作）是通过自己的xbus,ibus，pbus总线控制对应的控制单元；
+memorybist主要用于在测试模式下测试memory，它只要被使能，内部自动产生
+memory端口的时序，产生各种测试花样；
+test_ctrl用于测试模式测试所有的模拟ip,其中flash，memory有专门的测试
+模块，test_ctrl只要按要求提供控制时序即可，其他 的普通模拟ip，则需要
+直接控制模拟端口，产生时序，测试模拟ip测试是否正常。
+2. 上图中的架构与正常的8051系统有些不同，主要是外设的寄存器全部挂在
+xbus总线上，而且中间通过ramc做了mux.
+3. flash包含在flash bist中，bist内部做了测试模式于用户模式的mux
+4．上图中的ip_io_ctrl就是专门来控制普通模拟模块（不像adc那样需要时序
+的模拟模块），它主要是根据模式来mux控制源
+5．注意一点的是在控制时钟osc等模块时，使能位需要使用时钟的下降沿处理，
+而不能是上升沿
+2. Arm 架构
+说明：
+上图中的上半部分为常见的arm架构，下半部分为低功耗设计部分（不分析）。
+木秀于林,冲迎风霜 -- 每天积累一点点 918 / 1226
+
+## 第 19 页
+
+其中armm0为主host，通过ahb_lite（ahb简化版，m0核常用此总线）总线控
+制所有slave;并具有调试功能。
+Test_ctrl用于在测试模式测试所有的模拟ip;
+DMA 在此系统中用于根据系统配置把flash的数据搬移到sram中，其过程为控
+制efc读取flash，再控制ramc把数据写入sram中
+除了总线不一样，8051与arm m0的架构差不多。
+3. 系统在线升级考虑
+---触发升级条件 1),硬件管脚触发 2).通过串口(或其它接口)接收到特殊指令
+触发
+思路如下:
+对于8051核:
+升级程序存放在flash最后一个page;当触发了升级,则调用升级程序,此时程序
+在最后1page运行,可以开始擦除flash->接收新code数据,写入flash,循环这
+个过程,效验程序没有问题,则触发软复位,进行新程序运行.
+--注意,在擦除编程flash时,code总线是hold住的,系统不会操作flash.
+还一种方法就是2片flash乒乓操作,轮流当着升级区域,设置时注意地址影射.
+对于M0核:
+对于m0系列,可以把升级程序搬移到xram,然后程序空间重影射到xram—M0核
+需要硬件做相应处理(增加一个系统寄存器来配置重影射功能),M0+以上的核因
+为有中断向量重影射,可以直接影射过去.
+4. Cpu 操作存储器概念(转)
+计算机的存储系统采用Register，Cache，Memory和I/O的方式来构成存储系
+统，无疑是一个性能和经济性的妥协的产物。Cache和Memory机制是计算机硬
+件的基础内容，这里就不再啰嗦。下面重点说明Write-back，Write-through
+及write allocate这三种操作的区别。
+一、CPU 读Cache
+1. Read through，即直接从内存中读取数据；
+2. Read allocate，先把数据读取到Cache中，再从Cache中读数
+据。
+二、CPU 写Cache
+1. 若hit命中，有两种处理方式：
+Write-through: write is done synchronously both to the cache and to the
+backing store。Write-through（直写模式）在数据更新时，把数据同时写入
+Cache和后端存储。此模式的优点是操作简单；缺点是因为数据修改需要同时写入存储，
+数据写入速度较慢。
+Write-back (also called write-behind): initially, writing is done only
+to the cache. The write to the backing store is postponed until the cache
+blocks containing the data are about to be modified/replaced by new
+木秀于林,冲迎风霜 -- 每天积累一点点 919 / 1226
+
+## 第 20 页
+
+content。Write-back（回写模式）在数据更新时只写入缓存Cache。只在数据
+被替换出缓存时，被修改的缓存数据才会被写到后端存储（即先把数据写到
+Cache中，再通过flush方式写入到内存中）。此模式的优点是数据写入速度快，
+因为不需要写存储；缺点是一旦更新后的数据未被写入存储时出现系统掉电的情
+况，数据将无法找回。
+2. 若miss，有两种处理方式：
+Writeallocate(also called fetchonwrite): data at the missed-write
+location is loaded to cache, followed by a write-hit operation. In this
+approach, write misses are similar to read misses.。Write allocate：先
+把要写的数据载入到Cache中，写Cache，然后再通过flush方式写入到内存
+中； 写缺失操作与读缺失操作类似。
+No-writeallocate(also called write-no-allocateor writearound): data
+at the missed-write location is not loaded to cache, and is written
+directly to the backing store. In this approach, only the reads are being
+cached。No write allocate：并不将写入位置读入缓存，直接把要写的数据写
+入到内存中。这种方式下，只有读操作会被缓存。
+木秀于林,冲迎风霜 -- 每天积累一点点 920 / 1226
+
+## 第 21 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 921 / 1226
+
+## 第 22 页
+
+注、本文两幅图也来自wiki。
+计算机的Cache和Memory访问时Write-back，Write-through及write
+allocate的区别。
+原文地址：http://www.cnblogs.com/guojingdeyuan/p/7626983.html
+木秀于林,冲迎风霜 -- 每天积累一点点 922 / 1226
+
+## 第 23 页
+
+C8051 知识
+1. 基础知识
+1．IDLE是CPU停止工作，周边模块工作正常，中断唤醒 ；
+2．PD 是CPU和周边模块全部停止工作，其唤醒实际是对PD 寄存器复位;
+所以idle能停系统时钟，但不能停总时钟,模块时钟根据需求决定是否
+停止;
+PD可以停总时钟；
+不同的8051设计对退出pd的方式不完全一样,如下
+在idle时,sysclk会停止,但fclk不会停,所以各个中断可以退出idle.
+在pd时,会关闭所有时钟,所以只能通过复位来改变寄存器
+assign next_pcon[0] = s_intpre ? 1'b0 :
+s_regs_wr_en[2] & ~s_regs_wr_en[1] &
+(s_adr==8'h87) & ~s_atri_sp_pre & (pseq[1:0]==2'b01) ?
+s_data[0] : pcon[0];
+assign next_pcon[1] = s_regs_wr_en[2] & ~s_regs_wr_en[1] &
+(s_adr==8'h87) & ~s_atri_sp_pre & (pseq[3:2]==2'b01) ?
+s_data[1] : pcon[1];
+always@(posedge fclk or negedge resetn)//系统复位
+begin
+if(!resetn) begin
+pcon[0] <= 1'b0;
+pseq[1:0] <= 2'b0;
+end
+else begin
+pcon[0] <= next_pcon[0];
+pseq[1:0] <= next_pseq[1:0];
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 923 / 1226
+
+## 第 24 页
+
+end
+always@(posedge fclk or negedge resetn_pd)//专用复位
+//resetn_pd= resetn & pd专用复位
+begin
+if(!resetn_pd) begin
+pcon[1] <= 1'b0;
+pseq[3:2] <= 2'b0;
+end
+else begin
+pcon[1] <= next_pcon[1];
+pseq[3:2] <= next_pseq[3:2];
+end
+end
+3．对于C程序中的定义的CODE区常量，它们是在编译时产生，还是在启动
+时产生？？是在编译时产生，当做代码写入code区
+4．对于C程序中的定义的非CODE区常量，它们是在编译时产生，还是在启
+动时产生？？编译时，把内容编译到CODE区，但它们是在启动时产生写
+XRAM 的动作，在进入MAIN函数之前会有XBUS或IBUS 动作，把数据写
+入相应的数据区，简单说就是启动时从code读出要写的内容写到RAM去
+5．在很多8051核设计中，0x00~0x1f（r0~r7四个区），0x20~0x2f（位寻
+址区）用内部寄存器实现，其它空间用RAM实现；
+6．也有些时只把四个区的R0,R1(因为这两个最常用)，0x20~0x2f（位寻址
+区）用内部寄存器实现 其它空间用RAM实现
+7．程序的0地址放的都是跳转指令（0x2），后2字节放跳转地址
+8．短调子函数 SP<-SP+1;(SP)<-PCL;SP<-SP+1;(SP)<-PCH;
+PC[10:0]<-addr11;
+9．长调子函数 SP<-SP+1;(SP)<-PCL;SP<-SP+1;(SP)<-PCH;
+PC[10:0]<-addr16;
+木秀于林,冲迎风霜 -- 每天积累一点点 924 / 1226
+
+## 第 25 页
+
+10． 从子函数返回程序（子函数的最后一条指令）
+PCH<-(SP),SP<-SP-1;PCL<-(SP),SP<-SP-1;
+11． 从中断函数返回程序（中断函数的最后一条指令）
+PCH<-(SP),SP<-SP-1;PCL<-(SP),SP<-SP-1;
+12． Sp是一个向上增长的行为，即sp指针始终指向栈顶，压栈sp加1，
+出栈sp减1。
+13． 中断
+外部中断0向量:0x03;
+定时器中断0向量:0x0b:
+外部中断1向量:0x13;
+定时器中断1向量:0x1b:
+串口中断向量:0x23
+以上地址可以在KEIL中设置偏移量，见下图红圈
+注意:这个只是编译器有这个功能,如果硬件没这个寄存器,则修改此处程序
+在进入中断时会出错,需要硬件支持,在程序启动时配置对应寄存器修改中
+断偏移.
+14． 对于setb,CLR,SHL,SHR等对寄存器的操作都是先读取，在修改，再写
+三个步骤；与我们自己用C操作的方法一致，不同的是，专用指令只要
+取指一次，接着产生3个动作，如果自己写则每个动作需要取指一次，
+会多几次取指译码的过程。
+15． &a,表示变量a的地址，*p,指针变量p所指向的变量，其中p
+是指针变量名，即p才是变量，而不是*p,*p是一个动作或一种关系（指
+向），整体可以作为一个普通的变量；*p代表一个int类型的变量，p
+为一个指针变量（指针变量只能存储地址）；int a,int tp;则可以如下
+使用 tp=*p1; *p1=tp;*p1=*p2;p=&a; st1 *p;则p为结构体指针，存储
+木秀于林,冲迎风霜 -- 每天积累一点点 925 / 1226
+
+## 第 26 页
+
+的是结构体的起始地址； 访问结构体成员的方法有3种方法：
+1.st1.a;2.p.a;3.p->a;
+16． 只能使用p=&st1获得指针地址
+10．在C中规定数组名代表数组的首地址，int *p;时，可以使用p=a;或
+p=&a;*(p+1)为a[1]的值；
+#define base_adress 0x3000
+int*pwm=(int*)base_adress（与 int*pwm;pwm=(int*)base_adress;
+含义相同）;把pwm指向base_adress基地址；使用时可以
+pwm[0]=,pwm[1]= …等方法（应该也可以采用 *(pwm),*(pwm+)的方法来
+做 ）；考虑为什么不可以pwm = base_adress;因为pwm是指针变量，
+只能用指针赋值 ！
+理解#define IBUS8(addr) (*((unsigned char volatile data
+*)(addr)))：(unsigned char volatile data *)(addr)这段相当于一个
+指针变量pwm，(*((unsigned char volatile data *)(addr)))则相当于
+*pwm,可以认为是一个变量，可以对它进行读和写；
+11． 一个函数在编译时被分配给一个入口地址，这个入口地址就称为函数的
+指针 int(*p)()表示p是一个指向函数的指针变量
+int max();//函数max
+int (*p)();//函数指针变量p
+p=max;//把函数max的入口地址给指针变量p
+12．8051进中断前会进行现场保护，把PC的内容压入堆栈，堆栈的地址由
+SP指定，PC指针指向中断向量，退出时会把堆栈的内容弹出给PC
+13．8051在LCALL或ACALL子函数时，会把PC内出压入堆栈，堆栈的地址由
+SP指定，当子程序结束时会出栈把堆栈的内容返回给PC;
+子函数会通过下列几种方法传递参数：1.累加器和工作寄存器
+2.操作数地址传递参数：子程序中所需操作数存放在数据存储RAM中，调用子
+程序之前的入口参数为R0，R1或DPTR间接指出的地址；出口参数（操作结果）
+仍由R0，R1或DPTR间接指出的地址。一般内部RAM由R0，R1作地址指针，
+外部RAM由DPTR作地址指针。
+木秀于林,冲迎风霜 -- 每天积累一点点 926 / 1226
+
+## 第 27 页
+
+3.堆栈传递参数：在调用子程序前，先把参与运算的操作数压入堆栈。转入子
+程序后，可按堆栈指针SP间接访问堆栈中的操作数，同时又可以把运算结果
+推入堆栈中，返回主程序后，可用POP指令获取运算结果。注意：转子程序时，
+主程序的断点地址也要压入堆栈，占用堆栈两个字节，弹出参数时要用两条
+DECSP指令修改SP指针，以便使SP指向操作数。另外在子程序返回指令RET
+之前要加两条INCSP指令，以便使SP指向断点地址，保证能正确返回主程序。
+【简单说就是进入子程序前先把参数压入堆栈，再把主程序断点地址压入堆栈，
+子程序用参数时，先把堆栈地址-2，指向参数地址指针；退出时，把SP+2，
+把主程序断点地址弹出，】
+现场保护：在转入子程序时，特别是进入中断服务子程序时，要特别注意现
+场保护，即主程序使用的内部RAM，各工作寄存器内容，累加器A内容和DPTR
+以及PSW等寄存器内容，都不因转子程序而改变。如果子程序所使用的寄存
+器与主程序使用的寄存器有冲突，则在转入子程序后首先要采取现场保护措
+施。方法是将要保护的单元推入堆栈，而空出的这些单元供子程序使用。返
+回主程序之前要弹出到原工作单元，恢复主程序原来的状态。
+14． 51单片机的存储空间分为三部分
+程序存储区 此区域通过PBUS总线访问，对应汇编指令它能通过如下方式寻
+址：
+立即数寻址：MOV A ,#30H;(编译后#30H放在程序存储区)
+基址寄存器加变址寄存器：MOVC A,@A+DPTR;
+相对寻址:JNZ 23H;(累加器A不等于0，跳到PC+23H的地址执行)
+对应C语言的变量可以如下设置：
+#define PBUS8(addr) (*((unsigned char volatile code *)(addr)))
+内部低128byteRAM 区 此区域通过IBUS访问，对应汇编指令它能通过如下
+方式寻址：直接寻址：MOV A,30H;
+寄存器寻址: MOV A, R7;
+寄存器间接寻址: MOV @R0，A;
+位寻址（只能是20H~2FH地址）；
+对应C语言的变量可以如下设置：
+木秀于林,冲迎风霜 -- 每天积累一点点 927 / 1226
+
+## 第 28 页
+
+#define IBUS8(addr) (*((unsigned char volatile data *)(addr)))
+unsigned char volatile data DBGFLAG _at_ 10 ; DBGFLAG可以在程序
+中直接引用。
+SFR寄存器区
+此区域通过SFR总线访问，对应汇编指令只能通过
+直接寻址的方式访问:MOV A,80H;
+位寻址（SFR中12个能被8整除的字节地址）：
+对应C语言的变量可以如下设置：
+sfr MPUCR = 0xF8;MPUCR在程序中可以直接引用
+如果是访问IRAM 的高128byte则通过间接寻址 ，用IRAM 总线访问
+外部RAM存储区 此区域通过XBUS访问，对应汇编指令它只能
+寄存器间接寻址:MOVX A ,@DPTR;
+对应C语言的变量可以如下设置：
+#define XREG8(addr) (*((unsigned char volatile xdata *)(addr)))，
+#define MESHERR3 XBYTE[0x1C29]，MESHERR3可以在程序中直接引用
+unsigned char volatile xdata DBGFLAG _at_ 4095 ;； DBGFLAG可以在
+程序中直接引用。
+如果把变量声明为pdata,汇编为MOVX @Ri
+如果把变量声明为xdata,汇编为MOVX @DPTR
+木秀于林,冲迎风霜 -- 每天积累一点点 928 / 1226
+
+## 第 29 页
+
+IDATA区（52系统中的内部256byteRAM,高128byte与SFR地址重叠） 此
+区域通过IBUS访问，对应汇编指令它只能通过间接寻址 访问，对应C语言的
+变量可以如下设置：
+#define IBUS8(addr) (*((unsigned char volatile idata *)(addr)))
+15．当使用C与汇编交互时，它们需要传递参数关系如下：
+16． 说明：当汇编需要用C函数传来的参数，根据参数类型与个数会选择不
+同的Rx来传递参数，如果参数为char,则第一个参数通过R7传递，第二个参
+数通过R5来传递，第三个参数通过R3来传递，剩余的参数将在默认的存储器
+段中进行。
+当函数返回值时，按照下面的存储单元来返回
+木秀于林,冲迎风霜 -- 每天积累一点点 929 / 1226
+
+## 第 30 页
+
+17．在C程序中插入汇编需要用#pragma asm #pragma endasm把
+汇编程序包含起来,同时需要对插有汇编的该文件右键进行设置，如下图
+18．在 Options for Target 菜单的 BL51 Locate 选项卡的 Code: 中输
+入:?PR?myTest1?MAIN(0x3900), ?PR?myTest?MAIN(0x4000)，把函数
+myTest1 定位在程序区的 0x3900 处, 把函数 myTest 定义在程序区的
+0x4000 处, 重新编译就可以了.在 M51 文件中可以找到下面的内容:
+19．KEIL51编译后的结果在lst/.m51 文件中，包含了CODE，变量所放的地址
+?PR?开头的表示程序；CODE 001CH 0007H UNIT ?PR?CLOSEDSEND60?SCD 表
+示文件名为SCD里面的CLOSEDSEND60的函数放在CODE 0x1c开始的地方
+?CO?开头的表示定义在CODE区的常数；CODE0026H0515HUNIT ?CO?SCDTEST
+表示文件名为SCDTEST里面的常量放在CODE的0x26开始的地方
+还有一些是启动代码的汇编程序的位置
+20． KEIL51启动代码放在STARTUP.A51文件中;如果采用了bank技术，将
+会用L51_BANK.lst代替A51文件
+21． 写C程序时,源文件最好分三个文件夹,一个为include,放头文件,一
+个为drive放各模块的驱动,一个为main,放主程序，KEIL中C程序不区分
+大小写，
+22． struct *p; struct t ;引用是p->a;t.a;
+struct student {
+木秀于林,冲迎风霜 -- 每天积累一点点 930 / 1226
+
+## 第 31 页
+
+long int num;
+char name[20];
+char sex;
+float score;
+}
+struct student stu_1 ;
+struct student *p ;
+p=&stu_1;
+使用方法：stu_1.name 与p->name等价，也可以使用(*p).name;
+24．Keil C51中变量和函数的绝对地址定位问题:
+1. 变量绝对地址定位
+1) 在定义变量时使用 _at_ 关键字加上地址就可.
+e.g. unsigned char idata myvar _at_ 0x40;
+把变量 myvar 定义在 idata 的 0x40 处, 在 M51 文件中可以找到这麽一行
+IDATA 0040H 0001H ABSOLUTE
+表示有变量在 idata 的 0x0040 处绝对地址定位.
+2) 使用 KeilC 编译器定义绝对地址的变量, 方法待查.
+2. 函数绝对地址定位
+1) 在程序中编写一函数 myTest
+void myTest(void)
+{
+// Add your code here
+}
+2) 使用 KeilC 编译器定位绝对地址的函数, 打开 Project -> Options
+for Target 菜单,
+选中 BL51 Locate 选项卡, 在 Code: 中输
+入: ?PR?myTest?MAIN(0x4000)
+把函数 myTest 定位到程序区的 0x4000 处, 再次编译就可以了.
+木秀于林,冲迎风霜 -- 每天积累一点点 931 / 1226
+
+## 第 32 页
+
+3) 一次定位多个函数的方法
+同样地, 在程序中再编写另外一个函数 myTest1
+void myTest1(void)
+{
+// Add your code here
+}
+在 Options for Target 菜单的 BL51 Locate 选项卡的 Code: 中输入:
+?PR?myTest1?MAIN(0x3900), ?PR?myTest?MAIN(0x4000)
+把函数 myTest1 定位在程序区的 0x3900 处, 把函数 myTest 定义在程 序
+区的 0x4000 处,
+重新编译就可以了.
+在 M51 文件中可以找到下面的内容:
+>> 3.obj TO Reader RAMSIZE (256) CODE (?PR?MYTEST1?MAIN
+(0X3900), ?PR?MYTEST?MAIN (0X4000))
+3665H 029BH *** GAP ***
+CODE 3900H 0014H
+UNIT ?PR?MYTEST1?MAIN
+3914H 06ECH *** GAP ***
+CODE 4000H 0014H
+UNIT ?PR?MYTEST?MAIN
+木秀于林,冲迎风霜 -- 每天积累一点点 932 / 1226
+
+## 第 33 页
+
+2．Cpu 寄存器
+占用了sfr寄存器地址
+木秀于林,冲迎风霜 -- 每天积累一点点 933 / 1226
+
+## 第 34 页
+
+3． Ram 空间分布
+木秀于林,冲迎风霜 -- 每天积累一点点 934 / 1226
+
+## 第 35 页
+
+4． 中断系统
+标准的51系统有5个中断（52系统为6个中断），分别为：
+外部中断0（中断向量0x03）,
+定时器中断0（中断向量0x0b）,
+外部中断1（中断向量0x13）,
+定时器中断1（中断向量0x1b）,
+串口中断（中断向量0x23），
+定时器中断2（中断向量0x2b）---52系列;
+实际的soc产品一般都在这几个中断上进行扩展。
+中断响应是在取指阶段发生，也就是一定会完成当前指令才响应中断。
+在中断程序退出时 （执行RETI指令），不响应中断；如果退出后是在操作
+IE,IP寄存器，这时也不会响应中断。
+中断执行过程：
+2．发生中断
+木秀于林,冲迎风霜 -- 每天积累一点点 935 / 1226
+
+## 第 36 页
+
+3．硬件完成保存当前pc的动作,并根据中断，把对应的中断向量送
+给pc寄存器
+4．根据pc，程序跳转到指定位置
+5．执行保护现场动作---由编译器根据程序会在用户中断函数前插
+入一段汇编来保存cpu的寄存器及用户用到的变量内容。
+6．执行用户c程序
+7．执行返回现场动作—同样由编译器根据程序会在用户中断函数
+后插入一段汇编来恢复cpu的寄存器及用户用到的变量内容。
+8．执行第2步pc的内容
+中断信号的要求： 外部中断信号（指过滤后到达8051核的信号）需要大于2
+个系统时钟宽度。---或许与8051核的设计相关；
+下图是一个进入中断和退出中断的波形
+进入中断波形：
+信号说明：
+int2_i是同步过的中断信号，即中断信号源
+s_intPre2是经过优先级等判断后的中断信号
+ie2_int_proc是真正指示中断程序过程，后面如果没有优先级更高的中断，
+则要执行完这个中断程序，pc等于13是在经过当前行为1，2，3，4阶段后
+才进入的中断向量。
+退出中断波形
+木秀于林,冲迎风霜 -- 每天积累一点点 936 / 1226
+
+## 第 37 页
+
+当执行到最后RETI(上图中s_command==0x32)，ie2_int_proc撤消，也
+Sp及变量变化过程如下图：
+木秀于林,冲迎风霜 -- 每天积累一点点 937 / 1226
+
+## 第 38 页
+
+过程分析： main程序先使用了一些堆栈x个，然后进入中断，堆栈增长，保
+护现场，用了堆栈m个，进入用户程序，使用了n个堆栈；当用户程序退出时，
+sp减小 ，依次释放空间
+5． 程序执行过程
+8051总共有111条指令：
+49条单字节指令，45条双字节指令，17条三字节指令。
+8051系统程序执行分2步：
+9．取指令
+木秀于林,冲迎风霜 -- 每天积累一点点 938 / 1226
+
+## 第 39 页
+
+10． 执行指令—根据指令不同，需要1~3个阶段（一个阶段一个时
+钟），其实不同的内核，其执行周期并不完全一样。
+如三周期指令有：INC DPTR ；MUL AB ;XCH A,Direct;DIV A,B;等
+二周期指令有：XCH A Ri等
+单周期指令有：SUB A @Ri等
+注意:上面并没有core发送地址的阶段,所以发送地址阶段是与
+EXECx重叠的,而第一个fetch指令的地址为core默认发送的0地
+址,但返回给core的ready信号一定比第一个fetch提前一拍.而由
+于相当于地址要提前准备,那么在fetch阶段就需要分析指令,以确
+定需要发送的地址.
+fetch时发生中断时，当前fetch到的指令不会执行，接下来有3
+个exec动作，这三个动作为：
+EXEC1: 给pc指针中断向量，
+EXEC2:保存pc指针低8bit，sp地址+1，
+EXEC3:保存pc指针高8bit，sp地址+1，
+上面这4个动作为进入中断行为，在这个过程中，如果经过了EXEC1,
+则不会被其它中断打断。---此处与8051核设计相关，不同的设计
+估计情况不一样。
+在完全退出中断后会把保存的数据返回给pc，重新取指，执行的动
+作。这个保存pc的动作为硬件完成。
+木秀于林,冲迎风霜 -- 每天积累一点点 939 / 1226
+
+## 第 40 页
+
+如上:state含义:7表示初始状态;1为fetch,取指令 ;2,3,4表示
+执行的动作;
+Rom_rdy肯定是先为1,core才可以动作,上图可以看到提前sclk一
+拍,当第一个sclk时,core读到了第一条指令(0x2),并分析命令
+s_command,得出要发送的地址,当在sclk的第三拍,执行跳转.core
+发送地址0xf7a;
+一般的 8051单片机都不具有流水线操作.直接用状态机完成一条指
+令的的行为!!
+6． Keil 下载
+点击下图2个地方都会引起下载程序的行为
+使用1下载需要做如下配置
+这个驱动需要修改keil的插件，如果使用2下载，则需要勾上updatatarget
+before debugging,这样它们将使用同一个驱动，设置上面下载的驱动，在安
+装文件需要做如下更改--在安装目录下的TOOLS.INI文件中指明安装包.CDB
+和驱动.dll文件(放在c51\bin\目录下)。---dll文件用上作上图的下载驱动，
+CDB包用于下图的器件选择。
+木秀于林,冲迎风霜 -- 每天积累一点点 940 / 1226
+
+## 第 41 页
+
+动态链接库英文为DLL，是DynamicLinkLibrary的缩写。DLL是一个包含可由多个程序，同时使用的
+代码和数据的库。通过使用 DLL，程序可以实现模块化，由相对独立的组件组成。例如，一个
+计帐程序可以按模块来销售。可以在运行时将各个模块加载到主程序中（如果安装了相应模
+块）。因为模块是彼此独立的，所以程序的加载速度更快，而且模块只在相应的功能被请求
+时才加载。
+Cdb文件就是包含上述信息，里面有rom大小，xram大小。如下图所示
+如果选择了Use Debug Driver，则使用mon-51编程flash,那么对于flash控
+制器需要符合mon-51的要求
+木秀于林,冲迎风霜 -- 每天积累一点点 941 / 1226
+
+## 第 42 页
+
+注意在debug时，需要设置如下keil monitor-51 driver,这个东西应该是发
+送mon51命令的driver;
+木秀于林,冲迎风霜 -- 每天积累一点点 942 / 1226
+
+## 第 43 页
+
+7． Debug 过程
+Debug的行为分为三类：
+5．配置类：设置断点
+6．操作类：读写各种数据，sfr,xram,iram,code
+7．控制类：全速运行，单步运行，运行到断点，复位
+Debug的行为过程应该为如下几个阶段：
+1．点击debug按钮 ---download程序进入flash，进入调试状态，keil发送
+0x11与芯片握手，芯片交替返回0x00,0xff,如果界面有sfr等其它内容，
+keil会发送相关读取指令，把读取的数据显示在界面；---0x11握手是私
+有握手命令
+注意:keil工具本身会下发指令下载程序,如果有私有下载程序插件,那么
+将会下载2遍程序.
+a. 此时程序没有运行，51内核应该停止运行，一直处于取指状态；
+--指令操作一直在取当前的指令，core内部所有寄存器不能改变，只
+能通过调试命令修改；
+b. 当keil暂停时，其一定是在完成当前指令后暂停，然后再处于取指状
+态；
+注意:通过debug下载程序时,debug会通过分析代码,进行某种算法,然
+后再根据算法把代码下载进rom/flash;也就是它并不是一定按照
+flash/rom的顺序地址下载.
+2．用户配置keil界面
+3．用户通过keil界面仿真—单步或全速运行
+木秀于林,冲迎风霜 -- 每天积累一点点 943 / 1226
+
+## 第 44 页
+
+4．复位，复位的行为就是设置pc 等于0，也就是点击复位按钮，keil发送一
+个写pc=0的命令，但芯片需要做一个复位的动作，只是复位芯片，注意不
+能让keil与芯片断开，所以调试模块的复位不在此复位域。
+由于指令执行有1，2，3个不同的执行周期，那怎么找到什么时候执行完当前
+指令呢？看下面的做法。
+always @(posedge sclk or negedge resetn)
+begin
+if (~resetn ) state <= 3'h7;
+else state <= s_nextstate;
+`ifdef DBG51
+assign instr_end = cpu_run & (s_nextstate==`FETCH) & rom_rdy;
+`endif
+因为51无流水操作,当下一个状态为取指,则当前就一定是指令执行完的状
+态.
+8． Debug 图形界面介绍
+Debug工具
+a.
+木秀于林,冲迎风霜 -- 每天积累一点点 944 / 1226
+
+## 第 45 页
+
+上图此处配置的是debug使用的驱动,用的mon51标准驱动,并设置串口号及波
+特率;
+b.
+上图配置的1:下载程序所用到的驱动—此插件为私有插件,2:setings按纽可
+以配置下载的行为;3:指明在调试前先会调用flash download更新程序,如果
+没选择3，则直接进入debug进程，而不会下载程序。
+Debug的过程就是先download程序，然后再调试，也可以分步执行（3不选择）。
+c.
+点击上图红色按钮，则会调用b部分说的驱动来执行产生下载文件及下载
+木秀于林,冲迎风霜 -- 每天积累一点点 945 / 1226
+
+## 第 46 页
+
+9． Hex 格式讲解（转）
+Hex文件是可以烧录到MCU中，被MCU执行的一种文件格式。如果用记事本打
+开可发现，整个文件以行为单位，每行以冒号开头，内容全部为16进制码（以
+ASCII码形式显示）。Hex文件可以按照如下的方式进行拆分来分析其中的内
+容：
+例如 “:1000080080318B1E0828092820280B1D0C280D2854”可以被看作
+“0x10 0x00 0x08 0x00 0x80 0x31 0x8B 0x1E 0x08 0x28 0x09 0x28 0x20
+0x28 0x0B 0x1D 0x0C 0x28 0x0D 0x28 0x54”
+第一个字节 0x10表示本行数据的长度；
+第二、三字节 0x00 0x08表示本行数据的起始地址；
+第四字节 0x00表示数据类型，数据类型有：0x00、0x01、0x02、0x03、0x04、
+0x05。
+'00' Data Rrecord：用来记录数据，HEX文件的大部分记录都是数据记录
+'01' End of File Record: 用来标识文件结束，放在文件的最后，标识HEX
+文件的结尾
+'02' Extended Segment Address Record: 用来标识扩展段地址的记录
+'03' Start Segment Address Record:开始段地址记录
+'04' Extended Linear Address Record: 用来标识扩展线性地址的记录
+'05' Start Linear Address Record:开始线性地址记录
+然后是数据，最后一个字节 0x54为校验和。
+校验和的算法为：计算0x54前所有16进制码的累加和(不计进位)，检验和 =
+0x100 - 累加和
+在上面的后2种记录，都是用来提供地址信息的。每次碰到这2个记录的时候，
+都可以根据记录计算出一个“基”地址。对于后面的数据记录，计算地址的时
+候，都是以这些“基”地址为基础的。
+HEX文件都是由记录（RECORD）组成的。在HEX文件里面，每一行代表一个记
+录。记录的基本格式为：
+Record mark ‘:’
+木秀于林,冲迎风霜 -- 每天积累一点点 946 / 1226
+
+## 第 47 页
+
+Length
+Load offset
+Record type
+INFO or DATA
+CHKSUM
+1 byte
+1 byte
+2 bytes
+1 byte
+n bytes
+1 byte
+看个例子：
+:020000040008F2
+:10000400FF00A0E314209FE5001092E5011092E5A3
+:00000001FF
+对上面的HEX文件进行分析：
+第1条记录的长度为02，LOAD OFFSET为0000，RECTYPE为04，说明该记录
+为扩展段地址记录。数据为0008，校验和为F2。从这个记录的长度和数据，
+我们可以计算出一个基地址，这个地址为(0x0008 << 16)。后面的数据记录都
+以这个地址为基地址。
+第2条记录的长度为10（16），LOAD OFFSET为0004，RECTYPE为00，说明
+该记录为数据记录。数据为FF00A0E314209FE5001092E5011092E5，共16个BYTE。
+这个记录的校验和为A3。此时的基地址为0X80000，加上OFFSET，这个记录
+里的16BYTE的数据的起始地址就是0x80000 + 0x0004 = 0x80004.
+第3条记录的长度为00，LOAD OFFSET为0000，TYPE ＝ 01，校验和为FF。
+说明这个是一个END OF FILE RECORD，标识文件的结尾。
+木秀于林,冲迎风霜 -- 每天积累一点点 947 / 1226
+
+## 第 48 页
+
+在上面这个例子里，实际的数据只有16个BYTE：
+FF00A0E314209FE5001092E5011092E5，其起始地址为0x0004.
+Flip80251 知识
+地址空间分布
+木秀于林,冲迎风霜 -- 每天积累一点点 948 / 1226
+
+## 第 49 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 949 / 1226
+
+## 第 50 页
+
+The HDATA memory class is typically stored in external memory that is
+usually off-chip or on-chip.
+HDATA memory can only be accessed via the registers DR0 .. DR28 and DR56.
+Up to 16MB of memory can be accessed using these registers.
+The EDATA memory is only available in the 251 architecture.
+In the 251, EDATA memory can be accessed with direct memory addressing
+or indirect via the registers WR0 .. WR30. Also the memory class IDATA
+and DATA can be access with this addressing mode.
+基础知识
+请注意程序使用的逻辑地址和实际物理地址的关系，由于是16bitMCU，所以程
+序一般使用的地址应该是偶数即2byte;
+Binary mode: providing full binary code compatibility with the legacy
+80C51/52
+Source mode: providing an enriched instruction set with 16/32-bit
+capability
+两套指令集MAPing:
+木秀于林,冲迎风霜 -- 每天积累一点点 950 / 1226
+
+## 第 51 页
+
+如果想直接使用80c51的代码在Flip80251系统中运行，则必须选择Binary
+mode;
+可以实现流水操作:
+1. 复位地址指向0xff0000
+2. 取指只需一个clock;
+3. 每次取指16bit，为2条指令
+4. .对于程序区支持写操作，实际上是通过间接寻址指令写，与XBUS总线的指
+令一致，MOVX @RKG,Rn
+80251 XBUS空间寻址方式及范围
+木秀于林,冲迎风霜 -- 每天积累一点点 951 / 1226
+
+## 第 52 页
+
+Register file可以byte,word,dword访问
+registerfile可以做为中间临时变量，可以用三种方式操作，byte,word,dword,
+当操作8bit数据可以使用Rm(0,1,2...)
+当操作32bit数据时，可以使用DRk(k=0,4,8...)
+木秀于林,冲迎风霜 -- 每天积累一点点 952 / 1226
+
+## 第 53 页
+
+对应关系如上图
+中间空白处用于固定的特殊功能寄存器，如左图所示
+DPXL默认值为01，所以默认xram总线为0x01xxxx;标准8051没有
+Flip80251核的3类时钟
+注意PD和IDL退出的条件不一致：PD一定要外部中断才能退出，而IDLE只要
+有中断就可以退出
+PD和IDLE状态主要不同点：PD状态所有时钟停止，IDLE状态中断等模块的时
+钟不停止
+sysclk:与coreclk同源，但没有门控，它用于8051的寄存器和同步PD模式下
+的唤醒信号，PD只能外部中断int0,int1,NMI三种中断唤醒，属于异步信号
+periphclk:8051外设和中断控制模块时钟，该时钟只在PD状态停止，IDLE状态
+不停止
+cpuclk:cup时钟，当idle & pd状态，该时钟停止
+中断让时钟运行起来，但标志位的释放是根据程序运行到RETI这条指令来做的
+木秀于林,冲迎风霜 -- 每天积累一点点 953 / 1226
+
+## 第 54 页
+
+由于中断唤醒，所以在进入PD前必须配置相关中断使能
+SFR时序
+PBSU 时序
+木秀于林,冲迎风霜 -- 每天积累一点点 954 / 1226
+
+## 第 55 页
+
+XBUS时序
+木秀于林,冲迎风霜 -- 每天积累一点点 955 / 1226
+
+## 第 56 页
+
+上述XBUS和PBUS总线需要配合CORE 的prgbusy和rambusy运行，当相关信号
+为高，意味着外部忙，core将不会有指令动作，如果核发出了动作，同时也会
+发出fetchabort信号来指示动作无效
+木秀于林,冲迎风霜 -- 每天积累一点点 956 / 1226
+
+## 第 57 页
+
+问题：为什么会no data latchen,第一拍控制发出，正常情况第二拍发出数据，
+但主显示放弃及从表示忙，所以第三拍不采样数据，但第拍从已经把prgbusy
+木秀于林,冲迎风霜 -- 每天积累一点点 957 / 1226
+
+## 第 58 页
+
+信号拉第，且把数据返回，主也没有abort指示，为什么第四拍不能latch数
+据？？？
+答：因为第三拍返回的数据是ADDRESS N的数据，而那拍的数据为abort，所以
+第四拍不能latch
+木秀于林,冲迎风霜 -- 每天积累一点点 958 / 1226
+
+## 第 59 页
+
+如何配置把程序放在某个指定的空间 ：分两种情况1.地址在64K内；2，程序
+空间大于64K，需要在KEIL 中配置
+Code Rom Size: Large:64K program 或Huge:64K function,16M progr;
+当要指定程序myfunc的位置时，把程序myfunc单独写在一个文件中myfile，
+然后在选项L251 Misc中钩上“use linker control
+file:.\linkfile”,linkfile为需要create的文件，其内容格式为：当为
+Huge:64K function,16M progr模式时：SEGMENTS (?PR?TEST1 (0xFE2000)) 其
+木秀于林,冲迎风霜 -- 每天积累一点点 959 / 1226
+
+## 第 60 页
+
+中?PR?TEST1相当于路径；当为 64K program或其余模式时：SEGMENTS
+(?PR?*?TEST1 (C:0x2000))
+对于?PR?TEST1或?PR?*?TEST1可以先不加link文件，先生成map文件，然后再
+找到该路径
+当选择Huge:64K function,16M progr模式时，output文件类型必须选择
+hex386格式，而非hex80格式；扩展线性地址记录(HEX386)
+可以按下图方式配置CODE，DATA空间范围：这样可以防止编译出来的空间比实
+际的空间大，如果比实际空间大将会报错
+木秀于林,冲迎风霜 -- 每天积累一点点 960 / 1226
+
+## 第 61 页
+
+ARM 知识
+Cortex-M系列比较
+木秀于林,冲迎风霜 -- 每天积累一点点 961 / 1226
+
+## 第 62 页
+
+1． Arm 架构
+ARM公司的Cortex-M0应用于各种微控制器（MCU）中，并可让研发工程师以8
+位的价位创造32位的的效能，并将传统的8位和16位的处理器升级到更高效、
+更低功耗的32位处理器。
+Cortex-M0是Cortex-M家族中的M系列。最大特点是低功耗的设计。
+Cortex-M0为32位、3级流水线RISC处理器，其核心仍为冯.诺依曼结构，是指
+令和数据共享同一总线的架构。
+作为新一代的处理器，Cortex-M0的设计进行了许多的改革与创新，如系统存储
+器地址映像(system address map)、改善效率并增强确定性的嵌套向量中断系统
+(NVIC)与不可屏蔽中断(NMI)、全新的硬件除错单元等等，都带给了使用者全新
+的体验和更便利、 更有效率的操作。
+木秀于林,冲迎风霜 -- 每天积累一点点 962 / 1226
+
+## 第 63 页
+
+对比下面M0+结构
+木秀于林,冲迎风霜 -- 每天积累一点点 963 / 1226
+
+## 第 64 页
+
+MTB与M0+连接关系
+MTB SRAM can be used for both trace and general purpose storage by the
+processor.
+rtl集成层次:在实际集成过程, DAP的层次是在Processor里面,MTB与
+PROCESSOR在同一层次.
+mtb例化
+木秀于林,冲迎风霜 -- 每天积累一点点 964 / 1226
+
+## 第 65 页
+
+MTB接口描述:
+木秀于林,冲迎风霜 -- 每天积累一点点 965 / 1226
+
+## 第 66 页
+
+M0+可以有以下几种集成结构:
+M0+集成框图
+对应RTL层次:
+对于MTB(下面的CoreSight)的使用如下
+木秀于林,冲迎风霜 -- 每天积累一点点 966 / 1226
+
+## 第 67 页
+
+ARM 提供的RTL就是按照上述结构分层.如下:
+木秀于林,冲迎风霜 -- 每天积累一点点 967 / 1226
+
+## 第 68 页
+
+注:M0+的流水只有2级,这样有利于降低功耗.
+木秀于林,冲迎风霜 -- 每天积累一点点 968 / 1226
+
+## 第 69 页
+
+流水线使用3个阶段，因此指令分3个阶段执行。
+⑴ 取指从存储器装载一条指令
+⑵ 译码识别将要被执行的指令
+⑶ 执行处理指令并将结果写会寄存器
+无论处理器处于何种状态，程序计数器R15(PC)总是指向“正在取指”的指令，
+而不是指向“正在执行”的指令或者正在“译码”的指令。人们一般会习惯性的
+将正在执行的指令作为参考点，即当前第1条指令。所以，PC总是指向第3条
+指令，或者说PC总是指向当前正在执行的指令地址再加2条指令的地址
+M0的两种操作模式:线程模式—主程序,处理模式—异常程序
+(主程序和异常程序(中断是异常程序的一种))
+木秀于林,冲迎风霜 -- 每天积累一点点 969 / 1226
+
+## 第 70 页
+
+M0没有特权模式,M3分特权模式和操作模式
+M3总线
+木秀于林,冲迎风霜 -- 每天积累一点点 970 / 1226
+
+## 第 71 页
+
+2． 程序入口
+木秀于林,冲迎风霜 -- 每天积累一点点 971 / 1226
+
+## 第 72 页
+
+如何初始化MSP值? 启动代码可以修改
+木秀于林,冲迎风霜 -- 每天积累一点点 972 / 1226
+
+## 第 73 页
+
+3． 地址分配
+0xE000_0000~0xE00F_FFFF用于M0 核处理器寄存器配置,比如调试相关的地址,
+ROM Table is at 0xE00F_F003
+设计的处理器的外设寄存器地址一般在0x4000_0000~0x5fff_ffff区间
+Sram需要支持可以执行程序,主要考虑固件升级时重影射
+M0不支持非字对齐操作
+存储器属性
+存储器访问属性：可执行(Executable)，可缓冲(Bufferable)，可缓存
+(Cacheable)，可共享(Shareable)。与HPORT一起分析
+XN:不可执行
+木秀于林,冲迎风霜 -- 每天积累一点点 973 / 1226
+
+## 第 74 页
+
+下面是m0+的存储属性:
+关键点在于对于存储的操作顺序不一定与指令的顺序一致,是因为处理器会重新
+排序(re-order).;如果想对存储空间的操作一定按照指令顺序执行,则在需要的
+地方使用壁垒指令(DMB,DSB,ISB)
+木秀于林,冲迎风霜 -- 每天积累一点点 974 / 1226
+
+## 第 75 页
+
+4． M0 处理器内部寄存器
+中断相关寄存器:
+木秀于林,冲迎风霜 -- 每天积累一点点 975 / 1226
+
+## 第 76 页
+
+使用方法:
+注意:在使能中断和清除中断是在不同的寄存器对对应位置写1.
+木秀于林,冲迎风霜 -- 每天积累一点点 976 / 1226
+
+## 第 77 页
+
+5． M0 中断状态
+Inactive:没响应中断
+Pending:响应了中断但还没有进中断处理程序
+Active:进入了中断处理程序
+Active and pending :正在中断服务程序,但此中断号又来了一个中断
+进入中断程序的时间是固定的.
+木秀于林,冲迎风霜 -- 每天积累一点点 977 / 1226
+
+## 第 78 页
+
+6． M0 中断入口地址
+中断向量总共有15+32=47个,向量表占47*4byte=188byte,但最低位被MSP占用,
+所以前面有188byte+4byte=192byte空间被占用,0~0xbf,这段空间被称为向量
+表 .但我们在设置向量偏移时,都是以256byte为单位来偏移(地址才好对齐,中
+断向量寄存器的低7BIT固定为0).
+M0+支持4级中断优先级(每个中断的优先级配置位有8BIT,但只有最高2BIT有
+效);
+在进入中断时,硬件会做8个寄存器的现场保护(xpsp,pc,lr,r12,r3~r0),也就
+是sp指针会减去32byte,如果在进入中断还需要保护其它寄存器,则由编译器生
+成代码,有软件来进行保护剩下的现场信息.
+木秀于林,冲迎风霜 -- 每天积累一点点 978 / 1226
+
+## 第 79 页
+
+M0的中断入口地址的基地址固定在0x0;M0+核的中断入口地址可以通过寄存器
+配置(地址为0XE000ED08)
+7． Arm m0 指令集
+处理器使用的是ARMv6-MThumb指令集，包括大量的32位的使用Thumb-2技术的指
+令。表7-22列出了Cortex-M0指令和它们的周期数。周期计数以零等待状态的系统
+为基准。
+指令 目的操作数 源操作数
+操 作 描 述 汇编 指令 周 期
+木秀于林,冲迎风霜 -- 每天积累一点点 979 / 1226
+
+## 第 80 页
+
+8-bit immediate MOVS Rd,#<imm> 1
+Lo to Lo MOVS Rd,Rm 1
+MOVE
+Any to Any MOV Rd,Rm 1
+Any to PC MOV PC,Rm 3
+3-bit immediate ADDS Rd,Rn,#<imm> 1
+Add
+All registers Lo ADDS Rd,Rn,Rm 1
+Any to Any ADD Rd,Rd,Rm 1
+Any to PC ADD PC,PC,Rm 3
+8-bit immediate ADDS Rd,Rd,#<imm> 1
+With carry ADCS Rd,Rd,Rm 1
+Add
+Immediate to SP ADD SP,SP,#<imm> 1
+Form address from SP ADD Rd,SP ,#<imm> 1
+Form address from PC ADR Rd,<label> 1
+Lo to Lo SUBS Rd,Rn,Rm 1
+Subtract 3-bit immediate SUBS Rd,Rn,#<imm> 1
+8-bit immediate SUBS Rd,Rd,#<imm> 1
+With carry SBCS Rd,Rd,Rm 1
+木秀于林,冲迎风霜 -- 每天积累一点点 980 / 1226
+
+## 第 81 页
+
+Immediate from SP SUB SP,SP,#<imm> 1
+Negate RSBS Rd,Rn,#0 1
+Multiply Multiply MULS Rd,Rm,Rd 1 或 32
+Compare CMP Rn,Rm 1
+Compare Negative CMP Rn,Rm 1
+Immediate CMP Rn,#<imm> 1
+AND ANDS Rd, Rd, Rm 1
+Exclusive OR EORS Rd, Rd, Rm 1
+OR ORRS Rd, Rd, Rm 1
+Logical
+Bit clear BICS Rd, Rd, Rm 1
+Move NOT MVNS Rd, Rm 1
+AND test TST Rn, Rm 1
+Logical shift left by LSLS Rd, Rm,
+1
+immediate #<shift>
+Shift
+Logical shift left by LSLS Rd, Rd, Rs 1
+木秀于林,冲迎风霜 -- 每天积累一点点 981 / 1226
+
+## 第 82 页
+
+register
+Logical shift right by LSRS Rd, Rm,
+1
+immediate #<shift>
+Logical shift right by
+LSRS Rd, Rd, Rs 1
+register
+ASRS Rd, Rm,
+Arithmetic shift right 1
+#<shift>
+Arithmetic shift right by
+ASRS Rd, Rd, Rs 1
+register
+Rotate Rotate right by register RORS Rd, Rd, Rs 1
+LDR Rd, [Rn,
+Word, immediate offset 2
+#<imm>]
+LDRH Rd, [Rn,
+Halfword, immediate offset 2
+#<imm>]
+Load
+LDRB Rd, [Rn,
+Byte, immediate offset 2
+#<imm>]
+Word, register offset LDR Rd, [Rn, Rm] 2
+木秀于林,冲迎风霜 -- 每天积累一点点 982 / 1226
+
+## 第 83 页
+
+续表
+操 作 描 述 汇 编 指 令 周 期
+Halfword, register offset LDRH Rd, [Rn, Rm] 2
+Signed halfword, register
+LDRSH Rd, [Rn, Rm] 2
+offset
+Byte, register offset LDRB Rd, [Rn, Rm] 2
+Signed byte, register
+LDRSB Rd, [Rn, Rm] 2
+offset
+PC-relative LDR Rd, <label> 2
+SP-relative LDR Rd, [SP, #<imm>] 2
+LDM Rn!,
+Multiple, excluding base 1+N
+{<loreglist>}
+LDM Rn,
+Multiple, including base 1+N
+{<loreglist>}
+Word, immediate offset STR Rd, [Rn, #<imm>] 2
+Store
+Halfword, immediate STRH Rd, [Rn, 2
+木秀于林,冲迎风霜 -- 每天积累一点点 983 / 1226
+
+## 第 84 页
+
+offset #<imm>]
+STRB Rd, [Rn,
+Byte, immediate offset 2
+#<imm>]
+Word, register offset STR Rd, [Rn, Rm] 2
+Halfword, register offset STRH Rd, [Rn, Rm] 2
+Byte, register offset STRB Rd, [Rn, Rm] 2
+SP-relative STR Rd, [SP, #<imm>] 2
+STM Rn!,
+Multiple 1+N
+{<loreglist>}
+Push PUSH {<loreglist>} 1+N
+Push
+PUSH {<loreglist>,
+Push with link register 1+N
+LR}
+Pop POP {<loreglist>} 1+N
+Pop
+POP {<loreglist>,
+Pop and return 4+N
+PC}
+Branch Conditional B<cc> <label> 1或3
+木秀于林,冲迎风霜 -- 每天积累一点点 984 / 1226
+
+## 第 85 页
+
+Unconditional B<label> 3
+With link BL<label> 4
+With exchange BX Rm 3
+With link and exchange BLX Rm 3
+Signed halfword to word SXTH Rd, Rm 1
+Signed byte to word SXTB Rd, Rm 1
+Extend
+Unsigned halfword UXTH Rd, Rm 1
+Unsigned byte UXTB Rd, Rm 1
+Bytes in word REV Rd, Rm 1
+Reverse Bytes in both halfwords REV16 Rd, Rm 1
+Signed bottom half word REVSH Rd, Rm 1
+Supervisor Call SVC #<imm> -
+State
+change
+Disable interrupts CPSID i 1
+操 作 描 述 汇 编 指 令 周 期
+木秀于林,冲迎风霜 -- 每天积累一点点 985 / 1226
+
+## 第 86 页
+
+Enable interrupts CPSIE i 1
+Read special register MRS Rd, <specreg> 4
+Write special register MSR <specreg>, Rn 4
+Breakpoint BKPT #<imm> —
+Send event SEV 1
+Wait for event WFE 2
+Hint
+Wait for interrupt WFI 2
+Yield YIELD 1
+Hint No operation NOP 1
+Instruction synchronization ISB 4
+Barriers Data memory DMB 4
+Data synchronization DSB 4
+ISO/IEC 的 C 代码不能直接地获取一些 Cortex-M0 的指令。表 7-23
+列举了 CMSIS 的 C 编译器中提供的部分内部函数用于产生这些指令。
+如果一个 C 编译器不支持恰当的内部函数，则需要用内嵌汇编来获取
+有关指令。
+木秀于林,冲迎风霜 -- 每天积累一点点 986 / 1226
+
+## 第 87 页
+
+表 7-23 CMSIS 内部函数
+指 令 CMSIS 内部函数 指 令 CMSIS 内部函数
+void uint32_t __REV(uint32_t int
+CPSIE i REV
+__enable_irq(void) value)
+void uint32_t __REV16(uint32_t
+CPSID i REV16
+__disable_irq(void) int value)
+uint32_t __REVSH(uint32_t
+ISB void __ISB(void) REVSH
+int value)
+DSB void __DSB(void) SEV void __SEV(void)
+DMB void __DMB(void) WFE void __WFE(void)
+NOP void __NOP(void) WFI void __WFI(void)
+CMSIS 也提供了几个函数用于获取特殊的寄存器，如表 7-24 所示。
+表 7-24 CMSIS 提供的用于获取特殊寄存器的函数
+特殊寄存器 获 取 方 式 CMSIS 函数
+读 uint32_t __get_PRIMASK(void)
+PRIMASK
+写 void __set_PRIMASK(void)
+CONTROL 读 Uint32_t __get_CONTROL(uint32_t value)
+木秀于林,冲迎风霜 -- 每天积累一点点 987 / 1226
+
+## 第 88 页
+
+写 Void __set_CONTROL(uint32_t value)
+读 Uint32_t __get_MSP(void)
+MSP
+写 Void __set_MSP(uint32_t TopOfMainStack)
+读 Uint32_t __get_PSP(void)
+PSP
+写 Void __set_PSP(uint32_t TopOfMainStack)
+8． Ready 信号处理
+Ahb总线工作的前提条件是ready握手信号为高，所以当核要启动时，ready信
+号在复位时默认就是高，对于普通的slaver，ahb只是用来配置寄存器，这种行
+为是当拍完成，所以这种slaver的返回ready信号可以一直为1，如果是像flash
+控制器这种复杂控制，它当拍是无法完成的，那么它就必须拉低ready信号，等
+完成当前行为再释放ready为高，为了流水，需要在完成的当拍把ready信号拉
+高。
+9． 流水线知识(转)
+本文将讨论处理器的一个重要的基础知识：“流水线”。熟悉计算机体系结构的
+读者一定知道，言及处理器微架构，几乎必谈其流水线。处理器的流水线结构是
+处理器微架构最基本的一个要素，犹如汽车底盘对于汽车一般具有基石性的作用，
+它承载并决定了处理器其他微架构的细节。本文将简要介绍处理器的一些常见流
+水线结构，让您真正读懂处理器流水线。
+本文引用地址:
+http://www.21ic.com/embed/hardware/processor/201804/51558.html
+1 从经典的五级流水线说起
+木秀于林,冲迎风霜 -- 每天积累一点点 988 / 1226
+
+## 第 89 页
+
+流水线的概念来源于工业制造领域，以汽车装配为例来解释流水线的工作方式，
+假设装配一辆汽车需要四个步骤：
+第一步冲压：制作车身外壳和底盘等部件。
+第二步焊接：将冲压成形后的各部件焊接成车身。
+第三步涂装：将车身等主要部件清洗、化学处理、打磨、喷漆和烘干。
+第四步总装：将各部件(包括发动机和向外采购的零部件)组装成车。
+汽车装配则同时对应需要冲压、焊接、涂装和总装四个工人。最简单的方法是一
+辆汽车依次经过上述四个步骤装配完成之后，下一辆汽车才开始进行装配，最早
+期的工业制造就是采用的这种原始的方式，即同一时刻只有一辆汽车在装配。不
+久之后人们发现，某个时段中一辆汽车在进行装配时，其它三个工人都处于闲置
+状态，显然这是对资源的极大浪费，于是思考出能有效利用资源的新方法，即在
+第一辆汽车经过冲压进入焊接工序的时候，立刻开始进行第二辆汽车的冲压，而
+不是等到第一辆汽车经过全部四个工序后才开始，这样在后续生产中就能够保证
+四个工人一直处于运行状态，不会造成人员的闲置。这样的生产方式就好似流水
+川流不息，因此被称为流水线。
+计算机体系结构教材中被提及最多的经典MIPS五级流水线如图1所示。在此流
+水线中一条指令的生命周期分为：
+取指：
+指令取指(Instruction Fetch)是指将指令从存储器中读取出来的过程。
+译码：
+指令译码(InstructionDecode)是指将存储器中取出的指令进行翻译的过程。经
+过译码之后得到指令需要的操作数寄存器索引，可以使用此索引从通用寄存器组
+(Register File，Regfile)中将操作数读出。
+执行：
+指令译码之后所需要进行的计算类型都已得知，并且已经从通用寄存器组中读取
+出了所需的操作数，那么接下来便进行指令执行(Instruction Execute)。指令
+执行是指对指令进行真正运算的过程。譬如，如果指令是一条加法运算指令，则
+对操作数进行加法操作;如果是减法运算指令，则进行减法操作。
+木秀于林,冲迎风霜 -- 每天积累一点点 989 / 1226
+
+## 第 90 页
+
+在“执行”阶段的最常见部件为算术逻辑部件运算器(ArithmeticLogicalUnit，
+ALU)，作为实施具体运算的硬件功能单元。
+访存：
+存储器访问指令往往是指令集中最重要的指令类型之一，访存(Memory Access)
+是指存储器访问指令将数据从存储器中读出，或者写入存储器的过程。
+写回：
+写回(Write-Back)是指将指令执行的结果写回通用寄存器组的过程。如果是普通
+运算指令，该结果值来自于“执行”阶段计算的结果;如果是存储器读指令，该
+结果来自于“访存”阶段从存储器中读取出来的数据。
+在工业制造中采用流水线可以提高单位时间的生产量，同样在处理器中采用流水
+线设计也有助于提高处理器的性能。以上述的五级流水线为例，由于前一条指令
+在完成了“取指”进入“译码”阶段后，下一条指令马上就可以进入“取指”阶
+段，依次类推，如图2所示，如果流水线没有停顿，理论上可以取得每个时钟周
+期都完成一条指令的性能。
+图1 MIPS五级流水线结构图
+图2 MIPS五级流水线运行图
+2 可不可以不要流水线——流水线和状态机的关系
+言及处理器微架构，几乎必谈流水线。那么，我们能否挑战一下权威提出一个有
+意思的问题：处理器难道就一定需要流水线吗?可否不要流水线呢?
+在回答这个问题之前，我们先探讨下流水线的本质：
+流水线并不限于处理器设计，在所有的ASIC电路实现中都广泛采用流水线的思
+想。流水线本质上可以理解为是一种以面积换性能(Trade Area for
+Performance)、以空间换时间(Trade Space for Timing)的手段。
+譬如，以5级流水线为例，其增加了5组寄存器，每一个流水线级数内部都有各
+自的组合逻辑数据通路，彼此之间没有复用资源，因此，其面积开销是比较大的，
+木秀于林,冲迎风霜 -- 每天积累一点点 990 / 1226
+
+## 第 91 页
+
+但是由于可以让不同的流水线级数同时做不同的事情，而达到流水的效果，提高
+了性能，优化了时序，增加了吞吐率。
+与流水线相对应的另外一种策略是状态机，状态机是流水线的“取反”，同样在
+所有的ASIC电路实现中都广泛采用。状态机本质上可以理解为是一种以性能换
+面积(Trade Performance for Area)、以时间换空间(Trade Timing for Space)
+的手段。
+“流水线”和“状态机”的关系，还有一种说法称之为“展开”和“折叠”的关
+系。本质上都是一种电路设计时，选择侧重时间(性能)还是空间(面积)的一种取
+舍。
+通过上述分析，假设处理器不采用流水线，而是使用一个状态机来完成，则需要
+多个时钟周期才能完成一条指令的所有操作，每个时钟周期完成状态机的一个状
+态(譬如分别为取指、译码、执行、访存和写回)。通过使用状态机，可以省掉上
+述流水线中的寄存器开销，还可以复用组合逻辑数据通路，因此面积开销比较小，
+但是每条指令都需要5个周期才能完成，吞吐率和性能很差。
+谈及此处，就不得不提及8位单片机时代的传奇老炮儿8051内核，早期原始的
+8051内核微架构就是采用了类似状态机的实现方式而不是流水线。因此，回到
+最开始我们提出的问题，处理器可否不要流水线，答案是：当然可以，传奇老炮
+儿8051内核就没有流水线。
+所以说从功能能上来讲，处理器完全可以不使用流水线，而使用状态机的方式来
+实现，只不过由于这种方式性能比较差，在现代处理器设计中比较罕见而已。
+3 深处种菱浅种稻，不深不浅种荷花——流水线的深度
+流水线的级数(又称深度)多少最好呢?要回答这个问题，就需要了解流水线的深
+浅各自的优劣。此处有一个常见面试题，题目便是：处理器的流水线是否越深越
+好?在此我们给出答案：
+早期的经典流水线是5级流水线，分别为取指、译码、执行、访存和写回。现代
+的处理器往往具有极深的流水线级数，譬如高达十几级，或者二十几级的深度。
+流水线就像一根黄瓜，切五刀下去得到的每一截长度和切二十到下去得到的每一
+截长度肯定是不一样的。当流水线的级数越多，那么意味着流水线被切的很细，
+每一级流水线内容纳的硬件逻辑便越少，熟悉数字同步电路设计的读者应该比较
+木秀于林,冲迎风霜 -- 每天积累一点点 991 / 1226
+
+## 第 92 页
+
+熟悉，在两级寄存器(每一级流水线由寄存器组成)之间的硬件逻辑越少，则意味
+能够运行到更高的主频。因此现代的处理器流水线极深主要是由于处理器追求高
+频的指标所驱使，高端的ARM Cortex-A系列由于有十几级的流水线，所以能够
+运行到高达2GHz的主频，而Intel的x86处理器甚至采用几十级的流水线深度
+将主频推到3-4GHz的高度。主频越高也意味着流水线的吞吐率越高从而性能越
+高，这是流水线加深的正面意义。
+由于每一级流水线都由寄存器组成，那么意味着更多的流水线级数要消耗更多的
+寄存器，也意味着更多的面积开销。这是流水线加深的负面意义。
+同时流水线越深，由于每一级流水线需要进行握手，流水线最后一级的反压信号
+可能会一直串扰到最前一级造成严重的时序问题，需要使用一些比较高级的技巧
+来解决此类反压时序问题。这是流水线加深的负面意义。
+较深的处理器流水线还有一个问题，由于在流水线的取指令阶段无法得知条件跳
+转的结果是跳还是不跳，因此只能进行预测，而到了流水线的末端才能够通过实
+际的运算得知该分支是真的该跳还是不该跳，如果发现真实的结果(譬如该跳)
+与之前预测的结果(譬如预测为不跳)不相符，则意味着预测失败，需要将所有预
+取的错误指令流全部丢弃掉，而重新取正确的指令流，这个过程叫做流水线冲刷
+(PipelineFlush)，虽然可以使用分支预测器来保证前期的分支预测尽可能的准
+确，但是也无法做到万无一失。那么，流水线的深度越深，则意味着已经预取了
+很多的错误指令流，需要将其全部抛弃然后重启，不仅白白的浪费了功耗，还造
+成了性能的损失。流水线越深则意味着浪费和损失越严重，流水线越浅则浪费和
+损失越少。这是流水线加深的另一个主要的负面意义。
+综上，所谓深处种菱浅种稻，不深不浅种荷花，流水线的不同深度皆有其优缺点，
+需要根据不同的应用背景合理地进行选择。
+由于处理器流水线深浅的不同优劣，根据不同的应用场景，当今处理器的流水线
+深度在向着两个不同的极端发展，一方面级数越来越深，另一方面又越来越浅，
+下面我们结合不同的商用处理器例子予以探讨。
+4 向上生长——越来越深的流水线
+现代的高性能处理器相比最早期的处理器明显存在着流水线越来越深的现象，其
+驱动因素很简单，那就是追求更高的主频以获取更高的吞吐率和性能。
+木秀于林,冲迎风霜 -- 每天积累一点点 992 / 1226
+
+## 第 93 页
+
+以最知名的ARM Cortex-A系列处理器IP为例，Cortex-A7主打的低功耗前提下
+的能效比，其流水线级数为8级;而Cortex-A15主打高性能，其流水线深度为
+15级。
+当然流水线越来越深也需有其限度，曾有某些商业处理器产品一味地追求极端流
+水线深度(达到几十级)反而遭遇失败的例子。目前最新的Intel处理器和ARM 高
+性能Cortex-A系列处理器的流水线深度都在十几级的范围左右。
+5 向下生长——越来越浅的流水线
+现代低功耗处理器的另外一个趋势也存在着流水线越来越浅的现象，其驱动因素
+同样很简单，那就是在性能够用的前提下追求极低的功耗。
+以最知名的ARM Cortex-M系列处理器IP为例，2004年发布的Cortex-M3处理
+器核的流水线级数只有3级，2009年发布的Cortex-M0处理器核的流水线级数
+也只有3级，而2012年发布的Cortex-M0+处理器核的流水线级数反而只有2级，
+变得越来越少了，正因为此ARM也宣传Cortex-M0+处理器核为世界上能效比最
+高的处理器核。
+2级的流水线深度似乎已经浅到底了，读者可能会问，那是不是接下来要发布只
+有1级深度的流水线了?当深度变为1之后也就谈不上流水线了，其整体也就变
+成一个单周期的组合逻辑了，在众多的计算机体系结构教学案例中我们确实见到
+过很多流水线深度为1的处理器核，从功能上来说其仍然可以完成处理器的所有
+功能，只不过主频相当之低而已。
+6 处理器流水线中的反压
+随着流水线越深，由于每一级流水线都需要进行握手，流水线最后一级的反压信
+号可能会一直串扰到最前一级造成严重的反压(Back-pressure)时序问题，需要
+使用一些比较高级的技巧来解决这些时序问题。在现代处理器设计中，通常有如
+下若干种方法：
+取消握手：此方法能够彻底杜绝反压的发生，时序表现非常好。但是取消握手即
+意味着流水线中的每一级并不会与其下一级进行握手，因此可能会造成功能错误
+或者指令丢失。因此这种方法往往需要配合其他的机制，譬如重执行(Replay)，
+预留大缓存等等。简而言之，此方法比较激进，辅以一系列其他的配置机制，硬
+件总体的复杂度会比较大。只有在一些非常高级的处理器设计中才会用到。
+木秀于林,冲迎风霜 -- 每天积累一点点 993 / 1226
+
+## 第 94 页
+
+加入乒乓缓存：加入乒乓缓存(Ping-pong Buffer)是一种用面积换时序的方法，
+也是解决反压最简单的方法。通过使用乒乓缓存(有两个表项)替换普通的一级流
+水线(只有一个表项)，可以使得此级流水线向上一级流水线的握手接受信号仅仅
+需要关注乒乓缓存中是否有一个以上有空的表项即可，而无需将下一级的握手接
+受信号串扰至上一级。
+加入前向旁路缓存：加入前向旁路缓存(Forward Bypass Buffer)也是一种用面
+积换时序的方法，这是在解决反压时一种非常巧妙的方法。旁路缓存仅有一个表
+项，由于增加了这一个额外的缓存表项，可以将后向的握手信号时序路径砍断，
+但是对前向路径不产生影响，因此，可以广泛使用于握手接口。蜂鸟E200即于
+设计中采用此方法，有效地解决了多处反压造成的时序瓶颈。
+以上解决反压的技术方法，不仅在处理器设计中能够用到，而且在普通的ASIC
+电路设计中也会经常用到。
+7 处理器流水线中的冲突
+处理器的流水线设计中另外一个问题便是流水线中的冲突(Hazards)，主要分为
+资源冲突和数据冲突。
+7.1 流水线中的资源冲突
+资源冲突是指流水线中硬件资源的冲突，最常见的是运算单元的冲突，譬如除法
+器需要多个时钟周期才能完成运算，因此在前一条除法指令运算完成之前，新的
+除法指令如果也需要除法器则会存在着资源冲突。在处理器的流水线中硬件资源
+冲突种类还有较多，在此不做一一赘述。解决资源冲突的方法可以通过复制硬件
+资源或者流水线停顿等待硬件资源的方法解决。
+7.2 流水线中的数据冲突
+数据冲突是指不同的指令之间的操作数存在数据相关性造成的冲突。常见的数据
+相关性包括：
+WAR(Write-After-Read)相关性，又称先读后写相关性：表示“后序执行的指令
+需要写回的结果寄存器索引”与“前序执行的指令需要读取的源操作数寄存器
+索引”相同造成的数据相关性。因此，从理论上来讲，在流水线中“后序指令”
+一定不能比和它有WAR相关性的“前序指令”先执行，否则“后序指令”先写回
+了结果至通用寄存器组中，“前序指令”再读取操作数时，就会读到错误的数值。
+木秀于林,冲迎风霜 -- 每天积累一点点 994 / 1226
+
+## 第 95 页
+
+WAW(Write-After-Write)相关性，又称先写后写相关性：表示“后序执行的指令
+需要写回的结果寄存器索引”与“前序执行的指令需要写回的结果寄存器索引”
+相同造成的数据相关性。因此，从理论上来讲，在流水线中“后序指令”一定不
+能比和它有WAW相关性的“前序指令”先执行，否则“后序指令”先写回了结果
+至通用寄存器组中，“前序指令”再写回结果至通用寄存器组中就会将其覆盖。
+RAW(Read-After-Write)相关性，又称先写后读相关性：表示“后序执行的指令
+需要读取的源操作数寄存器索引”与“前序执行的指令需要写回的结果寄存器
+索引”相同造成的数据相关性。因此，从理论上来讲，在流水线中“后序指令”
+一定不能比和它有RAW相关性的“前序指令”先执行，否则“后序指令”便会从
+通用寄存器组中读回错误的源操作数。
+以上的三种相关性中，RAW属于真数据相关。
+解决数据冲突的常见方法如下：
+WAW和WAR可以通过寄存器重命名的方法将相关性去除，从而无需担心其执行顺
+序。
+寄存器重命名技术在Tomasulo算法中通过保留站和ROB(Re-Order Buffer)完成，
+或者采用纯物理寄存器(而不用ROB)的方式完成。
+之所以RAW称之为真数据相关，是因为其没有办法通过寄存器重命名的方法将相
+关性去除。一旦产生RAW相关性，后序的指令一定要使用和它有RAW数据相关性
+的前序指令执行完成的结果，从而造成流水线的等待停顿。为了能够尽可能的减
+少流水线停顿带来的性能损失，可以使用“动态调度”的方法。动态调度的思想
+本质上可以归结于以下方面：
+一方面采用数据旁路传播(Data Bypass and Forward)技术尽可能的让前序指令
+的计算结果更快的旁路传播给后序相关指令的操作数;
+另一方面尽可能的让后序相关指令在等待的过程中不阻塞流水线而让其他无关
+的指令能够继续顺利执行。
+早期的Tomasulo算法中通过保留站可以达到这两方面的功效，但是保留站由于
+保存了操作数无法做到很大的深度(否则面积和时序的开销巨大)。
+最新的高性能处理器普遍采用在每个运算单元前配置乱序发射队列(Issue
+Queue)的方式，发射队列仅追踪RAW相关性而并不存放操作数，因此可以做的很
+木秀于林,冲迎风霜 -- 每天积累一点点 995 / 1226
+
+## 第 96 页
+
+深(譬如16个表项)。在发射队列中的指令一旦相关性解除之后，再从发射队列
+中发射出来读取物理寄存器组(Physical Register File)，然后发送给运算单元
+开始计算。
+有关处理器的数据相关性问题和包括动态调度技术在内的解决方法，如果阐述清
+楚几乎可以单独成书，本文限于篇幅只能提纲挈领式的予以简述，感兴趣的读者
+可以自行查阅。
+本文试图以最通俗化的方式对处理器流水线进行介绍，首先讨论了处理器流水线
+概述，包括：从经典的五级流水线说起、可不可以不要流水线——流水线和状态
+机的关系、深处种菱浅种稻，不深不浅种荷花——流水线的深度、向上生长——
+越来越深的流水线、向下生长——越来越浅的流水线。然后本文介绍了处理器流
+水线设计的两大难题及其多种解决方法：处理器流水线中的反压、处理器流水线
+中的冲突。
+流水线上多周期指令执行时，流水线是否要暂停？
+1、如果每条指令的执行时间长度不一定，像加法1周期，乘法2周期，除法更多，那在执行多周期指令时，
+是不是流水线都要暂停等待呢？n周期指令等同于单周期指令加上n-1个NOP？
+2、扩展下问题，指令在流水线上，是不是每个流程都要流过，不能跨越？像MIPS的5流水，为了乘法流
+水变成6级（EX分解为执行1，执行2），那加法也必须分解为6级？PS：现在技术条件下，多少级流水
+最合适？
+这种问题最好要先问好应用范围。从复杂程度依次往上：I 上古8051没有流水
+线 < II 信号处理ARM M4，MIPS 或者其它相当的DSP是4－5级别流水线（可
+能有多发射，但一般顺序执行）< III 功耗价格敏感ARM Cortex A系列11-15
+级流水线（执行单元1-5周期）多发射乱序执行 < IV 通用处理Intel 处理器
+21＋级流水线。
+I不用讨论了。
+如果是II，一般都是顺序发射，顺序执行。这种一般就是加NOP，因为一来本来
+就浅，损失不大。加上处理器一般不能动态发射和执行。
+对于动态处理器来说，也有办法。比如用“完成”标志。在长指令完成前，下几
+条的指令先freeze在pipeline中。这个在移位除法器中尤其有用。因为有时候
+除法器可能要3-32个周期（根据数据）完成，如果一律添加32 个NOP那损失太
+大了。
+因为除法是6级那所有其它都变6级那是很愚蠢的行为。（那更长的FPU，DIV
+怎么办？）
+木秀于林,冲迎风霜 -- 每天积累一点点 996 / 1226
+
+## 第 97 页
+
+如果是III，基本就是在上面动态处理器的过程上插空发射了。而且可以“后发
+射先完成”。
+10．基础知识
+常用方法
+1. 编译时找不到stdio.h等标准头文件:
+配置MDK默认包含路径：进入options for Target xx->C/C++标签->配
+置Include Paths选项 ，一般是安装盘\Keil\C51\INC
+2. 编译时报找不到BIN40 \ArmAsm
+进工具
+Project->Manag->Components,Environment and
+Books->Folders/Extensions->RealViewFolder选项配置KEIL安装路径
+下的目录
+3. KEIL生成code文件并上传
+1.在工程trunk目录下建立名为upcode的文件夹，在upcode文件
+夹下面分别建立upcode.bat文件和upcode.txt文件。
+upcode.bat文件内容如下
+木秀于林,冲迎风霜 -- 每天积累一点点 997 / 1226
+
+## 第 98 页
+
+c:\Keil\ARM\BIN40\fromelf --vhx
+--32x1 .\application_test\debug\Pittosporum.axf
+--output=.\application_test\debug\code （其中
+c:\Keil\ARM\BIN40\fromelf 为KEIL安装路径下的一个可执行文
+件,;--vhx --32x1格式语句;
+.\application_test\debug\Pittosporum.axf为keil4生成的文件,
+通过此文件来生成二进制文件;
+--output=.\application_test\debug\code输出二进制文件名及路径）.
+或者在输入下面语句在run#2方框中
+fromelf --vhx --32x1 ..\output\PRJXXXX.axf
+--output=..\output\ main_rom是一样的 ,main_rom就是生成的文件
+ftp -s:.\upcode\upcode.txt
+upcode.txt文件内容为：
+open 10.70.53.216 //工作站的IP地址，
+user //修改为自己的工作站用户名
+passwd //修改为自己的工作站登陆密码
+cd
+project/xxx/trunk/Digital/FrontEnd/verification/software/sec //
+修改成上传的目录路径
+put .\application_test\debug\code //上传的文件名
+bye
+2.打开工程Target Option窗口，选择User栏，把Run #2后面框中的
+内容改成如图中所示：
+木秀于林,冲迎风霜 -- 每天积累一点点 998 / 1226
+
+## 第 99 页
+
+fromelf --bin --output=../output/bin.bin ../output/%L
+注意：fromelf.exe在windows系统自己内置的一个工具，如下图
+fromelf.exe --text -c -s --output=../output/list.lst ../output/%L
+在windows下搜索到的fromelf(可能是安装了keil工具会自动在
+windows下生成该文件)
+函数定位方法, 分散加载文件
+LR_ROM1 0x00000000 { ; load region size_region
+ER_ROM1 0x00000000 0x00008000 { ; load address = execution
+address
+木秀于林,冲迎风霜 -- 每天积累一点点 999 / 1226
+
+## 第 100 页
+
+*.o (RESET, +First)
+*.o(InRoot$$Sections)
+*.o(exe_at_rom)
+*.o(+RO)
+}
+ROM_EEPROM 0X00008000 0X00001800
+{
+*.o(exe_at_rom_eeprom)
+}
+; ROM_PATCH1 0X00009800 0X00000200
+; {
+; *.o(exe_at_rom_patch1)
+; }
+; ROM_PATCH2 0X00009a00 0X00000200
+; {
+; *.o(exe_at_rom_patch2)
+; }
+; ROM_PATCH3 0X00009c00 0X00000200
+; {
+; *.o(exe_at_rom_patch3)
+; }
+; ROM_PATCH4 0X00009e00 0X00000200
+; {
+; *.o(exe_at_rom_patch4)
+; }
+EEPROMCODE 0x08000000 0X14000
+木秀于林,冲迎风霜 -- 每天积累一点点 1000 / 1226
+
+## 第 101 页
+
+{
+*.o(exe_at_eeprom)
+}
+;this is just an empty area
+NOTHING 0x20000000 EMPTY 0
+{
+}
+;fpga verification ram,from 0x20000000 to 0x20000440
+FPGA_VERI +0 EMPTY 0X340
+{
+}
+;caution:in simulation,this segment can only be used by
+modifying memory map after connected to debugger
+RAMCODE +0 0X660
+{
+*.o(exe_at_sram)
+}
+;user ram,from 0x20000440-0x20000bc0,length=0xbc0,=3008
+bytes
+;ÓÃ»§RAM£¬Î»ÖÃÔÚramÆ«ÒÆµÄ1Kµ½4K£¬Ç°ÃæµÄFPGA_VERI¶ÎÉ¾³ý
+ºó£¬Î»ÖÃ½«×Ô¶¯µ÷ÕûÎªRAMÆ«ÒÆµÄ0Kµ½4K¡£
+RW_RAM1 +0 0x00000dc0 { ; RW data
+* (+RW +ZI)
+}
+;backup for memory test
+ARM_LIB_HEAP 0x20001400 EMPTY 0x100
+木秀于林,冲迎风霜 -- 每天积累一点点 1001 / 1226
+
+## 第 102 页
+
+{
+}
+;STACK,From 0x20001400-0x20001800,1K
+;Õ»£¬Î»ÖÃÔÚramÆ«ÒÆµÄ5k-6k
+ARM_LIB_STACK 0x20001800 EMPTY -0x300
+{
+}
+}
+LR_ROM_PATCH1 0x00008800 {
+ER_ROM_PATCH1 0X00008800 0X00000200
+{
+*.o(exe_at_rom_patch1)
+}
+}
+通过run#1和分散加载文件可以生成需要的二进制文件；而通过run#2可以自
+动把生成的文件上传到工作站
+4. Scatter基本点：
+1. 编译后输出的映像文件中各段是首尾相连的，中间没有空闲的区
+域，它们的先后关系是根据链接时参数的先后次序决定的 armlinker
+-file1.o file2.o ……
+2. scatter用于将编译后的映像文件中的特定段加载到多个分散的
+指定内存区域
+3. 有2类域region：执行域（executionregion，一般是ram区域）
+和加载域(load region，一般是rom区域)
+4. 加载域：就是编译之后得到的二进制文件烧写到rom中的这一段
+区域，所有的代码RO、预定义变量RW、堆栈之类清不清空无关紧要的大
+片内存区域ZI，都包括在其中
+木秀于林,冲迎风霜 -- 每天积累一点点 1002 / 1226
+
+## 第 103 页
+
+5. 执行域：就是把加载域进行‘解压缩’后的样子。比如：RO没有
+变动还是在ROM中，RW被移到了SRAM中，而ZI被放置在SDRAM中
+6.scatter本身并不能对映像实现‘解压缩’，编译器读入scatter
+文件之后会根据其中的各种地址生成启动代码，实现对映像的加载，而
+这一段代码就是* (InRoot$$Sections)它是__main()的一部分。这就是
+在汇编启动代码的最后跳转到__main() 而不是跳向main()的原因之一。
+7. 起始地址与加载域重合的执行域成为root region，*
+(InRoot$$Sections)必须放在这个执行域中，否则链接的时候会报错。
+*(+RO)包含了* (InRoot$$Sections)，所以如果在root region中用到
+了*(+RO)可以不再指定* (InRoot$$Sections)，
+5. scatter语法：
+ROM_LOAD 0x00000000
+{
+ROM 0x00000000 0x003FFFFF
+{
+vectors.o (+RO,+FIRST)
+* (InRoot$$Sections) ; All library sections that
+must be in a root region
+*(+RO)
+}
+SRAM 0x00400000 0x003FFFFF
+{
+* (+RW,+ZI)
+}
+SDRAM1 0x41000000 UNINIT
+{
+stack.o (+ZI) ; stack.s中定义了top_of_stack为长度
+为1的space，指定栈顶地址
+}
+木秀于林,冲迎风霜 -- 每天积累一点点 1003 / 1226
+
+## 第 104 页
+
+SDRAM2 +0 UNINIT
+{
+heap.o (+ZI)
+}
+}
+注解：
+1. ROM_LOAD是加载域。这里只有一个，也可以有多个（rom地址不
+连续的情况）
+2. ROM、SRAM、SDRAM1、SDRAM2是执行域，有多个。第一个执行域
+必须和加载域地址重合，因为ARM的复位地址就是加载域的起始地址（有
+bootstrap的话加载域址就是bootstrap执行完后的跳转地址）
+3. vectors.o (+RO, +FIRST) 中断向量表放在最开头
+4. ROM 0x00000000 0x003FFFFF; 加载域名 起始地址 最大允许长
+度；‘最大允许长度’也可以省略，但缺点是编译器不会检查段是否溢
+出和别的段重叠了。‘起始地址’= +0表示紧接着上一段开始的连续地
+址。
+5. * (InRoot$$Sections)是复制代码的代码
+6. UNINT关键字表示不进行初始化清零
+6. 值得注意的是：
+在一个scatter文件中，同一个.o文件不能出现2次，即使是在2
+个不同的加载域中也不可以，否则会报错：Ambiguous selectors found
+for *.o，错误的例子：
+LOAD1 0x00000000
+{
+EXE1
+{
+Init.o
+}
+木秀于林,冲迎风霜 -- 每天积累一点点 1004 / 1226
+
+## 第 105 页
+
+}
+LOAD2 0xFFFF0000
+{
+EXE2
+{
+Init.o
+}
+}
+推测是编译器自动生成的scatter载入代码InRoot$$Sections不支
+持把同一 obj搬移2次。这就带来一个问题：如果希望把同一段代码（如
+中断跳转表）载入2份拷贝到不同的地址，咋整?一个笨办法是自己写一
+段代码搬移程序来代替编译器自动生成的搬移代码，但前提是需要搞懂
+映像文件的组织，增加了工作量。投机一点的方法是在makefile中把一
+个.o文件复制并重新起一个名字，然后把它们传递给armlink.
+简单scatter分析
+LR_IROM1 0x00000800 0x0000C000 { ; load region size_region
+ER_IROM1 0x00000800 0x0000C000 { ; load address = execution
+address
+*.o (RESET, +First)
+*.o(InRoot$$Sections)
+*.o(+RO) //除了下面的代码外，其他代码都放在此空间
+}
+RW_IRAM1 0x20008000 UNINIT 0x00004000 { ; RW data
+.ANY (+RW +ZI)
+}
+}
+LR_IROM2 0X00000000 0X00000400 { //程序存放在此地址
+木秀于林,冲迎风霜 -- 每天积累一点点 1005 / 1226
+
+## 第 106 页
+
+test0 0X00000000 0X00000400 //执行地址，执行地址等于存放地址，
+不用搬移
+{
+gpio6_jump.o //gpio6_jump.o的代码--需要有一个gpio6_jump.c的
+文件
+}
+}
+LR_IROM3 0X00000400 0X00000400 { //程序存放在此地址
+test1 0X20000400 0X00000400 //执行地址，启动代码会把程序搬
+移到此地址运行
+{
+gpio7_jump.o //gpio7_jump.o的代码--需要有一个gpio7_jump.c的
+文件
+}
+}
+木秀于林,冲迎风霜 -- 每天积累一点点 1006 / 1226
+
+## 第 107 页
+
+Arm 程序运行过程如下图
+木秀于林,冲迎风霜 -- 每天积累一点点 1007 / 1226
+
+## 第 108 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1008 / 1226
+
+## 第 109 页
+
+启动文件
+启动文件startup_pittosporum_project.s,里面定义了各种向量，如中
+断向量，复位向量，存储管理向量，hardfault向量，调试等各方面的向
+量，其实就是定义各种情况下的入口地址
+Cortex-M 启动流程
+在离开复位状态后，SC000做的第一件事就是读取下列两个32位整
+数的值：
+从地址0x0000,0000处取出MSP的初始值。
+从地址0x0000,0004处取出PC的初始值——这个值是复位向量，LSB必
+须是1。然后从这个值所对应的地址处取指。
+木秀于林,冲迎风霜 -- 每天积累一点点 1009 / 1226
+
+## 第 110 页
+
+如果code地址有偏移,则04以上的地址也会偏移.
+因为CM0使用的是向下生长的满栈，所以MSP的初始值必须是堆栈
+内存的末地址加1。举例来说，如果你的堆栈区域在0x20007C00‐
+0x20007FFF之间，那么MSP的初始值就必须是0x20008000。
+向量表跟随在MSP的初始值之后——也就是第2个表目。要注意因为CM3
+是在Thumb态下执行，所以向量表中的每个数值都必须把LSB置1（也就
+是奇数）。正是因为这个原因，图3.18中使用0x101来表达地址0x100。
+当0x100处的指令得到执行后，就正式开始了程序的执行。在此之前初
+始化MSP是必需的，因为可能第1条指令还没执行就会被NMI或是其它
+fault打断。MSP初始化好后就已经为它们的服务例程准备好了堆栈。
+木秀于林,冲迎风霜 -- 每天积累一点点 1010 / 1226
+
+## 第 111 页
+
+程序生成流程:
+中断响应与处理流程
+当CM0开始响应一个中断时，会在它看不见的体内奔涌起三股暗流：
+入栈： 把8个寄存器的值压入栈
+取向量：从向量表中找出对应的服务程序入口地址
+选择堆栈指针MSP/PSP，更新堆栈指针SP，更新连接寄存器LR，更新程
+序计数器PC
+木秀于林,冲迎风霜 -- 每天积累一点点 1011 / 1226
+
+## 第 112 页
+
+1.响应异常的第一个行动，就是自动保存现场的必要部分：依次把
+xPSR, PC, LR, R12以及R3‐R0由硬件自动压入适当的堆栈中：如果当
+响应异常时，当前的代码正在使用PSP，则压入PSP，即使用线程堆栈；
+否则压入MSP，使用主堆栈。一旦进入了服务例程，就将一直使用主堆栈。
+2.假设入栈开始时，SP的值为N，则在入栈后，堆栈内部的变化如
+下所示。又因为AHB接口上的流水线操作本质，地址和数据都在经过一
+个流水线周期之后才进入。另外，这种入栈在机器的内部，并不是严格
+按堆栈操作的顺序的——但是机器会保证：正确的寄存器将被保存到正
+确的位置。
+3.CM0在看不见的内部打乱了入栈的顺序，这是有深层次的原因的。
+先把PC与xPSR的值保存，就可以更早地启动服务例程指令的预取——
+因为这需要修改PC；同时，也做到了在早期就可以更新xPSR中IPSR位
+段的值。
+4.为啥袒护R0‐R3以及R12呢，R4‐R11就是下等公民？原来，在ARM
+上，有一套的C函数调用标准约定（《C/C++ Procedure Call Standard
+for the ARM Architecture》，AAPCS, Ref5）。个中原因就在它上面：
+木秀于林,冲迎风霜 -- 每天积累一点点 1012 / 1226
+
+## 第 113 页
+
+它使得中断服务例程能用C语言编写，编译器优先使用被入栈的寄存器
+来保存中间结果（当然，如果程序过大也可能要用到 R4‐R11，此时编译
+器负责生成代码来 push 它们。但是，ISR应该短小精悍，不要让系统如
+此操心）。
+也就是说硬件只会保存 8 个寄存器内容,如果使用了更多寄存器,则由编
+译器生成汇编代码来保存更多的寄存器.
+另外注意,同一个中断不能在没有完成当前中断有响应当前中断源的中
+端,否则会 fault
+嵌套向量中断控制器（NVIC）
+更有效地处理异常中断
+集成于处理器内部，靠近内核
+高效处理系统异常（Exceptions）和中断（Interrupts）
+特性
+异常优先级设置
+“咬尾中断”机制和“晚到异常”处理
+完全确定的异常处理时间
+异常处理所花销的时钟周期数一样
+16个时钟周期的固定开销
+特定寄存器用来权衡延时和预防抖动
+只要会C就能编写程序
+木秀于林,冲迎风霜 -- 每天积累一点点 1013 / 1226
+
+## 第 114 页
+
+软件控制睡眠模式
+ARMv6-M 架构支持为减少功耗而让 Cortex-M0 和系统时钟停止运
+行的系统睡眠模式
+3 段流水线
+ARM Thumb
+PC PC 取指 指令从存储器中取出
+PC-4 PC-2 译码 对指令使用的寄存器进行译码
+PC-8 PC-4 执行 从寄存器组中读出寄存器
+执行移位和ALU 操作
+寄存器写回到寄存器组
+图1-1 指令流水线
+Table B1-3 Exception numbers
+Exception number Exception
+1 Reset 软件可见地
+址进入 0x00000004， 0x00000004 地址 放的是复位后的跳转地址
+2 NMI 软件可见地
+址进入 0x00000008
+3 HardFault 软件可见地
+址进入 0x0000000c
+4-10 Reserved 软件可见地
+址进入 0x00000040，后面地址依次+4
+11 SVCall
+12-13 Reserved
+14 PendSV
+15 SysTick, optional
+16 External Interrupt(0)
+… …
+木秀于林,冲迎风霜 -- 每天积累一点点 1014 / 1226
+
+## 第 115 页
+
+16 + N External Interrupt(N)
+HPROT[3] HPROT[2] HPROT[1]
+HPROT[0]
+cacheable bufferable privileged
+data/opcode Description
+Opcode fetch - - -
+0
+Data access - - -
+1
+User access - - 0
+-
+Privileged access - - 1
+-
+Not bufferable - 0 -
+-
+Bufferable - 1 -
+-
+Not cacheable 0 - -
+-
+Cacheable 1 - -
+-
+instr = ~HPROT[0]&HPROT[1];
+rd = HPROT[0]&HPROT[1]&read;
+wr = HPROT[0]&HPROT[1]&write;
+HPROT[3:2] 指示指令或数据是从哪里来或读到哪里去，
+privilegeded 一般与cacheable使用，所以HPROT出现的值一般为
+a,b,f;
+木秀于林,冲迎风霜 -- 每天积累一点点 1015 / 1226
+
+## 第 116 页
+
+Hresp 表示从还回OKEY or ERROR,0表示OKEY;1表示ERROR.从设
+备一般都是还回 0
+7. 写C程序时,源文件最好分三个文件夹,一个为include,放头文件,一个
+为drive放各模块的驱动,一个为main,放主程序
+中断向量表的重映射过程：
+15.中断重影射
+MO没有SCB->VTOR寄存器,M3以上才有此寄存器,m0不支持中断向量重映
+射
+void SetupVTORToRAM(void) // 设置向量重映射寄存器
+{
+UINT32 VTOR;
+//new vector stays in ram 0x20000000
+//warning,this address must be 64 words alignment
+VTOR = 0X20000000; // 设置中断向量表的起始地址为0x20000000
+木秀于林,冲迎风霜 -- 每天积累一点点 1016 / 1226
+
+## 第 117 页
+
+Memcpy((void *)VTOR, (void *)__TestVectors,
+sizeof(__TestVectors));
+//set VTOR register
+SCB->VTOR | = SCB_VTOR_TBLBASE_Msk | (VTOR &
+SCB_VTOR_TBLOFF_Msk);
+}
+定义函数: void *memcpy(void *dest, const void *src, size_t
+n)
+函数说明: memcpy()用来拷贝 src 所指的内存内容前 n 个字节到
+dest 所指的内存地址上。与 strcpy()不同的是,memcpy()会完整
+的复制 n 个字节,不会因为遇到字符串结束'/0'而结束
+返回值: 返回指向 dest 的指针
+附加说明: 指针 src 和 dest 所指的内存区域不可重叠
+中断异常处理流程
+这里的中断异常是指Reset、HardFault、NMI等异常情况的处理。
+操作说明
+系统运行时，异常可能会随时发生。当一个异常出现以后，SC000
+微处理器会执行以下几步操作：
+1) 将下一条指令的地址存入相应连接寄存器LR，以便程序在处理
+异常返回时能从正确的位置重新开始执行。
+2) 将CPSR (current program status register当前程序状态寄
+存器)，复制到相应的SPSR（saved program status register程序状态
+保存寄存器）中。
+3) 根据异常类型，强制设置CPSR的运行模式位。
+4) 强制PC从相关的异常向量地址取下一条指令执行，从而跳转到
+相应的异常处理程序处。
+木秀于林,冲迎风霜 -- 每天积累一点点 1017 / 1226
+
+## 第 118 页
+
+异常处理完毕之后，SC000微处理器会执行以下几步操作从异常返回：
+5) 将连接寄存器LR的值减去相应的偏移量后送到PC中。
+6) 将SPSR复制回CPSR中。
+7) 定义异常中断服务函数;
+8) 在中断服务函数中处理异常;
+以上步骤中的1~6是由SC000内核完成的，不需要用户程序参与，步骤
+7~8必须由用户在中断处理函数中实现。为保证在ARM处理器发生异常时
+不至于处于未知状态，在应用程序的设计中，首先要进行异常处理。采
+用的方式是在异常向量表中的特定位置放置一条跳转指令，跳转到异常
+处理程序。当ARM处理器发生异常时，程序计数器PC会被强制设置为对
+应的异常向量，从而跳转到异常处理程序。当异常处理完成以后，返回
+到主程序继续执行。可以认为应用程序总是从复位异常处理程序开始执
+行的，因此复位异常处理程序不需要返回。
+汇编中几个常用的段代号,基本跟编译器和处理器没关系:
+1.text //代码段具有可执行的属性
+2.data //读写数据段,存放可执行的属性
+3.const //只读数据段(有些编译器不使用此段,将只读数据并
+入.data段)
+4.bss //未初始化的全局变量数据段
+ARM地址分配规则:
+木秀于林,冲迎风霜 -- 每天积累一点点 1018 / 1226
+
+## 第 119 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1019 / 1226
+
+## 第 120 页
+
+中断表
+木秀于林,冲迎风霜 -- 每天积累一点点 1020 / 1226
+
+## 第 121 页
+
+中断进入与唤醒
+通过指令进入sleep模式
+唤醒可以通过内部中断,WFI—wait for interrupt唤醒
+唤醒可以通过外部事件,WFE—wait for event唤醒
+木秀于林,冲迎风霜 -- 每天积累一点点 1021 / 1226
+
+## 第 122 页
+
+M0 系统架构
+电源管理单元
+(PMU)
+Cortex-M0
+唤醒
+深度睡眠
+NVIC WIC
+唤醒
+外部中断
+软件控制睡眠模式
+― 极低的待机功耗(Cortex-M0内核功耗不到40μA/MHz)
+― 一个低门数中断唤醒控制器（WIC）
+Sleep（睡眠）
+― 内核时钟停止
+― NVIC(嵌套向量中断控制器)继续对中断有效
+Deep sleep（深度睡眠）
+― WIC对选择指定中断有效
+― Cortex-M0可进入保持状态
+WIC 唤醒信号传递给 PMU
+― 内核立即被唤醒
+木秀于林,冲迎风霜 -- 每天积累一点点 1022 / 1226
+
+## 第 123 页
+
+― 立即响应关键事件
+嵌套向量中断控制器（NVIC）
+― 更有效地处理异常中断
+― 集成于处理器内部，靠近内核
+― 高效处理系统异常（Exceptions）和中断（Interrupts）
+― 特性
+― 异常优先级设置
+― “咬尾中断”机制和“晚到异常”处理
+完全确定的异常处理时间
+― 异常处理所花销的时钟周期数一样
+― 16个时钟周期的固定开销
+特定寄存器用来权衡延时和预防抖动
+指令执行
+ 绝大多数指令占用 2 字节的存储空间
+指令执行占用确定的时间
+― 数据处理指令（例如加、移位、逻辑或）1个时钟周期内完成
+― 数据传输（例如加载，存储）需2个时钟周期
+― 分支转移指令需要3个时钟周期
+指令操作码都是 32 位
+― 处理器的寄存器和算术逻辑单元（ALU ）都是32位
+与中断相关的寄存器如下：
+木秀于林,冲迎风霜 -- 每天积累一点点 1023 / 1226
+
+## 第 124 页
+
+Set 中断和clear 中断 是通过2个地址来操作
+有直接的内置函数可用
+木秀于林,冲迎风霜 -- 每天积累一点点 1024 / 1226
+
+## 第 125 页
+
+系统控制寄存器
+M0有专用的进入sleep命令:__wfe(); __wfi();这两条指令在安装目录
+下core_cmInstr.h中定义
+Thumb 指令集特点
+1. 32位的操作码
+2. 16位的指令系统
+木秀于林,冲迎风霜 -- 每天积累一点点 1025 / 1226
+
+## 第 126 页
+
+寄存器说明
+数据的解析和控制器的处理过程中，需要处理器内核寄存器的参与。如
+果需要处理控制器中的数据，这些数据需要先加载到处理器内核的寄存器
+（寄存器组中的摸个），处理完成后，如果有需必要，它们还会被送到存
+储器中，这种方式被称为“加载-存储架构”（load-storearchitecture）。
+Cortex-M0有13个32位通用寄存器R0-R12，以及多个特殊寄存器。
+寄存器组包含16个32位寄存器，其中13个时通用的，其余三个具
+有特殊用途。
+R0-R12 通用寄存器
+R0-R12为32位通用寄存器，由于16位thumb指令集在空间上的限制，
+许多Thumb指令只能操作R0-R7，它们被称为低寄存器，而想MOV之类的
+一些指令则可以使用全部的寄存器。R0-R12寄存器的初始化值未定义。
+R13,栈指针（SP）
+R13为栈指针，对栈空间进行存取操作（通过PUSH和POP指令），
+Cortex-M0在不同的物理地址上有两个栈指针，一个为主栈指针（MSP），
+木秀于林,冲迎风霜 -- 每天积累一点点 1026 / 1226
+
+## 第 127 页
+
+也被称为SP_main，一个指针称为进程栈指针（PSP），也为称为SP_process，
+只能用在线程模式。可以通过CONTROL寄存器，选择使用那个栈指针。
+在ARM处理器中，由于寄存器是32位的，所以PUSH和POP指令永远
+是32位操作，而且存取地址是32位字对齐（32位对齐）。在处理器上电
+过程中，中断向量表的头4字节会被去除（中断向量表在0x000000000地
+址），然后填充到MSP，作为MSP的初始值，PSP的初始值为定义。
+一般使用操作系统是PSP进程栈指针才会被使用，这是因为操作系统
+内核的栈空间和线程级的应用程序的栈空间是相互独立的。
+R14，链接寄存器（LR）
+R14为链接寄存器，用于存储子程序或者函数调用的返回地址。子程
+序或者函数执行完毕，存储在LR中的返回地址将被装在到程序计数器PC
+中，以便调用程序可以继续执行。当发生异常中断时，LR会提供一个特定
+值，用于中断返回机制。
+尽管Cortex-M0处理器的函数返回地址始终时偶数（最低位为0，因
+为最小的指令都是16位的），LR的0位时可读写的。为了指明当前处于
+thumb状态，一些指令需要函数地址最低位为1。
+R15，程序计数器（PC）
+R15为程序计数器，为可读写。读操作返回当前正在执行的指令加上
+4（这是由流水线的特性决定的），而写入R15会导致程序跳转执行，这
+和函数调用不同，链接寄存器不会更新。
+Cortex-M0处理器指令是16位对齐的，所以PC寄存器的最低位必须
+始终为0.不过在使用跳转指令BX或者BLX执行跳转执行时，PC的最低位
+应该被置1，以表明目标分支处于thumb程序区域。如果试图切换到
+Cortex-M0未知的ARM状态，错误异常中断会被触发。
+注意，r0~r12没有初始值。
+木秀于林,冲迎风霜 -- 每天积累一点点 1027 / 1226
+
+## 第 128 页
+
+BL很常用,它在跳转之前会在寄存器LR(R14)中保存PC的当前内容。BL的
+经典用法如下：
+bl NEXT ; 跳转到NEXT
+……
+NEXT
+……
+mov pc, lr ; 从子程序返回。
+11．注意点
+1．当keil在硬件debug模式下，如果观察窗口的地址是一个不存在的地址，
+那么只要一点击debug按钮就会死机，因为它要去读一个不存在的地址，
+硬件就会挂掉，解决方法是此时配置为软仿状态，把观察窗口地址修改
+正确，再进行硬件仿真。
+2．Cortex调试设计为：当点击debug，程序是下载在flash中（keil必须
+配置下载到flash），当退出debug状态，程序会继续执行！在debug
+和flash download选项当中，都有关于flash的配置
+木秀于林,冲迎风霜 -- 每天积累一点点 1028 / 1226
+
+## 第 129 页
+
+3. 如果通过界面限制变量和堆栈空间，需要配置如下图两个地方
+木秀于林,冲迎风霜 -- 每天积累一点点 1029 / 1226
+
+## 第 130 页
+
+或者配置如下图
+上面选项就是根据Target对话框中配置来link.
+3．KEIL5破解成功也会有32k代码限制
+以管理员身份开启keil5进行破解。
+4．Comtex0 启动说明
+木秀于林,冲迎风霜 -- 每天积累一点点 1030 / 1226
+
+## 第 131 页
+
+Cpu固定从地址0 取数据，此数据为msp，然后从04地址取数据，此数
+据为cpu复位地址，即pc指针的初始值---第一条程序所放的地址（不
+是用户的main函数，是系统的_main函数），在系统的main函数里面执
+行
+_scatterload,_scatterload_null,scatterload_zeroinit,_rt_lib_in
+it,rt_lib_init_fp_1,_rt_lib_init_alloca_1,_rt_lib_shutdown,_rt
+_lib_shutdown_fp_trap_1,_rt_entry,_rt_entry_li,_rt_entry_mian,
+_rt_exit,_rt_exit_ls,_rt_wxit_exit等函数，这些函数会初始化根据
+配置产生的一些xram空间，或者程序搬移（分散加载文件可以配置）；
+然后再执行用户的main函数。
+从工作站仿真角度来看，当初始化code区间时，一定要把msp，
+reset_handle放在code空间的第一个word和第二个word,其它数据按
+照分散加载文件放在对应的地址；当用fpga验证时，则需要.ini文件来
+指定这两个地址
+5．从ahb总线来看，总线的取指总是提前pc执行，因为一般都会预取指令。
+6．Keil5arm编译程序时，全局变量在编译时就会开辟一个地址给它，而函
+数中的变量编译时没有，只有在用的时候才分配空间，可能占用的空间
+为堆栈空间，也就是在map文件只会有全局变量信息，而没有函数内部
+定义的临时变量信息，如果局部变量有很大的数组，需要注意sp的大小
+够不够。Keil 并不会根据程序自动改变堆栈大小；而是根据设置来处理，
+如下程序；
+int main(void)
+{
+u8 bTxbuf[520];// _at_ 0x20001000 ;
+u8 TvDa;
+for(TvDa=0;TvDa<100;TvDa++)
+bTxbuf[TvDa]=TvDa;
+while(1);
+木秀于林,冲迎风霜 -- 每天积累一点点 1031 / 1226
+
+## 第 132 页
+
+}
+编译后，sp的信息是
+__initial_sp 0x20000200 Data 0 startup.o(STACK )
+汇编为
+可见使用的变量bTxbuf[520]地址为sp-使用的大小，而sp的栈顶为
+0x200(‘d512),小于bTxbuf深度，所以当运行到这个变量时就会进入
+hardfault中断。
+12．分别配置
+相同的code可以根据不同的配置生成不同的代码,配置名如下图可改
+点击红圈按钮,出现如下图
+木秀于林,冲迎风霜 -- 每天积累一点点 1032 / 1226
+
+## 第 133 页
+
+可以增加名称,
+然后选择target, ]
+如下配置,进行编译
+或者选择下图配置编译
+他们编译出来的代码不一致,因为起始地址不一致,但功能完全一致.
+木秀于林,冲迎风霜 -- 每天积累一点点 1033 / 1226
+
+## 第 134 页
+
+当使用程序在xram空间,仿真需要加入一个xram.ini的文件,其内容如
+下:
+DEFINE LONG tmp;
+DEFINE INT tmp1;
+FUNC void Setup(void)
+{
+SP = _RDWORD(0x20000000); //code区域第一个word是sp
+值
+PC = _RDWORD(0x20000004); //code区域第二个word是复位
+值
+_WDWORD(0XE000ED08,0X20000000); //0XE000ED08为VECTOR
+寄存器地址,意思是中断向量表偏移到0x2000_0000开始,M0无此寄存
+器,M0+才有
+}
+LOAD ..\OUTPUT\bin.axf INCREMENTAL //bin.axf文件是生成的文
+件，根据项目需要相应修改
+setup();
+木秀于林,冲迎风霜 -- 每天积累一点点 1034 / 1226
+
+## 第 135 页
+
+Option->Debugger->Download 取消勾选 use flash loader
+13．KEIL 中启动文件详解（汇编语言）
+概述
+在嵌入式系统中，启动文件是整个系统非常关键的部分，它会进行一些底层的初始
+化，构建程序运行必要的环境，比如堆栈初始化，变量初始化等。如果启动文件出现错
+误，则整个系统就跑不起来，因此研究启动文件非常必要。
+在keil中，启动文件由汇编代码编写，一般命名为startup_xxx.s，xxx为支持的某种
+芯片，比如可以是lpc15xx（NXP的LPC15xx系列）、MK60D10（飞思卡尔）、stm32f10x
+（意法半导体stm32f10x系列）等Cortext-M0/M3/M4内核芯片。它们的代码格式非常
+相近，根据启动文件代码由上到下的编写顺序.
+可以将其分为以下5个典型部分：
+1.堆栈空间定义；
+2.存放中断向量表；
+3.复位中断函数（Reset_Handler）；
+4.其它中断异常服务函数，以及弱[WEAK]声明；
+5.将堆栈地址传递给库函数，利用库函数初始化堆栈，和库函数自身初始化。
+5个部分具体说明如下：
+1.堆栈空间定义
+如下图所示，定义了栈大小Stack_Size=0X200，即512字节；堆大小Heap_Size=
+0X100,256字节。还定义了三个标号：__initial_sp（栈顶）、__heap_base（堆起始地址）
+和__heap_limit（堆终止地址），它们的空间由SPACE关键字来申请，并记作Stack_Mem
+和Heap_Mem。
+木秀于林,冲迎风霜 -- 每天积累一点点 1035 / 1226
+
+## 第 136 页
+
+通过这些我们可以很容易的知道堆栈的大小，但是它们的绝对地址或者说基
+地址仅仅从这里是得不到的。编译器编译完工程后，根据生成.bss段（比如
+未初始化的全局变量）和.data 段（比如初始化的全局变量）的大小以及RAM
+的起始地址，来计算堆栈的基地址。
+举个例子：
+一个芯片的RAM起始地址为0x0200_0000，RAM大小为0x500字节，程序编
+译后.bss段为0x100个字节，.data段为0x100个字节。堆栈大小定义如上图。
+则：
+A：堆起始地址 __heap_base==Heap_Mem==0x0200_0200；
+B：堆终止地址即栈底 __heap_limit==Stack_Mem==0x0200_0300；
+C：栈顶地址 __initial_sp==0x0200_0500（栈是向下生长，栈顶处于RAM
+最大地址处）。
+其实，我可以在.map文件中查看堆栈的大小和基地址，如下图所示：
+2.存放中断向量表
+木秀于林,冲迎风霜 -- 每天积累一点点 1036 / 1226
+
+## 第 137 页
+
+在启动代码中，会见到许多由DCD申请空间存放的一个个函数入口，即中断
+向量表，如下图所示，只列出了部分。
+关键字DCD代表申请一个字的空间，后面的函数名即为中断服务函数入
+口地址。另外中断向量表一般存放在Flash 0地址。
+另外，对于NXP微控制器，均实现了芯片的加密，加密的设置在向量
+表的结尾处，具体地址为0x02FC处。通过在此地址存放不同的值实现是否加密
+或者加密的等级。加密分为三个等级，CRP1:0x12345678；CRP2:0x87654321；
+CRP3:0x43218765。至于每个等级的具体说明请参考芯片用户手册。下面说一下
+加密步骤，以CRP1为例：
+首先将下图中0xFFFFFFFF，修改为0x12345678。
+其次，图中IF :LNOT::DEF:NOCRP表示如果没有定义宏NOCRP则执
+行下面的代码，那么必须保证汇编中没有定义NOCRP宏。即保证下图中Define:
+一栏中没有定义NOCRP即可。
+木秀于林,冲迎风霜 -- 每天积累一点点 1037 / 1226
+
+## 第 138 页
+
+3. 复位中断函数（Reset_Handler）
+程序上电后，首先加载SP和PC，ARM规定从0地址处加载SP，从偏移为4的地
+址（0x00000004）处加载PC。然后将程序控制权交给程序。我们知道0地址处存放
+__initial_sp，0x00000004地址处存放Reset_Handler，加载PC后，程序跳转到
+Reset_Handler开始运行。Reset_Handler函数体如下图所示：
+首先调用SystemInit函数来初始化系统的各种时钟，然后调用__main函数（由KEIL
+微库或者C库实现），在__main函数中：.data段数据的初始化->.bss段变量清零->设置
+堆栈指针->库函数初始化（比如常用的malloc函数）->如果必要会设置main函数的argc
+和argv两个参数->调用用户main函数->退出。
+4．其它中断异常服务函数，以及弱[WEAK]声明
+木秀于林,冲迎风霜 -- 每天积累一点点 1038 / 1226
+
+## 第 139 页
+
+如上图所示，这里的中断服务函数是弱声明的（由[WEAK]关键字标注）。
+所谓弱声明，即：如果用户定义了相同的函数则此处函数失效而使用用户定义的
+中断服务函数。这样是为了防止用户使能了中断而没有中断服务函数，从而造成
+程序崩溃。假设使能了中断，而用户又没有定义中断服务函数则会进入默认中断，
+如下图所示，默认中断为死循环（死循环与程序崩溃不是一个概念）。
+5.将堆栈地址传递给库函数
+第三步骤中，调用__main函数，然后__main调用库函数初始化堆栈，
+但库函数并不知道堆栈的大小，因此我们需要告诉它，具体做法就是传递参数或
+声明标号。
+木秀于林,冲迎风霜 -- 每天积累一点点 1039 / 1226
+
+## 第 140 页
+
+下图为具体做法，可以看到第一行为：
+IF :DEF:__MICROLIB
+是条件编译选项，如果定义__MICROLIB，则编译图中红线上面部分，否
+则编译红线下面部分。那么就分2种情况。
+2种情况的选择可以如下实现：
+如果勾选【Options for Target】->【Target】->【Use MicroLIB】,
+如下图所示。即使用微库，则__MICROLIB会被定义，编译器编译红线以上代码。
+用EXPORT声明 __initial_sp、__heap_base和__heap_limit。
+如果不勾选【Use MicroLIB】，则缺省使用KEIL C库，上图红线以下
+会参与编译，KEIL C库函数会调用__user_initial_stackheap，通过R0~R3将
+堆栈以参数形式传递给KEIL C库。
+14．程序在 ram 运行分析
+当程序放在ram运行时，需要做如下配置，irom地址要在ram空间范围
+木秀于林,冲迎风霜 -- 每天积累一点点 1040 / 1226
+
+## 第 141 页
+
+Link时如下配置
+编译之后的代码如下
+第一行是msp，第二行是复位向量，
+木秀于林,冲迎风霜 -- 每天积累一点点 1041 / 1226
+
+## 第 142 页
+
+当仿真（软件仿真/硬件仿真）时需要添加一个.ini文件，如果不添加则无法仿
+真；下面是不添加ini文件，程序首先会跑道00地址，而此处地址在debug环
+境中是没有内容的，如下
+如果添加了ini文件，如下
+则debug会直接跳到启动地址0x20000090(地址为word对齐，所以不会是0小
+x200000091)
+木秀于林,冲迎风霜 -- 每天积累一点点 1042 / 1226
+
+## 第 143 页
+
+Ini文件相当于做了cpu的如下动作：
+1．从0地址读取msp地址
+2．从4地址读取reset地址
+3．跳转到reset地址
+所以当程序在xram运行，程序需要放在ram中，但程序的头2个word还是在
+code(flash)中。下面是仿真波形，程序预先初始化在xram,flash中。
+此场景与load在code区，exec在ram不同（程序放在code/flash中，启动时
+启动代码把主程序搬到xram，然后再在xram运行---通过分散加载文件实现）。
+由上分析可知，无论程序是在code/flash区运行还是在xram运行，cpu总是从
+0x0（code/flash区）地址启动，读取msp，然后从0x4地址读取复位向量，然
+后再根据复位向量跳转到对应的地址。
+15．启动程序分析(转)
+启动代码作用一般是：1）堆和栈的初始化；2）向量表定义；3）地址重映射及
+中断向量表的转移；
+; 4）设置系统时钟频率；5）中断寄存器的初始化；6）进入C应用程序。
+Stack_Size EQU 0x00000400 ; 定义Stack_Size为0x00000400
+AREA STACK, NOINIT, READWRITE, ALIGN=3 ;定义栈，可初始为0，8字节对齐
+Stack_Mem SPACE Stack_Size ;分配0x200个连续字节，并初始化为0
+__initial_sp ;汇编代码地址标号
+; <h> Heap Configuration
+; <o> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+Heap_Size EQU 0x00000000 ;定义Heap_Size为0x00000000
+AREA HEAP, NOINIT, READWRITE, ALIGN=3 ;定义堆，可初始为0，8字节对齐
+__heap_base
+Heap_Mem SPACE Heap_Size ;分配0x00个连续字节，并初始化为0
+木秀于林,冲迎风霜 -- 每天积累一点点 1043 / 1226
+
+## 第 144 页
+
+__heap_limit
+PRESERVE8 ; 指定当前文件堆栈8字节对齐
+THUMB ; 告诉汇编器下面是32为的Thumb指令，如果需要汇编器将插入位以保
+证对齐
+; Vector Table Mapped to Address 0 at Reset
+;以下中断向量表定义
+AREA RESET, DATA, READONLY ;定义复位向量段，只读
+EXPORT __Vectors ; 定义一个可以在其他文件中使用的全局标号。此处表示中
+断地址
+__Vectors DCD __initial_sp ; Top of Stack 给__initial_sp分配4字节32
+位的地址0x0
+DCD Reset_Handler ; Reset Handler 给标号Reset Handler分配地址为
+0x00000004
+DCD NMI_Handler ; NMI Handler 给标号NMI Handler分配地址0x00000008
+DCD HardFault_Handler ; Hard Fault Handler
+DCD 0 ; Reserved 这种形式就是保留地址，不给任何标号分配
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD SVC_Handler
+; SVCall Handler
+DCD 0 ; Reserved
+DCD 0 ; Reserved
+DCD PendSV_Handler ; PendSV Handler
+DCD SysTick_Handler ; SysTick Handler
+; External Interrupts
+木秀于林,冲迎风霜 -- 每天积累一点点 1044 / 1226
+
+## 第 145 页
+
+; maximum of 32 External Interrupts are possible
+DCD BOD_IRQHandler
+DCD WDT_IRQHandler
+DCD EINT0_IRQHandler
+DCD EINT1_IRQHandler
+DCD GPIOP0P1_IRQHandler
+DCD GPIOP2P3P4_IRQHandler
+DCD PWMA_IRQHandler
+DCD PWMB_IRQHandler
+DCD TMR0_IRQHandler
+DCD TMR1_IRQHandler
+DCD TMR2_IRQHandler
+DCD TMR3_IRQHandler
+DCD UART0_IRQHandler
+DCD UART1_IRQHandler
+DCD SPI0_IRQHandler
+DCD SPI1_IRQHandler
+DCD Default_Handler
+DCD Default_Handler
+DCD I2C_IRQHandler
+DCD Default_Handler
+DCD Default_Handler
+DCD PWRWU_IRQHandler
+DCD ADC_IRQHandler
+DCD Default_Handler
+DCD Default_Handler
+; 中断向量表的转移
+AREA |.text|, CODE, READONLY ; 代码段定义
+木秀于林,冲迎风霜 -- 每天积累一点点 1045 / 1226
+
+## 第 146 页
+
+; Reset Handler
+;ENTRY
+Reset_Handler PROC ; 标记一个函数的开始 (这里是复位子程序从0x04开始
+EXPORT Reset_Handler [WEAK] ;将Reset_Handler设为外部可引用的标号
+; [WEAK] 选项表示当所有的源文件都没有 定义这样一个标号时，
+;编译器也不给出错误信息，在多数情况下将该标号置为 0 ，
+;若该标号为 B 或 BL 指令引用，则将 B 或 BL指令置为 NOP 操作。
+;EXPORT提示编译器该标号可以为外部文件引用。
+;IMPORT SystemInit [WEAK] ;在自建工程时一般会出现这一行 ,并在复位子程
+序结束处跳到MAIN前
+;会先跳到这个初始化程序,如果你的主程序里没有这一初始化程序
+;而是在MAIN中初
+始化,将会导致编译器因找不到这一程序而报错
+;解决的办法是注解这一行，或加上 [WEAK]
+;当然后面跳到MAIN之前进初始化函数必须注解掉
+IMPORT __main ; 通知编译器要main在其他的源文件中定义，但要在当前源文
+件中引用
+LDR R0, =0x50000100 ;送立即数到R0 这个是寄存器写保护寄存器 (复位为锁
+定bit0为0)
+LDR R1, [R0, #0x10] ;将0x50000110(rc校验寄存器)处的值送到R1
+CMP R1, #0x3F ;比较0x50000110处的值与0x3f (默认的中心频率应该是0x20)
+BNE %F0 ; 如果不相等向前搜索标号为0的行，(以此实现循环，具体可看局部
+标号的知识)
+;如果相等就解锁 寄存器写保护寄存器 并 将 rc校验寄存器 设为中心值0x20
+LDR R1, =0x59
+STR R1, [R0]
+LDR R1, =0x16
+STR R1, [R0]
+LDR R1, =0x88
+木秀于林,冲迎风霜 -- 每天积累一点点 1046 / 1226
+
+## 第 147 页
+
+STR R1, [R0] ; 向0x50000100 写入0x59 0x16 0x88 解锁寄存器写保护寄存器
+(bit0为1)
+LDR R1, =0x20 ;加载0x20到R1
+STR R1, [R0, #0x10] ;将R1(0x20默认中心频率)送到0x50000110(rc校验寄存
+器)
+MOVS R1, #0 ;将0送到R1
+STR R1, [R0] ;将0写入0x50000100重锁保护寄存器
+0 ;标号
+;LDR R0, =SystemInit
+;BLX R0 ;这就是前面说的进初始化函数，如果你主程序里没有，必须注解掉。
+LDR R0, =__main ; 使用“=”表示LDR目前是伪指令不是标准指令。这里是把
+__main的地址给RO。
+BX R0 ; BX是ARM指令集和THUMB指令集之间程序的跳转
+; 也就是跳到MAIN处
+ENDP ; 复位子程序结束
+; Dummy Exception Handlers (infinite loops which can be modified)
+NMI_Handler PROC ; 函数的开始
+EXPORT NMI_Handler [WEAK] ; EXPORT NMI_Handler可外部引用 的标号
+B . ; 跳到当前行
+ENDP ; 函数的结束
+HardFault_Handler\
+PROC
+; "/"是换行的意思
+EXPORT HardFault_Handler [WEAK]
+B .
+ENDP
+SVC_Handler PROC
+EXPORT SVC_Handler [WEAK]
+B .
+木秀于林,冲迎风霜 -- 每天积累一点点 1047 / 1226
+
+## 第 148 页
+
+ENDP
+PendSV_Handler PROC
+EXPORT PendSV_Handler [WEAK]
+B .
+ENDP
+SysTick_Handler PROC
+EXPORT SysTick_Handler [WEAK]
+B .
+ENDP
+Default_Handler PROC
+EXPORT BOD_IRQHandler [WEAK]
+EXPORT WDT_IRQHandler [WEAK]
+EXPORT EINT0_IRQHandler [WEAK]
+EXPORT EINT1_IRQHandler [WEAK]
+EXPORT GPIOP0P1_IRQHandler [WEAK]
+EXPORT GPIOP2P3P4_IRQHandler [WEAK]
+EXPORT PWMA_IRQHandler [WEAK]
+EXPORT PWMB_IRQHandler [WEAK]
+EXPORT TMR0_IRQHandler [WEAK]
+EXPORT TMR1_IRQHandler [WEAK]
+EXPORT TMR2_IRQHandler [WEAK]
+EXPORT TMR3_IRQHandler [WEAK]
+EXPORT UART0_IRQHandler [WEAK]
+EXPORT UART1_IRQHandler [WEAK]
+EXPORT SPI0_IRQHandler [WEAK]
+EXPORT SPI1_IRQHandler [WEAK]
+EXPORT I2C_IRQHandler [WEAK]
+EXPORT PWRWU_IRQHandler [WEAK]
+木秀于林,冲迎风霜 -- 每天积累一点点 1048 / 1226
+
+## 第 149 页
+
+EXPORT ADC_IRQHandler [WEAK]
+BOD_IRQHandler
+WDT_IRQHandler
+EINT0_IRQHandler
+EINT1_IRQHandler
+GPIOP0P1_IRQHandler
+GPIOP2P3P4_IRQHandler
+PWMA_IRQHandler
+PWMB_IRQHandler
+TMR0_IRQHandler
+TMR1_IRQHandler
+TMR2_IRQHandler
+TMR3_IRQHandler
+UART0_IRQHandler
+UART1_IRQHandler
+SPI0_IRQHandler
+SPI1_IRQHandler
+I2C_IRQHandler
+PWRWU_IRQHandler
+ADC_IRQHandler
+B .
+ENDP
+ALIGN
+; User Initial Stack & Heap
+; 堆和栈的初始化
+IF :DEF:__MICROLIB ;；“DEF”的用法——:DEF:X 就是说X定义了则为真，否
+则为假
+EXPORT __initial_sp
+木秀于林,冲迎风霜 -- 每天积累一点点 1049 / 1226
+
+## 第 150 页
+
+EXPORT __heap_base
+EXPORT __heap_limit
+ELSE
+IMPORT __use_two_region_memory
+EXPORT __user_initial_stackheap
+__user_initial_stackheap
+LDR R0, = Heap_Mem
+LDR R1, = (Stack_Mem + Stack_Size)
+LDR R2, = (Heap_Mem + Heap_Size)
+LDR R3, = Stack_Mem
+BX LR
+ALIGN
+ENDIF
+END
+如下图配置
+其产生的.map文件如下
+木秀于林,冲迎风霜 -- 每天积累一点点 1050 / 1226
+
+## 第 151 页
+
+其中reset影射到了0xc00
+_vectors中断向量基地址,所有的中断入口地址为_vectors+offset,如下图
+vector表格,DCD表示4个BYTE,M0无VECTORS寄存器,所以中断入口地址固
+定,M0+才有该寄存器,可以配置
+木秀于林,冲迎风霜 -- 每天积累一点点 1051 / 1226
+
+## 第 152 页
+
+中断入口地址为4*(numb+1);如_IRQ_TIMER2_Handler的入口地址为
+(20+1)*4=84(0x54),此处放的跳转指令,跳到对应的中断服务程序,如下为
+0x340地址
+木秀于林,冲迎风霜 -- 每天积累一点点 1052 / 1226
+
+## 第 153 页
+
+16．下载程序
+当用keil工具下载程序时，由于不同的芯片操作flash的方法不同，所
+以需要添加一个.FLM文件在如下位置（把生成的flm文件copy到安装目
+录下的一个叫flash的文件夹下 ）
+上图中HL55HEXXXXXX文件就是我们根据flash的特性用keil生成的一
+个.flm文件，
+.flm文件就是.axf文件，只是要求.flm为后缀
+含program,erase函数，如下
+#include "FlashOS.H" // FlashOS Structures
+typedef volatile unsigned long vu32;
+#define M32(adr) (*((vu32 *) (adr)))
+// Peripheral Memory Map
+#define FLASH_BASE 0x40020000
+#define FLASH ((FLASH_TypeDef*) FLASH_BASE)
+// Flash Registers
+typedef struct {
+vu32 FOSR; // offset
+0x000
+木秀于林,冲迎风霜 -- 每天积累一点点 1053 / 1226
+
+## 第 154 页
+
+vu32 FOCR; // offset
+0x004
+vu32 TADR; // offset
+0x008
+vu32 WRDR; // offset
+0x00C
+vu32 OCMR; // offset
+0x010
+vu32 RDDR; // offset
+0x014
+vu32 CWCR; // offset
+0x018
+vu32 FWCR; // offset
+0x01C
+vu32 FPSR; // offset
+0x020
+} FLASH_TypeDef;
+int Init (unsigned long adr, unsigned long clk, unsigned long
+fnc) {
+/* Add your Code */
+return (0); // Finished
+without Errors
+}
+int UnInit (unsigned long fnc) {
+木秀于林,冲迎风霜 -- 每天积累一点点 1054 / 1226
+
+## 第 155 页
+
+/* Add your Code */
+return (0); // Finished
+without Errors
+}
+int EraseChip (void) {
+FLASH->FOCR = 0xa; // Mass Erase
+Enabled
+FLASH->OCMR = 0xa; // Start Erase
+while (FLASH->OCMR) {
+; // Reload Read
+}
+return (0); // Finished
+without Errors
+}
+int EraseSector (unsigned long adr) {
+FLASH->FOCR = 0x9; // Mass Erase
+Enabled
+FLASH->TADR = adr;
+FLASH->OCMR = 0xa; // Start Erase
+while (FLASH->OCMR) {
+; // Reload Read
+}
+return (0); // Finished
+without Errors
+}
+木秀于林,冲迎风霜 -- 每天积累一点点 1055 / 1226
+
+## 第 156 页
+
+int ProgramPage (unsigned long adr, unsigned long sz, unsigned
+char *buf) {
+FLASH->FOCR = 0xc; // write page enable
+FLASH->TADR = adr; // write page address
+FLASH->CWCR = sz; // write size, count in bytes
+FLASH->OCMR = 0xa; // Start write
+while(sz) {
+FLASH->WRDR = *((unsigned int *)buf); // Program Word
+buf += 4;
+sz -= 4;
+}
+while(FLASH->OCMR);
+return (0); // Finished without Errors
+}
+上面函数是标准接口，固定的函数名，不能改。
+"FlashOS.H"文件内容如下
+#define VERS 1 // Interface Version 1.01
+#define UNKNOWN 0 // Unknown
+#define ONCHIP 1 // On-chip Flash Memory
+#define EXT8BIT 2 // External Flash Device on
+8-bit Bus
+#define EXT16BIT 3 // External Flash Device on
+16-bit Bus
+#define EXT32BIT 4 // External Flash Device on
+32-bit Bus
+木秀于林,冲迎风霜 -- 每天积累一点点 1056 / 1226
+
+## 第 157 页
+
+#define EXTSPI 5 // External Flash Device on
+SPI
+#define SECTOR_NUM 512 // Max Number of Sector Items
+#define PAGE_MAX 65536 // Max Page Size for
+Programming
+struct FlashSectors {
+unsigned long szSector; // Sector Size in Bytes
+unsigned long AddrSector; // Address of Sector
+};
+#define SECTOR_END 0xFFFFFFFF, 0xFFFFFFFF
+struct FlashDevice {
+unsigned short Vers; // Version Number and
+Architecture
+char DevName[128]; // Device Name and
+Description
+unsigned short DevType; // Device Type: ONCHIP,
+EXT8BIT, EXT16BIT, ...
+unsigned long DevAdr; // Default Device Start
+Address
+unsigned long szDev; // Total Size of Device
+unsigned long szPage; // Programming Page Size
+unsigned long Res; // Reserved for future
+Extension
+unsigned char valEmpty; // Content of Erased Memory
+unsigned long toProg; // Time Out of Program Page
+Function
+unsigned long toErase; // Time Out of Erase Sector
+Function
+木秀于林,冲迎风霜 -- 每天积累一点点 1057 / 1226
+
+## 第 158 页
+
+struct FlashSectors sectors[SECTOR_NUM];
+};
+#define FLASH_DRV_VERS (0x0100+VERS) // Driver Version, do
+not modify!
+// Flash Programming Functions (Called by FlashOS)
+extern int Init (unsigned long adr, //
+Initialize Flash
+unsigned long clk,
+unsigned long fnc);
+extern int UnInit (unsigned long fnc); //
+De-initialize Flash
+extern int BlankCheck (unsigned long adr, //
+Blank Check
+unsigned long sz,
+unsigned char pat);
+extern int EraseChip (void); // Erase
+complete Device
+extern int EraseSector (unsigned long adr); //
+Erase Sector Function
+extern int ProgramPage (unsigned long adr, // Program
+Page Function
+unsigned long sz,
+unsigned char *buf);
+extern unsigned long Verify (unsigned long adr, //
+Verify Function
+unsigned long sz,
+unsigned char *buf);
+同时需要定义一个flash的结构体如下
+#include "FlashOS.H" // FlashOS Structures
+木秀于林,冲迎风霜 -- 每天积累一点点 1058 / 1226
+
+## 第 159 页
+
+struct FlashDevice const FlashDevice = {
+FLASH_DRV_VERS, // Driver Version, do not
+modify!
+"HL55FHEF512KX32GSA", // Device Name，看上图选择的
+名字就是在此设定
+ONCHIP, // Device Type
+0x000000, // Device Start Address
+0x00040000, // Device Size in Bytes (fpga
+actually 256K, IC is 4MB)
+1024, // Programming Page Size
+0, // Reserved, must be 0
+0xFF, // Initial Content of Erased
+Memory
+100, // Program Page Timeout 100
+mSec
+3000, // Erase Sector Timeout 3000
+mSec
+// Specify Size and Address of Sectors
+0x01000, 0x000000, // Sector Size 4kB (64 Sector)
+SECTOR_END
+};
+注意：上述内容在keil安装目录下，flash文件夹中有范例。
+下载程序时，需要根据情况加入.ini文件，如下图 ：
+木秀于林,冲迎风霜 -- 每天积累一点点 1059 / 1226
+
+## 第 160 页
+
+Flash.ini文件内容如下：
+DEFINE LONG tmp;
+DEFINE INT tmp1;
+FUNC void Setup(void)
+{
+SP = _RDWORD(0x00000000); //设置SP存放地址
+PC = _RDWORD(0x00000004); //设置pc指针
+_WDWORD(0XE000ED08,0X00000000);// 0XE000ED08为中断向量
+寄存器地址,只有M0+以上内核才有此寄存器,m0无此寄存器
+}
+LOAD ..\OUTPUT\bin.axf INCREMENTAL
+setup();
+程序放在xram空间时.ini文件为
+DEFINE LONG tmp;
+DEFINE INT tmp1;
+FUNC void Setup(void) //整个地址偏移0x2000_0000
+{
+SP = _RDWORD(0x20000000);
+PC = _RDWORD(0x20000004);
+木秀于林,冲迎风霜 -- 每天积累一点点 1060 / 1226
+
+## 第 161 页
+
+_WDWORD(0XE000ED08,0X20000000);
+}
+LOAD ..\OUTPUT\bin.axf INCREMENTAL
+setup();
+因为程序是固定从0地址取sp，从4地址取pc，上面就是告诉工具从哪
+个地方获得相关数据
+17．下载配置图解(转)
+请注意图中标注部分，左上方的Download Function是告诉下载程序算
+法需要做的事情。通常情况下选择图示三个即可。擦除，下载和效验。
+1. 关键的是如何知道 RAM for Algorithm 的起始地址和 size。首先看你前
+面选择的MCU，这是你调试的基础，打开其datasheet，以STM32F0X系列
+为例，如图示部分，SRAM的地址和大小清晰可见。为什么和SRAM有关呢？
+因为Keil首先通过SW接口协议将程序下载到SRAM中然后才会调用FLAS
+H算法将程序烧录。
+木秀于林,冲迎风霜 -- 每天积累一点点 1061 / 1226
+
+## 第 162 页
+
+2. 接下来就需要找到属于该芯片的flash算法了，请看下图中的蓝色标注部
+分，那个算法如何得来的呢？请点击ADD按钮，将会弹出一个对话框。
+3. 请下拉滚动条，你将会看到很多的算法，找到属于你的算法。
+木秀于林,冲迎风霜 -- 每天积累一点点 1062 / 1226
+
+## 第 163 页
+
+4. 前面提到了通用算法的选择，那么问题来了，这个算法文件如何来的呢？
+如果你所用的MCU不是默认支持的品牌，如何编写属于自己的算法呢？
+5. 工具/原料
+6. Keil uVisionULINK2仿真器百度经验:jingyan.baidu.com
+7. 方法/步骤
+1 打开 Keil 安装所在文件夹，如图示路径，你可以看到算法存储位置，
+也就是说你通过ADD按钮所选择的程序来自于这里，但是这个文件是如何
+来的呢？
+木秀于林,冲迎风霜 -- 每天积累一点点 1063 / 1226
+
+## 第 164 页
+
+步骤阅读2拖动滚动条，可以找到这样一个文件夹，如图示，打开它发现
+一个Keil工程，这就是flash算法的源码。
+步骤阅读步骤阅读 3 打开这个工程，工程里面主要是两个 C file，注意
+图中标示。其中 FlashDev.c 文件顾名思义是设备 Flash 的接口定义，我
+们可以看到里面有STM32F0xx系列的接口。
+木秀于林,冲迎风霜 -- 每天积累一点点 1064 / 1226
+
+## 第 165 页
+
+步骤阅读4任意截图一例如下图，这是一个结构体，右边有相应的注释。
+从注释上看，Device Name是可以更改，这个也就是你点击ADD按钮时所
+呈现的名字。接下来有 Device start address 和 Device size。继续定
+义programming page size，初始化内容填充值，一个 page 下载的 time
+out，擦除一个sector的timeout。 sector size等，看起来应该很清晰
+明白。
+步骤阅读5有了这些接口定义就对flash本身有了很清楚的了解，我们在
+看FlashPrg.c 文件。这是算法主文件。文件的开头是一些结构体和宏的
+定义。请仔细阅读你所选择的芯片的flash部分寄存器定义，你就可以找
+到。
+木秀于林,冲迎风霜 -- 每天积累一点点 1065 / 1226
+
+## 第 166 页
+
+步骤阅读6接下来可注意到下面有不同的函数定义，Init()函数很显然是
+对flash的一个初始化，仔细阅读芯片specification即可知道。对应的
+是UnInit()。你还可以看到int EraseChip (void) ， int EraseSecto
+r (unsigned long adr)，int ProgramPage (unsigned long adr, unsi
+gned long sz, unsigned char *buf)， 是不是很熟悉的感觉？
+步骤阅读7让我们再次回顾下图中蓝色标注部分，你可看到其实在下载之
+初你已经选择过类似的接口，下载过程中将会调用出现在该文件中的程序，
+木秀于林,冲迎风霜 -- 每天积累一点点 1066 / 1226
+
+## 第 167 页
+
+而如果你自己编写，就只要替换其中的代码即可，接口 Keil 已经为你准
+备完毕。如何编写，那么清仔细阅读相应flash controller章节的定义。
+18．Keil 内存解说
+keil编译后code，RO-data,RW-data,ZI-data含义及mcu的flash实际存储数据
+bss段：
+bss段（bss segment）通常是指用来存放程序中未初始化的全局变量的一块内存区域。
+bss是英文Block Started by Symbol的简称。
+bss段属于静态内存分配。
+data段：
+数据段（data segment）通常是指用来存放程序中已初始化的全局变量的一块内存区域。
+数据段属于静态内存分配。 初始化的内容是变异在rom，上电时从rom读出再写入到该区
+域中。全局变量是在编译时就分配好的，与静态变量一样
+text段：
+代码段（code segment/text segment）通常是指用来存放程序执行代码的一块内存区域。
+这部分区域的大小在程序运行前就已经确定，并且内存区域通常属于只读(某些架构也允许
+代码段为可写，即允许修改程序)。
+在代码段中，也有可能包含一些只读的常数变量，例如字符串常量等。
+堆（heap）：
+堆是用于存放进程运行中被动态分配的内存段，它的大小并不固定，可动态扩张或缩减。
+当进程调用malloc等函数分配内存时，新分配的内存就被动态添加到堆上（堆被扩张）；
+当利用free等函数释放内存时，被释放的内存从堆中被剔除（堆被缩减）。--与stack对
+应，不过是由用户来申请内存
+栈(stack)：
+栈又称堆栈，是用户存放程序临时创建的局部变量，---在map文件中看不到函数中定义的
+变量，这些变量在运行过程中自动分配在stack中，所以如果定义和的变量大小大于stack的大
+小，则会报内存益出。全局变量/静态变量才能在map文件看到。
+也就是说我们函数括弧“{}”中定义的变量（但不包括static声明的变量，static意味着
+在数据段中存放变量）。
+除此以外，在函数被调用时，其参数也会被压入发起调用的进程栈中，并且待到调用结束后，
+函数的返回值也会被存放回栈中。
+由于栈的先进先出(FIFO)特点，所以栈特别方便用来保存/恢复调用现场。
+从这个意义上讲，我们可以把堆栈看成一个寄存、交换临时数据的内存区。
+木秀于林,冲迎风霜 -- 每天积累一点点 1067 / 1226
+
+## 第 168 页
+
+一个程序本质上都是由bss段、data段、text段三个组成的。
+这样的概念，不知道最初来源于哪里的规定，但在当前的计算机程序设计中是很重要的一个
+基本概念。
+而且在嵌入式系统的设计中也非常重要，牵涉到嵌入式系统运行时的内存大小分配，存储单
+元占用空间大小的问题。
+在采用段式内存管理的架构中（比如intel的80x86系统），bss段通常是指用来存放程序
+中未初始化的全局变量的一块内存区域，
+一般在初始化时bss 段部分将会清零。bss段属于静态内存分配，即程序一开始就将其清零
+了。
+比如，在C语言之类的程序编译完成之后，已初始化的全局变量保存在.data 段中，未初始
+化的全局变量保存在.bss 段中。
+text和data段都在可执行文件中（在嵌入式系统里一般是固化在镜像文件中），由系统从
+可执行文件中加载；
+而bss段不在可执行文件中，由系统初始化。
+【例】
+两个小程序如下：
+程序1:
+int ar[30000];
+void main()
+{
+......
+}
+程序2:
+int ar[300000] = {1, 2, 3, 4, 5, 6 };
+void main()
+{
+......
+}
+发现程序2编译之后所得的.exe文件比程序1的要大得多。当下甚为不解，于是手工编译了一
+下，并使用了/FAs编译选项来查看了一下其各自的.asm，
+发现在程序1.asm中ar的定义如下：
+_BSSSEGMENT
+?ar@@3PAHADD0493e0HDUP(?) ;ar
+_BSSENDS
+而在程序2.asm中，ar被定义为：
+_DATASEGMENT
+?ar@@3PAHADD01H ;ar
+DD02H
+DD03H
+ORG$+1199988
+木秀于林,冲迎风霜 -- 每天积累一点点 1068 / 1226
+
+## 第 169 页
+
+_DATAENDS
+区别很明显，一个位于.bss段，而另一个位于.data段，两者的区别在于：
+全局的未初始化变量存在于.bss段中，具体体现为一个占位符；
+全局的已初始化变量存于.data段中；--从rom读取数据再写入到ram中
+而函数内的自动变量都在栈上分配空间；
+.bss是不占用.exe文件空间的，其内容由操作系统初始化（清零）；--对此处ram空间写0
+.data却需要占用，其内容由程序初始化。因此造成了上述情况。
+bss段（未手动初始化的数据）并不给该段的数据分配空间，只是记录数据所需空间的大小；
+bss段的大小从可执行文件中得到，然后链接器得到这个大小的内存块，紧跟在数据段后面。
+data段（已手动初始化的数据）则为数据分配空间，数据保存在目标文件中；内容放在rom中
+data段包含经过初始化的全局变量以及它们的值。当这个内存区进入程序的地址空间后全部清
+零。
+包含data段和bss段的整个区段此时通常称为数据区
+在系统初始化过程中，系统从rom读取数据写入data区，而对bss区直接写0
+中断过程中 r0 问题
+在主函数和中断中有对同一个寄存器操作,目的是改变不同的位,但实际上与
+设计目的不符,因为在中断过程中改变了r1寄存器,退出后直接使用了r1,
+在下图红色处进入中断,蓝色为下一条是准备把r1相关的值写入寄存器中,
+但此时进入中断响应.
+下图是退出中断的程序(中断函数部分),注意红色部分,此时的r1已经修改
+过的
+木秀于林,冲迎风霜 -- 每天积累一点点 1069 / 1226
+
+## 第 170 页
+
+当完全退出该中断然后进入上面蓝色指令,则蓝色指令写给r0的值并非在
+main修改过的内容,而是在中断函数修改过的内容
+M3实现上下文切换
+木秀于林,冲迎风霜 -- 每天积累一点点 1070 / 1226
+
+## 第 171 页
+
+MIPS 知识
+Mips 核结构
+流水线操作：五级流水线操作
+I:I Stage: Instruction Fetch；
+E：E Stage: Execution；
+M：M Stage: Memory Fetch；
+A：A Stage: Align；
+W：W Stage: Writeback
+木秀于林,冲迎风霜 -- 每天积累一点点 1071 / 1226
+
+## 第 172 页
+
+Mips 寄存器
+1.status 状态寄存器
+31 28 27 26 25 24 16 15 8 7 6 5 4 3 2 1 0
+------------------------------------------------------------------
+| cu0-3|RP|FR|RE| Diag Status| IM7-IM0
+|KX|SX|UX|KSU|ERL|EXL|IE|
+------------------------------------------------------------------
+其中KSU,ERL,EXL,IE位在这里很重要:
+KSU: 模式位 00 -kernel 01--Supervisor 10--User
+ERL: error level,0->normal,1->error
+EXL: exception level,0->normal,1->exception,异常发生是EXL自
+动置1
+IE: interrupt Enable, 0 -> disable interrupt,1->enable
+interrupt
+(IM位则可以用于enbale/disable具体某个中断,ERL||EXL=1 也使得
+中断不能响应)
+系统所处的模式由KSU,ERL,EXL决定:
+User mode: KSU = 10 && EXL=0 && ERL=0
+Supervisor mode(never used): KSU=01 && EXL=0 && ERL=0
+Kernel mode: KSU=00 || EXL=1 || ERL=1
+2.cause寄存器
+31 30 29 28 27 16 15 8 7 6 2 1 0
+----------------------------------------------------------------
+|BD|0 | CE | 0 | IP7 - IP0 |0|Exc code | 0 |
+----------------------------------------------------------------
+木秀于林,冲迎风霜 -- 每天积累一点点 1072 / 1226
+
+## 第 173 页
+
+异常发生时cause被自动设置
+其中:
+BD指示最近发生的异常指令是否在delay slot中
+CE发生coprocessor unusable异常时的coprocessor编号(mips有4个cp)
+IP: interrupt pending, 1->pending,0->no interrupt,CPU有6个中断
+引脚,加上两个软件中断(最高两个)
+Exc code:异常类型,所有的外设中断为0,系统调用为8,...
+3.EPC寄存器（PC写入EPC寄存器中）
+对一般的异常,EPC包含:
+. 导致异常的指令地址(virtual)
+or. if 异常在delay slot指令发生,该指令前面那个跳转指令的地址
+当EXL=1时,处理器不写EPC
+上面 Exc code的意义
+Table 5.13 Cause Register ExcCode Field
+1-3 16#00-16#03 - Reserved
+4 16#04 AdEL Address error exception (load or instruction fetch)
+5 16#05 AdES Address error exception (store)
+6 16#06 IBE Bus error exception (instruction fetch)
+7 16#07 DBE Bus error exception (data reference: load or store)
+8 16#08 Sys Syscall exception
+9 16#09 Bp Breakpoint exception
+10 16#0a RI Reserved instruction exception
+11 16#0b CpU Coprocessor Unusable exception
+12 16#0c Ov Arithmetic Overflow exception
+13 16#0d Tr Trap exception
+14-15 16#0e-16#0f - Reserved
+16 16#10 IS1 Implementation-Specific Exception 1 (COP2)
+17 16#11 CEU CorExtend Unusable
+18 16#12 C2E Coprocessor 2 exceptions
+木秀于林,冲迎风霜 -- 每天积累一点点 1073 / 1226
+
+## 第 174 页
+
+19-31 16#13-16#1f - Reserved
+MIPS将存储空间划分为4大块--kuseg, kseg0,kseg1 and kseg2.
+------------------------------------------------------------------
+0xFFFF FFFF
+mapped kseg2
+0xC000 0000
+unmapped uncached kseg1
+0xA000 0000
+unmapped cached kseg0
+0x8000 0000
+2G kuseg
+0x0000 0000
+当开电(Power On)的时候，只有kseg0 and kseg1 是可以存取的。MIPS CPU
+通过TLB 来translates all virtual addresses generated by the CPU
+MIPS32TM 体系结构含有32 个通用寄存器（GPR），记为$0-$31。有几个特殊
+寄存器需要特别注意，$0 寄存器中始终包含零值， $1 寄存器留给汇编器
+（Assembler）使用作为中间寄存器，$26 和$27 寄存器留作操作系统专用，
+$28为全局指针（GP，Globl Pointer），$29 通常用作堆栈指针（SP，Stack
+Pointer），$30 为帧指针（FP，FramePointer），$31 寄存器通常用来存放
+程序的返回地址（RA，Return Address）。除$0 寄存器外，其余的只是约定
+俗成的用法，在硬件实现上并没有区别。具体用法可参考附录B 和文献[1][14]。
+木秀于林,冲迎风霜 -- 每天积累一点点 1074 / 1226
+
+## 第 175 页
+
+MIPS32TM 还含有3 个特殊寄存器（SPR），分别是PC 指针、高位寄存器Hi 和
+低位寄存器Lo。PC 指针中包含当前正在执行指令的地址，也称为程序计数器。
+Hi 和Lo 两个寄存器是乘法和除法指令的专用寄存器。
+MIPS 体系结构下，程序计数器不是一个寄存器，其实你最好不要去那样想。
+在一个具有流水线的CPU 中，程序计数器的值在一个给定的时刻有多个可选
+值。这一点有点
+迷惑人。jal 指令的返回地址跟随其后的第二条指令。
+寄存器编号 助记符 用法
+0 zero 永远返回值为0
+1 at 用做汇编器的暂时变量
+2-3 v0, v1 子函数调用返回结果,如果这两个寄存器不够存放需
+要返回的值，编译器将会通过内存来完成
+4-7 a0-a3 子函数调用的参数
+8-15 t0-t7 暂时变量，子函数使用时不需要保存与恢复(t0~t9用
+法一致)
+24-25 t8-t9 依照约定，一个子函数可以不用保存并随便的使用这
+些寄存器。在作表达式计算时，这些寄存器是非常好的暂时变量。编译器/程
+序员必须注意的是， 当调用一个子函数时，这些寄存
+器中的值有可能被子函数破坏掉
+16-25 s0-s7 子函数寄存器变量。子函数必须保存和恢复使用过的变
+量在函数返回之前，从而调用函数知道这些寄存器的值没有变化。子函数必须
+保证当函数返回时这 些寄存器的内容必须恢复到函数
+调用以前的值，或者在子函数里不用这些寄存器或把它们保存在堆栈上并在函
+数退出时恢复。
+26,27 k0,k1 通常被中断或异常处理程序使用作为保存一些系统参
+数
+28 gp 全局指针。一些运行系统维护这个指针来更方便的存取
+“static“和”extern"变量。
+木秀于林,冲迎风霜 -- 每天积累一点点 1075 / 1226
+
+## 第 176 页
+
+29 sp 堆栈指针
+30 s8/fp 第9 个寄存器变量。子函数可以用来做桢指针
+31 ra 子函数的返回地□
+C 名字 MIPS 名字 大小(字节) 汇编助记符
+longlong dword 8 "d"代表ld
+int/long word 4 "w"代表lw
+short halfword 2 "h"代表lh
+char byte 1 "b"代表lb
+在函数调用时，MIPS先把PC保留到RZ，在把S0，S1保留，返回函数时，在
+出栈，MIPS函数调用的内容由编译器决定，而不是是核硬件来保护现场
+异常,中断,初始化：
+当一个异常发生,系统的顺序执行被中断时,流水线(PIPELINE)的CPU 将会有
+几条指令出于流水线的不同阶段(STAGE).因为我们不想中断处理破坏程序的
+正常执行,对于没有执行完的指令,我们必需记住它们执行到哪一个阶段,以便
+在中断处理之后能恢复程序执行.
+核根据STATE，CAUSE寄存器来判断是什么类型的中断
+C 语言开发常用的定义
+typedef unsigned char UINT8;
+typedef signed char INT8;
+typedef unsigned short UINT16;
+typedef signed short INT16;
+typedef unsigned int UINT32;
+typedef signed int INT32;
+typedef unsigned long long UINT64;
+typedef signed long long INT64;
+木秀于林,冲迎风霜 -- 每天积累一点点 1076 / 1226
+
+## 第 177 页
+
+#define REG8( addr ) (*(volatile UINT8 *) (addr))
+#define REG16( addr ) (*(volatile UINT16 *)(addr))
+#define REG32( addr ) (*(volatile UINT32 *)(addr))
+#define REG64( addr ) (*(volatile UINT64 *)(addr))
+Mips 开发工程
+MIPS环境采用MAKEFILE管理的方式来实现，如下：
+CC = sde-gcc
+LD = sde-ld
+OBJCOPY = sde-objcopy
+OBJDUMP = sde-objdump
+#==================================================================
+==
+# tagert names
+#==================================================================
+==
+IMAGE_BASENAME = scd
+IMAGENAME = $(IMAGE_BASENAME)
+# REC\ELF\MAP\DIS names
+SREC = $(IMAGENAME).rec
+ELF = $(IMAGENAME).elf
+MAP = $(IMAGENAME).map
+DIS = $(IMAGENAME).dis
+BIN = $(IMAGENAME).bin
+木秀于林,冲迎风霜 -- 每天积累一点点 1077 / 1226
+
+## 第 178 页
+
+#==================================================================
+==
+# dir path
+#==================================================================
+==
+ROOT = .
+TARGET = $(IMAGE_BASENAME)
+#set source dir
+LNKDIR = $(ROOT)/script
+OBJDIR = $(ROOT)/bin/$(TARGET)
+MAKDIR = $(ROOT)/bin/$(TARGET)
+INCDIR = $(ROOT)/include/
+LIBDIR = $(ROOT)/API
+SRCDIR = $(ROOT)/boot \
+$(ROOT)/app/$(TARGET) $(ROOT)/app/$(TARGET)/testcase
+MIPS16SRCDIR = $(ROOT)/sha
+#set target dir
+IMAGE_SREC = $(OBJDIR)/$(SREC)
+IMAGE_DIS = $(OBJDIR)/$(DIS)
+IMAGE_ELF = $(OBJDIR)/$(ELF)
+IMAGE_MAP = $(OBJDIR)/$(MAP)
+IMAGE_BIN = $(OBJDIR)/$(BIN)
+#set clean dir/files
+木秀于林,冲迎风霜 -- 每天积累一点点 1078 / 1226
+
+## 第 179 页
+
+CLEAN_FILES = $(OBJDIR)/*.o $(OBJDIR)/*.bin $(OBJDIR)/*.elf
+$(OBJDIR)/*.rec $(OBJDIR)/*.map $(OBJDIR)/*.dis $(LIBDIR)/*.o
+$(MIPS16SRCDIR)/*.o
+#==================================================================
+==
+# Building Options
+#==================================================================
+==
+# Preprocessor Options
+DEBUG = -D_DEBUG_
+SIMULATE = -D_SIMULATE_
+REV_OPTS = '-D_REVMAJ_="$(REVMAJ)"' '-D_REVMIN_="$(REVMIN)"'
+P_OPTS = $(DEBUG) $(SIMULATE) $(REV_OPTS)
+# Warning Options
+W_OPTS = -Wimplicit -Wformat
+# Debugging Options
+D_OPTS = -g -D_32_
+# Directory Options
+I_OPTS = -I $(INCDIR)
+# Assembler Options
+A_OPTS = -D_ASSEMBLER_ -DEL
+# Optimization Options
+O_OPTS = -G0 -fno-builtin
+木秀于林,冲迎风霜 -- 每天积累一点点 1079 / 1226
+
+## 第 180 页
+
+O_OPTSNEW = -Os
+# mips16 Options
+MIPS16_OPTS= -mips16e
+# Machine Options
+CPUTUNE = -mtune=m4k
+ENDIAN = -EL
+M_OPTS = $(CPUTUNE) $(ENDIAN)
+# Overall Options
+CC_OPTS = $(M_OPTS) \
+$(P_OPTS) \
+$(I_OPTS) \
+$(O_OPTS) \
+$(W_OPTS) \
+$(D_OPTS) \
+$(MIPS16_OPTS) \
+$(O_OPTSNEW) \
+CC_MIPS16_OPTS = $(M_OPTS) \
+$(P_OPTS) \
+$(I_OPTS) \
+$(O_OPTS) \
+$(W_OPTS) \
+$(D_OPTS) \
+$(MIPS16_OPTS) \
+$(O_OPTSNEW) \
+木秀于林,冲迎风霜 -- 每天积累一点点 1080 / 1226
+
+## 第 181 页
+
+CC_OPTS_AS = $(CC_OPTS) $(A_OPTS)
+# Linker Options
+LD_SCRIPT = $(LNKDIR)/default.xn
+LD_OPTS = -L$(LIBDIR)
+LD_MIPS16_OPTS = -L$(MIPS16SRCDIR)
+OFORMAT = elf32-tradlittlemips
+# Objdump Options
+OBJDP_OPTS = -S --disassemble-all
+#==================================================================
+==
+# compiler files
+#==================================================================
+==
+VPATH = $(SRCDIR)
+# source files
+SRC_C = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.c))
+SRC_S = $(foreach dir, $(SRCDIR), $(wildcard $(dir)/*.S))
+SRC_H = $(foreach dir, $(SRCDIR) $(INCDIR), $(wildcard $(dir)/*.h))
+SRC_LIB_C = $(foreach dir, $(LIBDIR), $(wildcard $(dir)/*.c))
+SRC_LIB_S = $(foreach dir, $(LIBDIR), $(wildcard $(dir)/*.S))
+SRC_MIPS16_C = $(foreach dir, $(MIPS16SRCDIR), $(wildcard
+$(dir)/*.c))
+SRC = $(SRC_S) $(SRC_C)
+木秀于林,冲迎风霜 -- 每天积累一点点 1081 / 1226
+
+## 第 182 页
+
+# target files
+OBJ_C = $(notdir $(patsubst %.c, %.o, $(SRC_C)))
+OBJ_S = $(notdir $(patsubst %.S, %.o, $(SRC_S)))
+OBJ_LIB_C = $(patsubst %.c, %.o, $(SRC_LIB_C))
+OBJ_LIB_S = $(patsubst %.S, %.o, $(SRC_LIB_S))
+OBJ = $(OBJ_S) $(OBJ_C)
+OBJ_ATT = $(addprefix $(OBJDIR)/,$(OBJ_C))
+OBJ_LIB = $(OBJ_LIB_C) $(OBJ_LIB_S)
+OBJ_MIPS16 = $(patsubst %.c, %.o, $(SRC_MIPS16_C))
+#==================================================================
+==
+# target building
+#==================================================================
+==
+.PHONY : release clean dep
+# build
+all: $(IMAGE_DIS)
+sde-conv -f bin $(IMAGE_ELF) -o $(IMAGE_BIN)
+lib: $(OBJ_LIB)
+$(IMAGE_DIS) : $(IMAGE_ELF)
+$(OBJDUMP) $(OBJDP_OPTS) $(IMAGE_ELF) > $(IMAGE_DIS)
+mips16: $(OBJ_MIPS16)
+$(IMAGE_DIS) : $(IMAGE_ELF)
+$(OBJDUMP) $(OBJDP_OPTS) $(IMAGE_ELF) > $(IMAGE_DIS)
+木秀于林,冲迎风霜 -- 每天积累一点点 1082 / 1226
+
+## 第 183 页
+
+release :
+$(MAKE) clean
+$(MAKE) all
+$(IMAGE_SREC) : $(IMAGE_ELF)
+$(OBJCOPY) -O srec $(IMAGE_ELF) $(IMAGE_SREC)
+$(IMAGE_ELF) : $(OBJ) $(OBJ_LIB) $(OBJ_MIPS16) $(LD_SCRIPT)
+$(LD) $(LD_OPTS) $(LD_MIPS16_OPTS) -T $(LD_SCRIPT) -EL -o $(IMAGE_ELF)
+-Map $(IMAGE_MAP) --oformat $(OFORMAT) $(OBJ_ATT) $(OBJ_LIB)
+$(OBJ_MIPS16)
+# compile
+$(OBJ_C) : %.o : %.c
+$(CC) -c $(CC_OPTS) -o $(OBJDIR)/$@ $<
+$(OBJ_S) : %.o : %.S
+$(CC) -c $(CC_OPTS_AS) -o ./boot/$@ $<
+$(OBJ_LIB_C) : %.o : %.c
+$(CC) -c $(CC_OPTS) -o $@ $<
+$(OBJ_MIPS16) : %.o : %.c
+$(CC) -c $(CC_MIPS16_OPTS) -o $@ $<
+$(OBJ_LIB_S) : %.o : %.S
+$(CC) -c $(CC_OPTS_AS) -o $@ $<
+木秀于林,冲迎风霜 -- 每天积累一点点 1083 / 1226
+
+## 第 184 页
+
+# makefile
+$(OBJ) : $(MAKDIR)
+$(OBJ_LIB) : $(MAKDIR)
+$(OBJ_MIPS16) : $(MAKDIR)
+# clean
+clean :
+-$(RM) -f $(CLEAN_FILES)
+-$(CD) $(EL_PATH): $(RM) -f $(CLEAN_FILES)
+# depend
+dep:
+$(CC) $(INCDIR) -M $(SRC) > ./depend.mk
+-include ./depend.mk
+而与ARM对应的分散加载文件采用如下方式：文件后缀.xn
+*******************************************************************
+*****/
+OUTPUT_ARCH(mips)
+/**** Start point ****/
+ENTRY(_start)
+MEMORY
+{
+木秀于林,冲迎风霜 -- 每天积累一点点 1084 / 1226
+
+## 第 185 页
+
+FLASH(rwx): ORIGIN = 0xBFd08000, LENGTH = 576K
+ram(!rw):ORIGIN = 0xb2000000, LENGTH = 24K
+}
+SECTIONS
+{
+/**** Code and read-only data ****/
+.text_app 0xBFd08000:
+{
+_ftext_init = ABSOLUTE(.);
+./boot/Init.o(.text)
+./boot/sysapi.o (.text)
+*(.text)
+*(.rodata)
+*(.rodata.*)
+. = ALIGN(8);
+/*
+_fdata = ABSOLUTE(.); /* Start of initialised data */
+*(.data)
+. = ALIGN(8);
+*/
+_etext_init = ABSOLUTE(.);
+} >FLASH = 0
+木秀于林,冲迎风霜 -- 每天积累一点点 1085 / 1226
+
+## 第 186 页
+
+/**** Initialised data ****/
+_etext = ABSOLUTE(0xb2000000);
+.RAM_SEC :
+AT(_etext)
+{
+_sp = ABSOLUTE(. + 0x6000);
+_fdata = ABSOLUTE(.); /* Start of initialised data */
+*(.data)
+. = ALIGN(8);
+_gp = ABSOLUTE(. + 0x2000); /* Base of small data */
+*(.lit8)
+*(.lit4)
+*(.sdata)
+. = ALIGN(8);
+_edata = ABSOLUTE(.); /* End of initialised data */
+} >ram = 0
+/**** Uninitialised data ****/
+_fbss = ABSOLUTE(.); /* Start of unitialised data */
+木秀于林,冲迎风霜 -- 每天积累一点点 1086 / 1226
+
+## 第 187 页
+
+.sbss :
+{
+*(.sbss)
+*(.scommon)
+}>ram
+.bss :
+{
+*(.bss)
+*(COMMON)
+}>ram
+_end = . ;
+_freemem = .;
+}
+下面对linker script文件里的一些关键点进行如下说明：
+如下图所示，第一个红色矩形线框：
+MEMORY是脚本语言里面的一个命令，用来配置内存的大小和位置，
+“FLASH(rwx): ORIGIN = 0xBFd08000, LENGTH = 1024K”
+上面这条程序是分配一块大小为1024KB，起始地址为0xBFd08000的FLASH，
+程序里面的”FLASH”只是一个符号名；”( rwx)”表示分配的这段内存的属
+性为可读，可写，可执行；关键字ORIGIN用于指示内存的起始地址；关键字
+LENGTH用于指示内存的大小。
+“ ram(!rw):ORIGIN = 0xb2000000, LENGTH = 24K ”
+木秀于林,冲迎风霜 -- 每天积累一点点 1087 / 1226
+
+## 第 188 页
+
+上面这条程序是分配一块大小为24KB，起始地址为0xb2000000的RAM，
+程序里面的
+” ram”只是一个符号名；” (!rw)”表示分配的这段内存的属性为不可读，
+可写；
+如下图所示，第二个红色矩形线框：
+ABSOLUTE是一关键字，可以将相对值转化成绝对值，“.”是定位计数器，
+用于记录当前所在的内存地址。
+“_sp = ABSOLUTE(. + 0x6000); ”
+上面这条程序是给符号变量”_sp”赋值，将定位计数器的值再加上0x6000，
+即将当前的内存地址再往后移24KB，所以_gp的值为0xb2006000，这里”_sp”
+就是堆的顶地址指针，也可以把它理解为RAM的大小。
+如下图所示，第三个红色矩形线框：
+“_gp = ABSOLUTE(. + 0x2000);”
+上面这条程序是给符号变量” _gp”赋值，将定位计数器的值再加上0x2000，
+即将当前的内存地址再往后移8KB，所以_gp的值为0xb2002000，这里”_gp”
+就是栈的顶地址指针，也可以把它理解为栈的大小。
+木秀于林,冲迎风霜 -- 每天积累一点点 1088 / 1226
+
+## 第 189 页
+
+MIPS初始化文件 .s
+木秀于林,冲迎风霜 -- 每天积累一点点 1089 / 1226
+
+## 第 190 页
+
+/****************************** Include
+******************************/
+#include "define.h"
+#include "mipsregs.h"
+#include "Marco.h"
+#include <mips/asm.h>
+#include <mips/regdef.h>
+#include <mips/cpu.h>
+#include <sys/init.h>
+#include <xxxx.h>
+/****************************** ROUTINE
+*****************************/
+.text
+.globl _start
+.ent _start
+_start:
+.set noreorder
+RVECENT(reset,0) /* Program enter */
+.org 0x180
+RVECENT(ExceptionHandle,00) // 0xbfD0_0180:
+.org 0x200
+RVECENT(Software0Interrupt,0) // 0xbfD0_0200: Software0Interrupt
+木秀于林,冲迎风霜 -- 每天积累一点点 1090 / 1226
+
+## 第 191 页
+
+RVECENT(Software1Interrupt,1) // 0xbfD0_0220: Software1Interrupt
+RVECENT(HardWare0Interrupt,0) // 0xbfD0_0240: HardWare_Interrupe0
+RVECENT(HardWare1Interrupt,1) // 0xbfD0_0260: HardWare_Interrupe1
+RVECENT(HardWare2Interrupt,2) // 0xbfD0_0280: HardWare_Interrupe2
+RVECENT(HardWare3Interrupt,3) // 0xbfD0_02a0: HardWare_Interrupe3
+RVECENT(HardWare4Interrupt,4) // 0xbfD0_02c0: HardWare_Interrupe4
+RVECENT(HardWare5Interrupt,5) // 0xbfD0_02e0: HardWare_Interrupe5
+reset:
+CP0_SET_VALUE(Status, 0x10000000) // CP0 can access,
+CP0_CLR(Status, 0x00000001) // disable all interrupt
+CP0_SET_Sel(12,1,0x00000020) // Specify the space between
+interrupts is 16#20
+CP0_SET_Sel(15,1,0xBFd08000) // Set interrupt enter base
+address; 16#BFd0_0200
+CP0_SET (Cause,Cause_IV) // Cause_IV=1,the Interrupt enter addr is
+16#200 the 23bit
+CP0_CLR (Status,Status_BEV) // Status_BEV=0 Normal mode the 22bit
+la sp, _sp
+CP0_SET (Status,SET_IM) // enable all interrupt mask
+addiu sp,sp,-24
+sw ra, 16(sp)
+la gp, _gp
+jal main // for 16e mode
+// j main // for 32bit mode
+nop
+木秀于林,冲迎风霜 -- 每天积累一点点 1091 / 1226
+
+## 第 192 页
+
+.text
+.set noat
+.set noreorder
+.globl ExceptionHandle
+.align 4
+ExceptionHandle:
+mfc0 k1, EPC
+move a0,k1
+jal Uart1SendByte
+nop
+srl a0,k1,8
+jal Uart1SendByte
+nop
+srl a0,k1,16
+jal Uart1SendByte
+nop
+srl a0,k1,24
+jal Uart1SendByte
+nop
+mfc0 k1, Cause
+move a0,k1
+jal Uart1SendByte
+nop
+srl a0,k1,8
+jal Uart1SendByte
+nop
+srl a0,k1,16
+jal Uart1SendByte
+nop
+木秀于林,冲迎风霜 -- 每天积累一点点 1092 / 1226
+
+## 第 193 页
+
+srl a0,k1,24
+jal Uart1SendByte
+nop
+mfc0 k1, Status
+move a0,k1
+jal Uart1SendByte
+nop
+srl a0,k1,8
+jal Uart1SendByte
+nop
+srl a0,k1,16
+jal Uart1SendByte
+nop
+srl a0,k1,24
+jal Uart1SendByte
+nop
+nop
+CP0_CLR(Status,Status_IE)
+wait
+eret
+.type ExceptionHandle, @function
+.size ExceptionHandle,.-ExceptionHandle
+/********************************** ENTRY
+*****************************************/
+.set reorder
+.end _start
+木秀于林,冲迎风霜 -- 每天积累一点点 1093 / 1226
+
+## 第 194 页
+
+//=================================================================
+==================================
+Software0Interrupt:
+INTENTRY(SW0IntHandleAsm,SW0IntHandle)
+Software1Interrupt:
+INTENTRY(SW1IntHandleAsm,SW0IntHandle)
+HardWare0Interrupt:
+INTENTRY2(HW0IntHandleAsm,HW0IntHandle)
+HardWare1Interrupt:
+INTENTRY3(HW1IntHandleAsm,HW1IntHandle)
+HardWare2Interrupt:
+INTENTRY4(HW2IntHandleAsm,HW2IntHandle)
+HardWare3Interrupt:
+INTENTRY5(HW3IntHandleAsm,HW3IntHandle)
+HardWare4Interrupt:
+INTENTRY6(HW4IntHandleAsm,HW4IntHandle)
+HardWare5Interrupt:
+INTENTRY7(HW5IntHandleAsm,HW5IntHandle)
+木秀于林,冲迎风霜 -- 每天积累一点点 1094 / 1226
+
+## 第 195 页
+
+C 语言开发问题分析
+在MIPS 工具Eclipse编译器中，如果对想对某个变量不断赋值，然后不断查
+询，则需要定义为volatile类型，否则程序查询时不会一直去读该变量，只
+有定义为volatile类型才会有此结果;
+volatile UINT8 T100kIntFlag,
+while(!T100kIntFlag);
+编译后的结果是：
+bfc0842a: 6c02 li a0,2
+bfc0842c: ec6d or a0,v1
+bfc0842e: c580 sb a0,0(a1)
+bfc08430: a660 lbu v1,0(a2)
+bfc08432: 6a05 li v0,5
+bfc08434: ec4b neg a0,v0
+bfc08436: ec6c and a0,v1
+bfc08438: c680 sb a0,0(a2)
+bfc0843a: a560 lbu v1,0(a1)
+bfc0843c: 6a10 li v0,16
+bfc0843e: ea6d or v0,v1
+bfc08440: c540 sb v0,0(a1)
+bfc08442: a7c0 lbu a2,0(a3) //变量赋值
+bfc08444: 26fe beqz a2,bfc08442 <CGU_TEST_801+0x72>//在此处循
+环
+UINT8 T100kIntFlag,
+while(!T100kIntFlag);
+编译后的结果是：
+bfc08426: 6c02 li a0,2
+bfc08428: ec6d or a0,v1
+木秀于林,冲迎风霜 -- 每天积累一点点 1095 / 1226
+
+## 第 196 页
+
+bfc0842a: c580 sb a0,0(a1)
+bfc0842c: a6e0 lbu a3,0(a2)
+bfc0842e: 6a05 li v0,5
+bfc08430: ec4b neg a0,v0
+bfc08432: ecec and a0,a3
+bfc08434: c680 sb a0,0(a2)
+bfc08436: a560 lbu v1,0(a1)
+bfc08438: 6a10 li v0,16
+bfc0843a: ea6d or v0,v1
+bfc0843c: c540 sb v0,0(a1)
+bfc0843e: 6a00 li v0,0 //立即数赋值
+bfc08440: 22ff beqz v0,bfc08440 <CGU_TEST_801+0x74> //在此句
+循环
+分析：
+{
+...
+while (1)
+{
+if (i) do_something();
+}
+}
+/* Interrupt service routine. */
+void ISR_2(void)
+{
+i=1;
+}
+木秀于林,冲迎风霜 -- 每天积累一点点 1096 / 1226
+
+## 第 197 页
+
+程序的本意是希望ISR_2中断产生时，在main当中调用do_something函
+数，但是，由于编译器判断在main函数里面没有修改过i，因此可能只执行
+一次对从i到某寄存器的读操作，然后每次if判断都只使用这个寄存器里面
+的“i副本”，导致do_something永远也不会被调用。如果变量加上volatile
+修饰，则编译器保证对此变量的读写操作都不会被优化（肯定执行）。此例中
+i也应该如此说明。
+一般说来，volatile用在如下的几个地方：
+1、中断服务程序中修改的供其它程序检测的变量需要加volatile；
+2、多任务环境下各任务间共享的标志应该加volatile；
+3、存储器映射的硬件寄存器通常也要加volatile说明，因为每次对它的读写
+都可能由不同意义；
+另外，以上这几种情况经常还要同时考虑数据的完整性（相互关联的几个标志
+读了一半被打断了重写），在1中可以通过关中断来实现，2中可以禁止任务
+调度，3中则只能依靠硬件的良好设计了
+volatile总是与优化有关，编译器有一种技术叫做数据流分析，分析程序中
+的变量在哪里赋值、在哪里使用、在哪里失效，分析结果可以用于常量合并，
+常量传播等优化，进一步可以死代码消除。但有时这些优化不是程序所需要的，
+这时可以用volatile关键字禁止做这些优化，volatile的字面含义是易变的，
+它有下面的作用：
+1 不会在两个操作之间把volatile变量缓存在寄存器中。在多任务、中断、
+甚至setjmp环境下，变量可能被其他的程序改变，编译器自己无法知道，
+volatile就是告诉编译器这种情况。
+2 不做常量合并、常量传播等优化，所以像下面的代码：
+volatile int i = 1;
+if (i > 0) ...
+if的条件不会当作无条件真。
+3 对volatile变量的读写不会被优化掉。如果你对一个变量赋值但后面没用
+到，编译器常常可以省略那个赋值操作，然而对Memory Mapped IO的处理是
+不能这样优化的。
+木秀于林,冲迎风霜 -- 每天积累一点点 1097 / 1226
+
+## 第 198 页
+
+OTHERS
+在win下打开文件并复制内容
+开始菜单 输入cmd命令
+用命令cd xxx打开文件夹,(可以使用tab键来自动找到合适文件—--- 先
+输入一个字符)
+使用type 命令打开文件:type file
+使用右键 再mark
+选中之后使用enter键复制内容
+半导体知识
+seal ring 是什么
+从layout角度看，seal ring是一个由diff, contact, via和metal等layer
+按照一定的规则叠加组成的图形。
+从工艺角度看，seal ring是一种氧化、钝化层结构
+从物理角度看，seal ring是介于芯片（chip）和划片槽（scrible line）之间
+的（保护）环。
+简单按照pcb的方式直接理解如下:
+seal ring:单块pcb边与最外层走线的距离;在画pcb开始,需要先画2个框,最
+外层为pcb尺寸,次外层就是里面可以走线,布器件的空间,这两个框之间的距离
+就相当于芯片的seal ring;
+scribleline:画pcb会把几个pcb拼成一块,在各个pcb之间会有锯齿壮把它们
+连接在一起,这个锯齿的宽度就应该是scrible line.
+seal ring怎么画
+如果不想承担什么风险， 给芯片添加seal ring这件事可以交给foundry，出
+钱就行。不过多数时候我们宁可自己动手去做这些事情。一般情况下foundry
+都会在design rule中清楚的规定seal ring的结构及尺寸。常见的seal ring
+会将工艺中所有的层都列出来，并标明 darkorclear，用这里的dark和clear
+去对照工艺制程中这些layer的dark或clear，如果同为dark或clear则seal
+ring上面有这层，反之则seal ring上没有这层。
+design rule中的contact和via都是我们常用的方孔，实际上长孔比方孔更好
+些，foundry这样建议的。。。
+sealring一般要离芯片core有一定的距离，如果芯片面积宽松可以参考design
+木秀于林,冲迎风霜 -- 每天积累一点点 1098 / 1226
+
+## 第 199 页
+
+rule，因为rule的规定通常比较大；当然出于成本的考虑，我们宁可根据流片
+经验自己定义。
+seal ring怎么接
+一般的PSUB工艺都会将sealring做成P+的，接到芯片的ground，而其浮空一
+般也不会有影响；无特殊情况不能接到 power。
+最好不要用metal1去将core和sealring连接在一起，而是用其它上层 metal；
+如果有diff层连到sealring, 在靠近sealring的diff上面做一小段salicide
+结构（通常是加rpo或sab），这样对防止ESD绝对好处大大的。
+如有需要开槽的宽金属连接到seal ring，请尽量不要在靠近 seal ring的地方
+开槽，非开槽不可的话那尽量开的小点，这些都是防止外界的杂质等进入芯片。
+seal ring什么用
+seal ring最根本也是最主要的作用就是防止芯片在切割的时候受到机械损伤，
+以下其它作用可以说是衍生的，搭顺风车的：a) Seal Ring接地，屏蔽芯片外
+的干扰； b) Seal Ring可以防止潮气从侧面断口侵入； c) 将切割所产生的
+静电就近接地，再由切割时邻近的seal ring共同分摊所产生的电流，将对die
+本体的冲击降到最小。d) …………
+1． 工艺角
+（Process Corner）PVT(Precess Voltage Temperature)工艺误差
+与双极晶体管不同，在不同的晶片之间以及在不同的批次之间，MOSFETs
+参数变化很大。为了在一定程度上减轻电路设计任务的困难，工艺工程
+师们要保证器件的性能在某个范围内，大体上，他们以报废超出这个性
+能范围的芯片的措施来严格控制预期的参数变化。
+detail
+通常提供给设计师的性能范围只适用于数字电路并以“工艺角”
+（Process Corner）的形式给出。如图，其思想是：把NMOS和PMOS晶
+体管的速度波动范围限制在由四个角所确定的矩形内。这四个角分别是：
+快NFET和快 PFET，慢NFET和慢PFET，快NFET和慢PFET，慢NFET和
+快PFET。例如，具有较薄的栅氧、较低阈值电压的晶体管，就落在快角
+附近。
+从晶片中提取与每一个角相对应的器件模型时，片上NMOS和PMOS的测
+试结构显示出不同的门延时，而这些角的实际选取是为了得到可接受的
+成品率。
+各种工艺角和极限温度条件下对电路进行仿真是决定成品率的基础。
+木秀于林,冲迎风霜 -- 每天积累一点点 1099 / 1226
+
+## 第 200 页
+
+所以我们所说的ss、tt、ff分别指的是左下角的corner，中心、右上角
+的corner。
+工艺极限 (Process Corner)
+如果采用5-corner model会有TT,FF,SS,FS,SF 5个corners。如TT指
+NFET-Typical corner & PFET-Typical corner。其中, Typical指晶体
+管驱动电流是一个平均值，FAST指驱动电流是其最大值，而SLOW指驱动
+电流是其最小值（此电流为Ids电流）这是从测量角度解释，也有理解
+为载流子迁移率(Carrier mobility)的快慢. 载流子迁移率是指在载流
+子在单位电场作用下的平均漂移速度。至于造成迁移率快慢的因素还需
+要进一步查找资料。单一器件所测的结果是呈正态分布的，均值在 TT，
+最小最大限制值为SS与FF。从星空图看NFET，PFET所测结果,这5种覆
+盖大约+-3 sigma即约99.73% 的范围。对于工艺偏差的情况有很多，比
+如掺杂浓度，制造时的温度控制，刻蚀程度等，所以造成同一个晶圆上
+不同区域的情况不同，以及不同晶圆之间不同情况的发生。这种随机性
+的发生，只有通过统计学的方法才能评估覆盖范围的合理性。
+PVT (process, voltage, temperature)
+设计除了要满足上述5个corner外，还需要满足电压与温度等条件, 形
+成的组合称为PVT (process, voltage, temperature) 条件。电压如：
+1.0v+10% ,1.0v ,1.0v-10% ; 温度如：-40C, 0C 25C, 125C。设计时设
+计师还常考虑找到最好最坏情况. 时序分析中将最好的条件(Best Case)
+定义为速度最快的情况, 而最坏的条件(Worst Case)则相反。最好最坏
+的定义因不同类型设计而有所不同。最坏的延迟也不都出现在SS[19] 。
+至于延迟随PVT发生怎样的变化，还需要进一步查找资料。
+根据不同的仿真需要，会有不同的PVT组合。以下列举几种标准STA分
+析条件[16]：
+WCS (Worst Case Slow) : slow process, high temperature, lowest
+voltage
+木秀于林,冲迎风霜 -- 每天积累一点点 1100 / 1226
+
+## 第 201 页
+
+TYP (typical) : typical process, nominal temperature,nominal
+voltage
+BCF (Best Case Fast ) : fast process, lowest temperature, high
+voltage
+WCL (Worst Case @ Cold) : slow process, lowest temperature, lowest
+voltage
+在进行功耗分析时，可能是另些组合如：
+ML (Maximal Leakage ) : fast process, high temperature, high
+voltage
+TL (typical Leakage ) : typical process, high temperature, nominal
+voltage
+除此之外，另一个组合条件称为 Scenarios:
+Scenarios = Interconnect + operation mode + PVT
+噪声(noise)与串扰(crosstalk) 似乎需要另外考虑。
+1. 内连线情况(interconnect corner)
+制造对互连线造成的影响，如：R_typicalC_typical,R_maxC_max,
+R_maxC_min, R_minC_min
+2. 工作模式 (Operation Mode)
+如：function mode, scan mode, sleep mode, standby mode,
+active mode
+PVT
+对多种scenarios 的综合分析，称之为 MMMC(Multi-ModeMulti-Corner)
+Analysis。
+OCV (On-chip Variations)
+由于偏差的存在，不同晶圆之间，同一晶圆不同芯片之间，同一芯片不
+同区域之间情况都是不相同的。造成不同的因素有很多种，这些因素造
+成的不同主要体现：
+1，IR Drop造成局部不同的供电的差异；
+2，晶体管阈值电压的差异；
+木秀于林,冲迎风霜 -- 每天积累一点点 1101 / 1226
+
+## 第 202 页
+
+3，晶体管沟道长度的差异；
+4，局部热点形成的温度系数的差异；
+5，互连线不同引起的电阻电容的差异。
+OCV可以描述PVT在单个芯片所造成的影响。更多的时候, 用来考虑长距
+离走线对时钟路径的影响。在时序分析时引入derate参数模拟OCV效应，
+其通过改变时延迟的早晚来影响设计。
+三种STA(Static Timing Analysis)分析方法 [13]：
+1，单一模式, 用同一条件分析setup/hold ;
+2，WC_BC模式, 用worst case计算setup，用best case计算hold；
+3，OCV模式, 计算setup 用计算worst case数据路径，用best case
+计算时钟路径；计算hold 用best case计算数据路径，用worst case
+计算时钟路径；
+以上三种方法，在逐步的改进，但显然越来越悲观。比如第三种分析方
+法，计算setup 时让数据慢一点到，而时钟快一点到，以压缩setup时
+间。到了计算hold时，又变成了压缩hold时间，这样情况显然是不实
+际的。derate具体做法是在长路径应用late参数，短路径应用early
+参数, 就是将原本希望走快的变慢，希望走慢的变快。
+除derate外，还有一个常用的参数uncertainty。它定义时钟沿的不确
+定性，或早或晚，同样压缩了setup / hold时间。
+锁存器与触发器
+锁存器与触发器是静态时序分析中涉及最主要的类型. Latch是异步单
+元，即输出在输入改变之后改变。而FLIP-FLOP是同步单元，即随时钟
+信号改变而改变。LATCH与FLIP-FLOP最大差别是Latch 没有时钟端，
+可以理解为有一个使能端，所以是电平敏感[8]。Flip-Floppreset表示
+在输出产生一个逻辑1,clear表示在输出产生一个逻辑0。 Setup/hold
+是分析数据与时钟之间的关系。用时钟沿来采集数据，如果定义用时钟
+上升沿触发，即用上升沿将数据分割成两部分，前部分为准备时间 setup，
+后部分为保持时间 hold。说明数据在上升沿来临之前必须准备好，在采
+集时必须保持一段时间。理解时[removal/recovery]，类似为用
+木秀于林,冲迎风霜 -- 每天积累一点点 1102 / 1226
+
+## 第 203 页
+
+preset/clear采集时钟数据，用preset/clear将时钟分为两部分，前部
+分为迁移时间，后部分为复原时间。
+统计静态时序分析
+SSTA (Statistical Static timing analysis)
+全局工艺差异(global_process_variations)
+也称为片间器件差异(inter-die device variations ), 描述同一器件
+不同芯片间的差异。同一芯片的器件应用同一参数，器件的不同参数是
+相互独立的，而且每个参数都是呈统计分布的。
+局部工艺差异(local_process_variations)
+也称为片内器件差异 (intra-die device variations), 描述同一器件
+在同一芯片不同区域的差异。每个差异也是呈统计分布的。
+也就是说对于某一个全局参数，应该细化成多个局部参数，每个局部参
+数都是呈统计分布的。如果提供的库是基于局部参数差异统计建立起来
+的，在进行基于OCV模型的静态时序分析时，就无需OCV参数的设定。
+对于互连线差异也是一样的. 决定同一段线的因素有很多种，比如线宽，
+厚度，介电系数，刻蚀等，但同一因素不同区域是不相同的，各个因素
+之间也是相互独立的。这些差异同样需要进行统计学概括。
+好比中医与西医，西医就是同一种病吃同一种药，而中医则认为同一种
+病分不同种情况，不同的人也应不同对待。至少感觉上是这样的。
+基于这样的观点，同一时序路径可能存在不同种情况的组合，而且每种
+情况的参数都是呈统计学分布，组合的计算将不是单纯的相加差，而是
+需要相关性分析与统计学计算。统计方法的引入，改变了传统静态时序
+分析悲观但不实际的做法。
+2．芯片 signoff 的 Corner 设置
+在STA星球，用library PVT、RC corner跟OCV来模拟这些不可控的随
+机因素。在每个工艺结点，通过大量的建模跟实测，针对每个具体的工
+艺，foundary厂都会提供一张推荐的timingsignoff表格，建议需要
+木秀于林,冲迎风霜 -- 每天积累一点点 1103 / 1226
+
+## 第 204 页
+
+signoff的corner及各个corner需要设置的ocv跟margin。这些corner
+能保证大部分芯片可以承受温度、电压跟工艺偏差，
+一个corner=libraryPVT+ RC corner + OCV，本文将关注于library PVT。
+------OCV（on-chip-variation）也是用来模拟cell的PVT及线的RC
+变化，与前面两个不同的是，前两者是芯片全局的PVT/RC Corner，OCV
+是芯片上内的局部偏差（包括process 、voltage、temperature、network
+RC）。比如在STA分析setup时，并不是用最慢的libraryPVT来signoff
+就是最差情况，对于capture clock如果其跑的更快了，那么应该是更
+悲观的情况，对RCCorner 也同理；所以在STA分析时，要结合libraray
+PVT/RC corner/OCV三者才能cover到芯片最坏情况。
+PVT也称为Operating condition，是STA一个基本且重要的概念，在
+library的表头会有operating condition的定义，如下图，其中
+『ss0p81vm40c』是这个operating condition的名字，通常这个名字是
+有意义的，它会标示出该lib对应的电压跟温度，如0p81对应于
+voltage:0.81，m40c对应于temperature:-40度。
+P-process：IC制造工艺本身的不完美，使得制造偏差不可避免，在
+library中会用一个百分比来表示工艺偏差，如process:1表示没偏差。
+在沉积或参杂过程中，杂质浓度密度、氧化层厚度、扩散深度都可能发
+生偏差，从而导致管子的电阻跟阈值电压发生偏差；光刻过程中由于分
+辨率的偏差会导致管子的宽长比产生偏差。而这些偏差，都会导致管子
+性能的差异。
+V-voltage：管子的延时取决于饱和电流，而饱和电流取决于供电电压。
+且不论多电压域芯片，就单电压芯片而言，电池的供电电压本身就在一
+个范围内变化，再加上片外或片上voltage regulator的误差、再加上
+木秀于林,冲迎风霜 -- 每天积累一点点 1104 / 1226
+
+## 第 205 页
+
+IR，一个芯片上的每个管子都可能工作在不同电压下，从而性能也有所
+差别。
+T-temperature：在日常操作中，IC芯片必须适应温度不恒定的环境，当
+芯片运行时，由于开关功耗、短路功耗和漏电功耗会使芯片内部的温度
+发生变化。温度波动对性能的影响通常被认为是线性的，但在深亚微米
+温度对性能的影响是非线性的。对于一个管子，当温度升高，空穴/电子
+的移动速度会变慢，使延时增加，而同时温度的升高也会使管子的阈值
+电压降低，较低的阈值电压意味着更高的电流，因此管子的延时减小。
+而通常温度升高对空穴/电子移动速度的影响会大于对阈值电压的影响，
+所以温度升高管子的延时呈增加趋势。但是并不是温度越低管子的延时
+就越小，晶体管有温度翻转效应，当温度低到某个值之后，随着温度的
+降低，管子的延时会增加，至于温度翻转点跟具体的工艺相关。
+-----上面的PVT描述有疑问，既然本文讲的是library的PVT，那么上
+述PVT应该是芯片的生产及工作条件，是全局偏差，比如温度和电压应
+该是整个芯片可能处于不同的电压温度情况，芯片内部的电压温度不同
+由OCV来cover
+在做STA分析时，operating condition通常通过lib读入，如果多个
+library中的operating condition不同，通常用第一个读入的library
+中定义的operating condition。也可以用命令设置/定义operating
+condition，不同的工具有不同的实现方式，如：
+set_operating_condition。在debug环境时可以report_design来check
+当前所用的operating condition。
+------对于PT而言，如果PT读入了多个operating condition的库，
+那个针对每个cell的operating condition的值是其link 库的值，并
+不是第一个读入库的定义operatingcondition；由第一个读入库来定义
+的标准为电压电容单位，transtion的pct定义标准等。
+Timing sign-offCorner=library PVT+RC corner+ OCV，PVT 在《巴山夜雨涨秋池，
+邀君共学PVT：STA之PVT》中。今天来把玩一下RCcorner，这里的RC指gate
+跟network 的寄生参数，寄生参数抽取工具根据电路的物理信息，抽取出电路的
+木秀于林,冲迎风霜 -- 每天积累一点点 1105 / 1226
+
+## 第 206 页
+
+电阻电容值，再以寄生参数文件输入给STA工具，常见的寄生参数文件格式为
+SPEF。
+ICer都知道在集成电路中是多层走线的，专业术语叫metal layer，不同工艺有不
+同层metal layer，任何两层metal layer 间由介电材料隔离，『走线』通过过孔（VIA）
+连接。Width 跟Spacing 是衡量绕线的两条最重要的物理设计规则，它们随着工
+艺的进步逐步减小。介电材料、绕线材料、线间距、线宽及线的厚度这些物理特
+性决定了network 的RC 值。
+Network 电容：
+耦合电容：Coupling capacitance=e*T/S
+表面电容：Surface capcitance=e*W/H
+边缘电容：Fringe capcitance
+决定容值的因素：
+介电常数：e
+线宽：W
+线厚：T
+线间距：S
+介电材料的厚度：H
+随着工艺进步，W,S,T逐代递减，表面电容跟随减小，耦合电容随之增加，耦
+合电容在总电容中占比增加，当线厚 T 一定时为了减少耦合电容要么增加线间
+距要么减小介电常数。通常为了减小噪声敏感信号线（如clock net）上的耦合电
+容，在物理实现时会人为增加对应信号的线宽及线间距，俗称NDR。要减小介
+电常数需要从材料入手，从 .18开始引入lowK介电材料。
+Network 电阻：
+R=r/W*T,r为电阻率，除了跟线宽 W 和线厚 T 相关之外，还跟温度相关，随
+着温度的上升而增大。
+Parameters Resistance Surface Capacitance Coupling
+Capacitance
+温度增加 增加 -- --
+木秀于林,冲迎风霜 -- 每天积累一点点 1106 / 1226
+
+## 第 207 页
+
+线宽减小 增加 减小 --
+线厚减小 增加 -- 减小
+线间距减小 无影响 无影响 增加
+由上面的分析可知，Network 的单位电容和单位电阻是不可能同时最大或同时最
+小的。有了这些铺垫，来看一下不同工艺结点是如何定义RCcorner 的。
+90nm 之前，Cell delay 占主导，Network 电容主要是对地电容，STA只需要两个
+RCcorner 即可：
+Cbest(Cmin): 电容最小电阻最大
+Cworst(Cmax):电容最大电阻最小
+90nm 之后，netdelay 的比重越来越大，而且 network 的耦合电容不可忽略，所
+以又增加了两个RCcorner:
+RCbest(XTALKcorner): 耦合电容最大，（对地电容*电阻）最小
+RCworst(Delay corner): 耦合电容最小，（对地电容*电阻）最大
+木秀于林,冲迎风霜 -- 每天积累一点点 1107 / 1226
+
+## 第 208 页
+
+至此总共有两个需要setup timing sign-off的RCcorner，有四个需要holdtiming
+sign-off的RCcorner：
+Setuptimesign-off 的RCcorner 是: Cworst/ RCworst
+Hold timesign-off 的RC corner 是: Cbest / RCbest / Cworst/ RCworst
+C-best:
+It hasminimumcapacitance. So also knownas Cmin corner.
+Interconnect Resistanceis larger than theTypical corner.
+Thiscorner results in smallest delay forpaths with short netsand can beusedfor
+min-path-analysis.
+C-worst:
+Refers tocorners which results maximum Capacitance. Soalso known as Cmax
+corner.
+Interconnect resistance issmaller than at typical corner.
+Thiscorners results in largest delay for paths withshorts nets and can beusedfor
+max-path-analysis.
+RC-best:
+Refers tothecorners which minimizeinterconnect RC product. Soalso known as
+RC-mincorner.
+Typicallycorresponds to smalleretch which increases thetrace width.This results
+insmallestresistance butcorresponds tolarger than typical capacitance.
+Cornerhas smallestpath delay for paths withlong interconnects andcan beused for
+min-path-analysis.
+RC-worst:
+Refers tothecorners which maximizeinterconnect RCproduct. Soalso known as
+RC-maxcorner.
+Typicallycorresponds to largeretch which reduces thetrace width.This results
+inlargest resistance butcorresponds to smaller than typical capacitance.
+木秀于林,冲迎风霜 -- 每天积累一点点 1108 / 1226
+
+## 第 209 页
+
+Cornerhas largest path delay for paths with longinterconnects and can beused for
+max-path-analysis.
+------C =a *W*L R =b*L/W RC = ab *L^2
+所以对于短线来说（L很小），RC 由于与L的平方成正比，非常小，电容起主要
+作用。对于长线RC起主要作用。
+Q：还有一种RCcorner 带后缀『_T』，只用于setup signoff，T指的是什么？
+A：T 代表tighten，在rc的variation 上的sigma 分布比不带T的更紧，因此只能
+用于setup，hold 不推荐。AppletoApple 地比较，T的variation 更小，理论看到
+的rc变化更小，单从setup 产生violation 的可能性更小。至于悲观还是乐观，除
+非自己定criteria，其余的followfoundry 或者vendor 的rule 最重要。
+Q：为什么setup 既需要sign-offC-corner 又需要sign-offRC-corner？
+A：因为C-corner表示『电容』最大/最小，而RC-corner 是『电容*电阻』最大/
+最小。通常对于短线而言，电容占主导地位，C-corner 可以cover RC-corner，但
+对于长线则电阻占主导地位，C-corner无法cover RC-corner，而是反过来
+RC-corner 去cover C-corner。而没人保证一个设计里只有短线没有长线，也没权
+威对长短的幅度有量化的定义，所以最保险的就是两者分别sign-off。
+Q：为什么hold 需要sign-off所有的corner？
+A：对于hold 而言，根据其仿真曲线，相互之间都无法完全覆盖，故需要sign-off
+所有corner。
+木秀于林,冲迎风霜 -- 每天积累一点点 1109 / 1226
+
+## 第 210 页
+
+Q：金属电阻是否跟density/spacing 相关？为什么方块电阻跟density/spacing 相
+关？
+A：就电阻本身而言，阻值跟density 没有关系，只跟金属线自身的宽厚和电阻
+率相关，
+不是每一个程序员都必须玩过linux，只是博主觉得现在的很多服务器都是linux系统的，而自己属于那种前端也
+搞，后台也搞，对框架搭建也感兴趣，但是很多生产上的框架和工具都是安装在服务器上的，而且有不少大公司
+都要求熟悉在linux上开发，因此从个人职业发展有必要去多了解一下linux。
+（博主网上查了一下，现在大部分服务器安装的系统主要有：ubuntuserver、centos、suselinuxenterprise,redhatlinux
+等）
+于是今天博主就在虚拟机上安装了Ubuntu，并分享整个安装过程给大家。之所以没有安装双系统，是考虑多很多
+不方便的地方，比如，你在linux上开发了一个实例，你想写博客，写博客肯定是在windows上方便多了，代码
+需要从一个系统弄到另外一个系统，这里是双系统的不方便。另外，虚拟机上安装linux的另外一个好处就是，
+你可以在windows上下载了工具安装包，然后在linux上安装。
+好了，下面马上附上安装全过程。
+VMware Ubuntu 安装详细过程（非常靠谱）--转 验证过可
+行
+一、下载 Ubuntu 镜像文件
+下载地址：http://www.ubuntu.com
+打开上面的连接，我们来到如下页面，点击download：
+木秀于林,冲迎风霜 -- 每天积累一点点 1110 / 1226
+
+## 第 211 页
+
+下一步，到如下页面，点击UbuntuDesktop：
+木秀于林,冲迎风霜 -- 每天积累一点点 1111 / 1226
+
+## 第 212 页
+
+然后选择Ubuntu14.04.3LTSreleasenotes：
+木秀于林,冲迎风霜 -- 每天积累一点点 1112 / 1226
+
+## 第 213 页
+
+然后选择UbuntuDesktopandServer：
+木秀于林,冲迎风霜 -- 每天积累一点点 1113 / 1226
+
+## 第 214 页
+
+接下来我们选择桌面版64-bitPC(AMD64)desktop，博主的电脑是64位的。另外desktop 和 server版的区别主要
+是：桌面版面向个人电脑
+使用者，可以进行文字处理、网页浏览、多媒体播放和玩游戏。本质上说，这是一个为普通用户所定制的多用途
+操作系统。另一方面，服务器版旨在充当web服务器，可用来托管文件、网页及相似内容。
+木秀于林,冲迎风霜 -- 每天积累一点点 1114 / 1226
+
+## 第 215 页
+
+点击上面的连接即可下载，容量大概1G左右，时间有点长，接下来我们先看VMware的下载安装与在VMware
+上安装Ubuntu的过程。
+二、VMware 下载安装
+VMware的下载安装就好办了，下载直接百度如下，哈哈：
+木秀于林,冲迎风霜 -- 每天积累一点点 1115 / 1226
+
+## 第 216 页
+
+下载完成即可安装，安装可以全部采取默认，看个人而定，博主的安装目录是自选的。
+安装完成之后启动VMware，需要输入产品密钥（vmwareworkstation12），博主随便百度了一个，猿友看你的是
+否有效：
+5A02H-AU243-TZJ49-GTC7K-3C61N
+ 1
+VMware安装完毕，下面介绍在VMware安装Ubuntu。
+三、在 VMware 安装 Ubuntu
+1、创建虚拟机
+木秀于林,冲迎风霜 -- 每天积累一点点 1116 / 1226
+
+## 第 217 页
+
+2、向导选择自定义
+木秀于林,冲迎风霜 -- 每天积累一点点 1117 / 1226
+
+## 第 218 页
+
+3、然后下一步再下一步，直到这里，稍后再安装系统
+木秀于林,冲迎风霜 -- 每天积累一点点 1118 / 1226
+
+## 第 219 页
+
+4、然后选择linux，注意这里下面的下拉选择Ubuntu64，因为我们下载的是64位的，如果你的电脑是32位的，
+就选Ubuntu即可，博主的就是因为Ubuntu，导致后面安装出错了，不过后面还可以设置的。
+木秀于林,冲迎风霜 -- 每天积累一点点 1119 / 1226
+
+## 第 220 页
+
+5、选择安装位置，这里必须输入一个已存在的目录，不然后面会报错的
+木秀于林,冲迎风霜 -- 每天积累一点点 1120 / 1226
+
+## 第 221 页
+
+6、后面设置处理器和内存的，电脑配置好的可以试试，否则采用默认的，博主这里是采用默认的，然后下一步…，
+直到这里，选择将虚拟机存储为单个磁盘：
+木秀于林,冲迎风霜 -- 每天积累一点点 1121 / 1226
+
+## 第 222 页
+
+7、然后下一步，到如下页面，点击自定义硬件：
+木秀于林,冲迎风霜 -- 每天积累一点点 1122 / 1226
+
+## 第 223 页
+
+8、然后如下图选择我们第一步下载的Ubuntu镜像：
+木秀于林,冲迎风霜 -- 每天积累一点点 1123 / 1226
+
+## 第 224 页
+
+9、然后点击完成，向导设置完成
+木秀于林,冲迎风霜 -- 每天积累一点点 1124 / 1226
+
+## 第 225 页
+
+10、虚拟机已经配置完毕，接下来我们开启虚拟机：
+木秀于林,冲迎风霜 -- 每天积累一点点 1125 / 1226
+
+## 第 226 页
+
+11、然后就会来到如下界面，如果出现错误请看（四、可能遇到的错误），我们选择中文简体点击InstallUbuntu：
+木秀于林,冲迎风霜 -- 每天积累一点点 1126 / 1226
+
+## 第 227 页
+
+12、到了如下界面，我们点击继续：
+木秀于林,冲迎风霜 -- 每天积累一点点 1127 / 1226
+
+## 第 228 页
+
+13、然后点击，开始安装：
+木秀于林,冲迎风霜 -- 每天积累一点点 1128 / 1226
+
+## 第 229 页
+
+14、到了这界面，点击继续：
+木秀于林,冲迎风霜 -- 每天积累一点点 1129 / 1226
+
+## 第 230 页
+
+15、如下，输入你的位置，随便输入就好：
+木秀于林,冲迎风霜 -- 每天积累一点点 1130 / 1226
+
+## 第 231 页
+
+16、然后选择汉语，点击继续：
+木秀于林,冲迎风霜 -- 每天积累一点点 1131 / 1226
+
+## 第 232 页
+
+17、设置用户名密码，这里博主选择自动登录
+木秀于林,冲迎风霜 -- 每天积累一点点 1132 / 1226
+
+## 第 233 页
+
+18、下面就开始正式安装了：
+木秀于林,冲迎风霜 -- 每天积累一点点 1133 / 1226
+
+## 第 234 页
+
+19、安装完成之后，会提示重启，点击现在重启
+木秀于林,冲迎风霜 -- 每天积累一点点 1134 / 1226
+
+## 第 235 页
+
+20、重启成功之后，会来到桌面，博主的重启中遇到一些问题，手动重启的，影响不大：关键
+木秀于林,冲迎风霜 -- 每天积累一点点 1135 / 1226
+
+## 第 236 页
+
+21、我们打开浏览器，输入百度网址，发现可以访问网络：
+木秀于林,冲迎风霜 -- 每天积累一点点 1136 / 1226
+
+## 第 237 页
+
+安装完成！！！！！！！！！！
+四、可能遇到的错误
+在安装过程中，博主遇到了如下的错误：
+4.1、This kernel requires an x86-64 CPU，but only detected an i686 CPU.如下图：
+木秀于林,冲迎风霜 -- 每天积累一点点 1137 / 1226
+
+## 第 238 页
+
+可能原因是：在创建虚拟机向导的时候我们如下页面选择了Ubuntu，而不是Ubuntu64，但是我下载的镜像是64
+位的，如下图：
+木秀于林,冲迎风霜 -- 每天积累一点点 1138 / 1226
+
+## 第 239 页
+
+解决办法：如下设置回Ubuntu64即可，然后继续你没有完成的步骤：
+木秀于林,冲迎风霜 -- 每天积累一点点 1139 / 1226
+
+## 第 240 页
+
+4.2、报如下错误：
+木秀于林,冲迎风霜 -- 每天积累一点点 1140 / 1226
+
+## 第 241 页
+
+可能原因是：你的电脑没有支持虚拟化
+解决办法：重启电脑，进入bios（博主的进入bios的键是F10），设置虚拟化启用。
+进入bois后选择Security选项：
+选择Virtualization，回车进入，按+键修改俩个选项为enabled：
+然后按F10，输入y保存退出即可。
+设置了启用了虚拟化之后，继续上面没有完成的步骤即可
+4.3、如果虚拟系统安装成功之后重启失败了（如停留在某个页面时间过长），手动重启Ubuntu即可
+木秀于林,冲迎风霜 -- 每天积累一点点 1141 / 1226
+
+## 第 242 页
+
+VMware Tools 安装方法及共享文件夹设置方法—转
+正确安装好VMware Tools后，可以实现主机与虚拟机之间的文件共享，
+可以设置共享文件夹，以及在主机与虚拟机之间直接进行复制黏贴的操作。
+安装方法：
+选择"虚拟机"—>"重新安装VMware Tools"
+弹出以下界面：
+鼠标右键点击VMwareTools-10.0.10-4301679.tar.gz，选择"Copy To..."
+木秀于林,冲迎风霜 -- 每天积累一点点 1142 / 1226
+
+## 第 243 页
+
+选择"Home"—>"Downloads":
+双击"Downloads"，点击右下角的"Select":
+木秀于林,冲迎风霜 -- 每天积累一点点 1143 / 1226
+
+## 第 244 页
+
+这样，就将VMwareTools-10.0.10-4301679.tar.gz复制到"/home/用户
+/Downloads/"下
+点击左上角的"X"，关闭Files窗口。
+木秀于林,冲迎风霜 -- 每天积累一点点 1144 / 1226
+
+## 第 245 页
+
+接下来，开始解压安装VMware Tools:
+按"Ctrl"+"Alt"+"T",打开终端。
+输入 cd /home/ ， 按一次Tab键，进入用户目录，我的是/home/jason/，按下
+回车键。
+输入 cd Downloads/ + 回车键
+输入 ls + 回车键
+木秀于林,冲迎风霜 -- 每天积累一点点 1145 / 1226
+
+## 第 246 页
+
+发现VMwareTools-10.0.10-4301679.tar.gz已经被复制到/home/用户名
+/Downloads/下
+接下来，输入 tar zxf VMwareTools-10.0.10-4301679.tar.gz ，回车键，解压
+该文件。
+解压完毕后，输入 sudo ./vmware-tools-distrib/vmware-install.pl ,回车键，
+开始安装
+直接输入用户密码，输入过程中不会显示，输入完毕后按回车键即可。
+接下来，进入安装步骤，按照截图中的操作进行安装即可：
+木秀于林,冲迎风霜 -- 每天积累一点点 1146 / 1226
+
+## 第 247 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1147 / 1226
+
+## 第 248 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1148 / 1226
+
+## 第 249 页
+
+到此，VMware Tools便成功安装完成了。执行 sudo reboot 重启操作系统。
+接下来，设置共享文件夹：
+先在主机创建一个文件夹用以虚拟机与主机的文件共享，
+我的文件夹路径为 C:\开发工具
+\ubuntu-14.04.4-desktop-amd64\jasonshare
+然后，按照下图进行操作：
+选择"虚拟机"—>"设置"
+木秀于林,冲迎风霜 -- 每天积累一点点 1149 / 1226
+
+## 第 250 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1150 / 1226
+
+## 第 251 页
+
+点击"浏览"，选择主机中共享文件夹的路径：
+木秀于林,冲迎风霜 -- 每天积累一点点 1151 / 1226
+
+## 第 252 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1152 / 1226
+
+## 第 253 页
+
+至此，共享文件夹便设置好了。
+在虚拟机ubuntu中访问主机共享文件夹的方法:
+在终端命令行输入 cd /mnt/ + 按下两次Tab键 ，回车
+即可进入主机中的共享文件夹。
+逻辑分析仪简单使用
+1. 打开逻辑分析仪软件
+2. 打开edit开关如下图
+木秀于林,冲迎风霜 -- 每天积累一点点 1153 / 1226
+
+## 第 254 页
+
+进入hardware set…… 进入如下图,检测硬件
+3. 点击setup进入下图—下图红1
+红2表示修改监控信号/波形名字
+红3选择逻辑分析对应的编号
+红4添加监控信号/波形
+木秀于林,冲迎风霜 -- 每天积累一点点 1154 / 1226
+
+## 第 255 页
+
+红5表示正常时序
+红6表示采样率
+红7表示采样深度
+红8表示采样格式
+需要与硬件连接关系一致
+4.
+红1表示采样触发信号,点击设置
+红2选择drag zoom可以像verdi一样放大缩小,点击左右键可以测量时
+间
+红3全局观察波形
+红4可移动鼠标放大局部波形
+常用电路原理及分析
+数学公式
+欧拉公式
+木秀于林,冲迎风霜 -- 每天积累一点点 1155 / 1226
+
+## 第 256 页
+
+离散傅里叶变换的公式：
+其中
+为旋转因子
+加法电路
+localparam A_WIDTH = 16;
+localparam B_WIDTH = 8;
+// Sumation result width should be 1 bit more than biggest widht of adder
+factor
+localparam C_WIDTH = if (A_WIDTH > B_WIDTH) ? A_WIDTH + 1'b1 : B_WIDTH
++ 1'b1;
+reg signed [A_WIDTH-1 : 0] a;
+reg signed [B_WIDTH-1 : 0] b;
+reg signed [C_WIDTH-1 : 0] c;
+reg unsigned [C_WIDTH-1 : 0] c_unsigned;
+always @(*) begin
+c = {(C_WIDTH-A_WIDTH){a[A_WIDTH-1]}},a} +
+{{C_WIDTH-B_WIDTH{b[B_WIDITH-1]}},b};
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1156 / 1226
+
+## 第 257 页
+
+always @（*） begin
+c_unsigned = {~c[C_WIDTH-1],c[C_WIDTH-2:0]};
+end
+仲裁电路
+当几个模块同时操作一个模块时,则需要对这些请求进行仲裁排序,常见的就是
+cpu和dma同时访问flash,ram等memory;
+仲裁电路输入的特点为:
+1. 每路请求至少有一个请求信号req和一个应答信号ack;当无ack
+应答时,req一直存在,直到ack响应req才可以撤消---ack相当于
+总线里面的ready信号
+2. 必须安排优先级
+部分代码如下:
+Req_order为所有需要仲裁的输入信号排序,
+grant_ack是真正的请求信号为一个脉冲,也可以理解成同意了一个请求,开始
+执行对标的操作
+Grant_order_nxt是根据优先级产生的顺序—每次只能一个访问标的
+Read_req是给标的的控制信号,输出, 此信号为电平信号,当有响应时,才可能
+拉低(如果此时又来一个请求,则不会拉低);所以此处逻辑大致如下
+If(req) read_req<=1’b1;else if(ack) read_req<=1’b0;
+木秀于林,冲迎风霜 -- 每天积累一点点 1157 / 1226
+
+## 第 258 页
+
+grant_clr 为操作完一次标的,pluse信号
+grant_mask 被屏蔽的权限—下次可以执行的标号
+分析上述时序(cpu_rd_req为2号请求,fp_rd_req为1号请求,cmd_commit为0
+号请求):
+第1阶段:Fp_rd_req, cmd_commit同时发生,产生一个grant_ack,此时把0,2
+号的请求屏蔽 (1号比0号优先级高) —也可以理解成后续可以执行0号和2号
+请求;执行1号请求,在执行过程中来了2号请求,忽略,继续执行完1号请求,返
+回ack,
+第2阶段:fp_rd_req的请求执行完,产生一个新的grant_ack,执行在第1阶段的
+2号请求(虽然0号比2号早,但此时2号优先级高于0号),屏蔽0号请求,执行
+完2号请求,返回ack
+第3阶段,虽然Fp_rd_req, cmd_commit同时存在,且2号优先级高,但此时0号
+在上一个轮回还没执行过,所以必须执行0号请求,执行完后返回ack
+第4阶段:重新下一轮优先级处理
+木秀于林,冲迎风霜 -- 每天积累一点点 1158 / 1226
+
+## 第 259 页
+
+上述方法可以避免某一个请求一直占用总线,在一个周期内,每个请求都有机会
+执行
+伪随机电路
+基础知识
+伪随机序列包括 序列， 序列是目前 系统中采用的最基本的 序列。 是最长线性反馈移位寄存器序列的简
+m m CDMA PN
+称。同时 序列在通信方面有很重要的作用。 序列是由线性反馈移位寄存器产生的。
+m m
+这是一个典型的线性反馈移位寄存器。通过选取系数的值，其中系数的值只能是0或者1，来确定反馈路
+径。然后给定寄存器初始值，叫做种子值，然后就可以获得2^n-1个状态。
+常用的反馈系数:
+木秀于林,冲迎风霜 -- 每天积累一点点 1159 / 1226
+
+## 第 260 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1160 / 1226
+
+## 第 261 页
+
+设计源码
+module rand_lfs(
+clk_sys,
+rand_clk, //osc800k
+木秀于林,冲迎风霜 -- 每天积累一点点 1161 / 1226
+
+## 第 262 页
+
+rst,
+xsel2,
+xadr2,
+xwdata2,
+xrdata2,
+enable,
+out_rand
+);
+input clk_sys;
+input rand_clk;
+input rst;
+input xsel2;
+input[7:0] xadr2;
+input[7:0] xwdata2;
+output[7:0] xrdata2;
+input enable;
+output out_rand;
+parameter ADDR_SEEDL = 3'h0 ;
+parameter ADDR_SEEDH = 3'h1 ;
+parameter ADDR_FEEDL = 3'h2 ;
+parameter ADDR_FEEDH = 3'h3 ;
+reg[11:0] register_lfs ;
+wire next_register_lfs_0 ;
+reg[7:0] seedl ;
+reg[3:0] seedh ;
+reg[7:0] feedl ;
+reg[3:0] feedh ;
+wire temp0;
+wire temp1;
+wire temp2;
+wire temp3;
+wire temp4;
+wire temp5;
+wire temp6;
+wire temp7;
+wire temp8;
+wire temp9;
+wire temp10;
+wire temp11;
+木秀于林,冲迎风霜 -- 每天积累一点点 1162 / 1226
+
+## 第 263 页
+
+wire seedl_sel = xsel2 & (xadr2[2:0] == ADDR_SEEDL);
+wire seedh_sel = xsel2 & (xadr2[2:0] == ADDR_SEEDH);
+wire feedl_sel = xsel2 & (xadr2[2:0] == ADDR_FEEDL);
+wire feedh_sel = xsel2 & (xadr2[2:0] == ADDR_FEEDH);
+wire [7:0] next_seedl = seedl_sel ? xwdata2 : seedl ;
+wire [3:0] next_seedh = seedh_sel ? xwdata2 : seedh ;
+wire [7:0] next_feedl = feedl_sel ? xwdata2 : feedl ;
+wire [3:0] next_feedh = feedh_sel ? xwdata2 : feedh ;
+wire [11:0] seed = {seedh,seedl};
+wire [11:0] feed = {feedh,feedl};
+assign xrdata2 = seedl_sel ? seedl :
+seedh_sel ? {4'h0,seedh}:
+feedl_sel ? feedl :
+feedh_sel ? {4'h0,feedh} :8'h0;
+//-------------------------------
+//feed is list :bit[12] must 1
+// feed_data[0]= 13'o10123; => 12'o0123; => 12'h53 ;
+// feed_data[1]= 13'o11417; => 12'o1417; => 12'h30f
+// feed_data[2]= 13'o12515; => 12'o2515; => 12/h54d
+// feed_data[3]= 13'o13505; => 12'o3505; => 12/h745 //default
+// feed_data[4]= 13'o14127; => 12'o4127; => 12/h857
+// feed_data[5]= 13'o15053; => 12'o5053; => 12/ha2b
+//-------------------------------
+always @(posedge clk_sys or negedge rst)
+if(!rst) begin
+seedl <= 8'h55;
+seedh <= 4'h5;
+feedl <= 8'h45;
+feedh <= 4'h7;
+end
+else begin
+seedl <= next_seedl;
+seedh <= next_seedh;
+feedl <= next_feedl;
+feedh <= next_feedh;
+end
+sync_level uSyn_enable(
+.clk ( rand_clk ),
+.clk_rst_n ( rst ),
+.async_sig ( enable ),
+.sync_sig ( sync_enable)
+木秀于林,冲迎风霜 -- 每天积累一点点 1163 / 1226
+
+## 第 264 页
+
+);
+assign next_register_lfs_0 = feed[0] ? temp0 :1'b0; //feed[0] must 1
+assign temp0 = feed[1] ? temp1 ^ register_lfs[0] : temp1;
+assign temp1 = feed[2] ? temp2 ^ register_lfs[1] : temp2;
+assign temp2 = feed[3] ? temp3 ^ register_lfs[2] : temp3;
+assign temp3 = feed[4] ? temp4 ^ register_lfs[3] : temp4;
+assign temp4 = feed[5] ? temp5 ^ register_lfs[4] : temp5;
+assign temp5 = feed[6] ? temp6 ^ register_lfs[5] : temp6;
+assign temp6 = feed[7] ? temp7 ^ register_lfs[6] : temp7;
+assign temp7 = feed[8] ? temp8 ^ register_lfs[7] : temp8;
+assign temp8 = feed[9] ? temp9 ^ register_lfs[8] : temp9;
+assign temp9 = feed[10] ? temp10 ^ register_lfs[9] : temp10;
+assign temp10= feed[11] ? temp11 ^ register_lfs[10] : temp11;
+assign temp11=register_lfs[11]; //feed[12] must 1
+//assign temp11= feed[12] ?register_lfs[11]:1'b0; //feed[12] must 1
+assign out_rand = register_lfs[11] ;
+always @(posedge rand_clk or negedge rst)
+if(!rst)begin
+register_lfs <= 12'b0;
+end
+else if(!sync_enable) begin
+register_lfs <= seed;
+end
+else begin
+register_lfs <= {register_lfs[10:0],next_register_lfs_0};
+end
+endmodule
+Crc 电路
+一 LFSR
+线性反馈移位寄存器(LFSR)是内测试电路中最基本的标准模块结构，既用作伪随机测试码产生器，也作为压缩测
+试结果数据的特征分析器。
+一个n阶的LFSR由n个触发器和若干个异或门组成。在实际应用当中，主要用到两种类型的LFSR，即异或门外
+接线性反馈移位寄存器（IE型LFSR，图1）--用于伪随机数发生器和异或门内接线性反馈移位寄存器（EE型LFSR，
+图2）--用于crc效验电路。其中g gg g 为’0’或’1’，Q QQ Q 为LFSR的输出，M(x)是输入的码字多项式，
+0 1 2 n 1 2 3 n
+如M(x)=x4+ x1+1，表示输入端的输入顺序为11001，同样，LFSR的结构也可以表示为多项式G(x)，称为生成多
+项式：
+G(x)=g*xn+ …+g*x1+g；
+n 1 0
+木秀于林,冲迎风霜 -- 每天积累一点点 1164 / 1226
+
+## 第 265 页
+
+二 CRC（参考博文http://blog.sina.com.cn/s/blog_468e65190100cxq3.html）
+循环冗余校验码（CRC）的基本原理是：在K位信息码后再拼接R位的校验码，整个编码长度为N位，因此，这
+种编码又叫（N，K）码。对于一个给定的（N，K）码，可以证明存在一个最高次幂为N-K=R的多项式G(x)可以使
+整个编码被除余数为0。根据G(x)可以生成K位信息的校验码，而G(x)叫做这个CRC码的生成多项式。校验码的
+具体生成过程为：假设发送信息用信息多项式C(X)表示，将C(x)左移R位，则可表示成C(x)*2的R次方，这样
+C(x)的右边就会空出R位，这就是校验码的位置。通过C(x)*2的R次方除以生成多项式G(x)得到的余数就是校
+验码。
+通过CRC的生成原理知道CRC的检验码生成是通过除法得到，由此联想到可以通过LFSR来产生校验码。
+假设原信息码子多项式为
+木秀于林,冲迎风霜 -- 每天积累一点点 1165 / 1226
+
+## 第 266 页
+
+wire [15:0] next_crc16_result = crc16_start ? 16'hffff :
+crc_en ? crc_tmp : crc16_result;
+always @(posedge clk r or negedge resetn)
+if(~resetn) begin
+木秀于林,冲迎风霜 -- 每天积累一点点 1166 / 1226
+
+## 第 267 页
+
+crc_en <= 1'b0;
+crc16_result <= 16'hffff;
+end
+else begin
+crc_en <= next_crc_en;
+crc16_result <= next_crc16_result;
+end
+integer i;
+always@(data_in or crc16_result) begin
+crc_tmp = crc16_result;
+for(i=15;i>=0;i=i-1) begin
+tmp = data_in[i] ^ crc_tmp[15];
+crc_tmp[15] = crc_tmp[14];
+crc_tmp[14] = crc_tmp[13];
+crc_tmp[13] = crc_tmp[12];
+crc_tmp[12] = crc_tmp[11] ^ tmp;
+crc_tmp[11] = crc_tmp[10];
+crc_tmp[10] = crc_tmp[9];
+crc_tmp[9] = crc_tmp[8];
+crc_tmp[8] = crc_tmp[7];
+crc_tmp[7] = crc_tmp[6];
+crc_tmp[6] = crc_tmp[5];
+crc_tmp[5] = crc_tmp[4] ^ tmp;
+crc_tmp[4] = crc_tmp[3];
+crc_tmp[3] = crc_tmp[2];
+crc_tmp[2] = crc_tmp[1];
+crc_tmp[1] = crc_tmp[0];
+crc_tmp[0] = tmp;
+end
+end
+cordic 算法详解
+cordic 原理转发
+转载自小一休哥的文章：http://blog.csdn.net/qq_39210023/article/details/77456031
+目前，学习与开发FPGA的程序员们大多使用的是VerilogHDL语言（以下简称为Verilog），关于Verilog
+的诸多优点一休哥就不多介绍了，在此，我们将重点放在Verilog的运算操作上。
+我们都知道，在Verilog中，运算一般分为逻辑运算（与或非等）与算术运算（加减乘除等）。而在一开
+始学习Verilog时，老司机一定会提醒我们，“切记，千万别用‘/’除、‘%’取模（有的也叫取余）和
+‘**’幂。”这话说的不无道理，因为这三个运算是不可综合的。但，需清楚理解的是，不可综合的具体
+意思为不能综合为简单的模块，当我们在程序中调用了这些运算时，‘/’除和‘%’取模在Quartus软件
+木秀于林,冲迎风霜 -- 每天积累一点点 1167 / 1226
+
+## 第 268 页
+
+中是可以综合的，因此可以正常调用运行，但是会消耗一些逻辑资源，而且会产生延时，即这两个运算的
+处理时间会很长，可能会大于时序控制时钟的单周期时间。此时呢，我们会建议你调用IP核来实现运算操
+作，虽然这样也会消耗许多逻辑资源，但产生的延时相对较小满足了你基本的需求。
+问题好像迎刃而解了，可是仔细一想，除了这些运算，我们还剩下什么？对呀，三角函数，反三角函数，
+对数函数，指数函数呢，这些函数我们在高中就学习了的呀，难道在FPGA中就没有用武之地吗？有人会说，
+查找表呗，首先将某个运算的所有可能的输入与输出对一一罗列出来，然后放进Rom中，然后根据输入查
+表得到输出。这个方法虽然有效的避免了延时问题，却是一个十分消耗资源的方法，不适合资源紧张的设
+计。那么，就真的没有办法了吗？
+答案就是咱们今天的标题了，CORDIC，而且CORDIC是一个比较全能的算法，通过这一原理，我们可以实现
+三角函数，反三角函数，对数函数，指数函数等多种运算。接下来，一休哥就带领大家来学习CORDIC的原
+理吧。（题外话：请相信一休哥，本文不会让你感到太多痛苦~）
+本文将分三个小部分来展开介绍：
+1、CORDIC的基本原理介绍
+2、CORDIC的具体操作流程介绍
+3、CORDIC的旋转模式——Verilog仿真
+本文涉及到的全部资料链接：
+链接：http://pan.baidu.com/s/1gfrJzMj密码：x92u
+一、CORDIC的基本原理介绍
+CORDIC算法是一个“化繁为简”的算法，将许多复杂的运算转化为一种“仅需要移位和加法”的迭代操作。
+CORDIC算法有旋转和向量两个模式，分别可以在圆坐标系、线性坐标系和双曲线坐标系使用，从而可以演
+算出8种运算，而结合这8种运算也可以衍生出其他许多运算。下表展示了8种运算在CORDIC算法中实现
+的条件。
+这里写图片描述
+首先，我们先从旋转模式下的圆坐标系讲起，这也是CORDIC方法最初的用途。
+1、CORDIC的几何原理介绍
+假设在xy坐标系中有一个点P1（x1，y1），将P1点绕原点旋转θ角后得到点P2（x2，y2）。
+这里写图片描述
+木秀于林,冲迎风霜 -- 每天积累一点点 1168 / 1226
+
+## 第 269 页
+
+于是可以得到P1和P2的关系。
+x2 = x1cosθ – y1sinθ = cosθ(x1 – y1tanθ)
+y2 = y1cosθ + x1sinθ = cosθ(y1 +x1tanθ)
+以上就是CORDIC的几何原理部分，而我们该如何深入理解这个几何原理的真正含义呢？
+从原理中，我们可以知道，当已知一个点P1的坐标，并已知该点P1旋转的角度θ，则可以根据上述公式
+求得目标点P2的坐标。然后，麻烦来了，我们需要用FPGA去执行上述运算操作，而FPGA的Verilog语言
+根本不支持三角函数运算。因此，我们需要对上述式子进行简化操作，将复杂的运算操作转换为一种单一
+的“迭代位移”算法。那么，接下来我们介绍优化算法部分。
+2、CORDIC的优化算法介绍
+我们先介绍算法的优化原理：将旋转角θ细化成若干分固定大小的角度θi，并且规定θi满足tanθi=2-i，
+因此∑θi的值在[-99.7°，99.7°]范围内，如果旋转角θ超出此范围，则运用简单的三角运算操作即可
+（加减π）。
+然后我们需要修改几何原理部分的假设，假设在xy坐标系中有一个点P0（x0，y0），将P0点绕原点旋转
+θ角后得到点Pn（xn，yn）。
+于是可以得到P0和Pn的关系。
+xn = x0cosθ – y0sinθ = cosθ(x0 – y0tanθ)
+yn = y0cosθ + x0sinθ = cosθ(y0 + x0tanθ)
+然后，我们将旋转角θ细化成θi，由于每次的旋转角度θi是固定不变的（因为满足tanθi=2-i），如
+果一直朝着一个方向旋转则∑θi一定会超过θ（如果θ在[-99.7°，99.7°]范围内）。因此我们需要对
+θi设定一个方向值di。如果旋转角已经大于θ，则di为-1，表示下次旋转为顺时针，即向θ靠近；如果
+旋转角已经小于θ，则di为1，表示下次旋转为逆时针，即也向θ靠近。然后我们可以得到每次旋转的角
+度值diθi，设角度剩余值为zi+1，则有zi+1 = zi - diθi，其中z0为θ。如此随着i的增大，角度剩
+余值zi+1将会趋近于0，此时运算结束。（注：可以发现，di与zi的符号位相同）
+第一次旋转θ0，d0为旋转方向：
+x1 = cosθ0(x0 – d0y0tanθ0)
+y1 = cosθ0(y0 + d0x0tanθ0)
+第二次旋转θ1，d1为旋转方向：
+x2 = cosθ1(x1 – d1y1tanθ1) = cosθ1cosθ0(x0 – d0y0tanθ0 – d1y0tanθ1 – d1d0 x0tanθ1
+tanθ0)
+木秀于林,冲迎风霜 -- 每天积累一点点 1169 / 1226
+
+## 第 270 页
+
+y2 = cosθ1(y1 + d1x1tanθ1) = cosθ1cosθ0(y0 + d0x0tanθ0 + d1x0tanθ1 – d1d0y0tanθ1 tan
+θ0)
+大家可能已经发现了，在我们旋转的过程中，式子里一直会有tanθi和cosθi，而每次都可以提取出cos
+θi。虽然我们的FPGA无法计算tanθi，但我们知道tanθi = 2-i，因此可以执行和tanθi效果相同的
+移位操作2-i来取代tanθi。而对于cosθi，我们可以事先全部提取出来，然后等待迭代结束之后（角度
+剩余值zi+1趋近于0，一般当系统设置最大迭代次数为16时zi+1已经很小了），然后计算出∏cosθi的
+值即可。
+总结一下：
+迭代公式有三：
+xi+1 = xi – (d i)(y i)(2^-i)，提取了cosθi，2-i等效替换了tanθi之后
+yi+1 = yi + (d i)(x i)(2^-i)，提取了cosθi，2-i等效替换了tanθi之后
+zi+1 = zi - diθi
+其中i从0开始迭代，假设当i = n-1时，zn趋近于0，迭代结束。然后对结果乘上∏cosθi（i从0至
+n-1），于是得到点Pn（xn∏cosθi，yn∏cosθi），此时的点Pn就近似等于之前假设中的点Pn（xn，yn）
+了，所以此时的点Pn同样满足之前假设得到的公式：
+xn∏cosθi = x0cosθ – y0sinθ
+yn∏cosθi = y0cosθ + x0sinθ
+由于i从0至n-1，所以上式可以转化成下式：
+xn = 1/∏cosθi(x0cosθ – y0sinθ)，（其中i从0至n-1）
+yn = 1/∏cosθi(y0cosθ + x0sinθ)，（其中i从0至n-1）
+注意：上式中的xn，yn是经过迭代后的结果，而不是之前假设中的点Pn（xn，yn）。了解这点是十分重
+要的。
+根据高中学的三角函数关系，可以知道cosθi = 1/[(1+tan2θi)^0.5] = 1/[(1+2-2i)^0.5]，而
+1/[(1+2-2i)^0.5]的极值为1，因此我们可以得出一个结论：当i的次数很大时，∏cosθi的值趋于一个
+常数。
+关于如何计算∏cosθi的代码如下所示：
+closeall;
+clear;
+clc;
+%初始化
+16%迭代次数
+die= ;
+zeros 1 %每次旋转的角度
+jiao= (die, );
+zeros 1 %每次旋转的角度的余弦值
+cos_value= (die, );
+zeros 1 %余弦值的N元乘积
+K= (die, );
+zeros 1 %余弦值的N元乘积的倒数
+K_1= (die, );
+fori 1
+= :die
+2 i 1
+a= ^(-( - ));
+i atan
+jiao( )= (a);
+i cos i
+cos_value( )= (jiao( ));
+if i 1
+( == )
+i i
+K( )=cos_value( );
+i 1 i
+K_1( )= /K( );
+else
+i i 1 i
+K( )=K( - )*cos_value( );
+木秀于林,冲迎风霜 -- 每天积累一点点 1170 / 1226
+
+## 第 271 页
+
+i 1 i
+K_1( )= /K( );
+end
+end
+25610
+jiao=vpa(rad2deg(jiao)* , )
+10
+cos_value=vpa(cos_value, )
+10
+K=vpa(K, )
+10
+K_1=vpa(K_1, )
+这里写图片描述
+从上表也可以看出，当迭代次数为16，i=15时，cosθi的值已经非常趋近于1了，∏cosθi的值则约等
+于0.607253，1/∏cosθi为1.64676。所以当迭代次数等于16时，通过迭代得到的点Pn坐标已经非常接
+近之前假设中的点Pn。所以，当迭代次数等于16时，这个式子是成立的。
+xn = 1/∏cosθi(x0cosθ – y0sinθ)，（其中i从0至n-1）
+yn = 1/∏cosθi(y0cosθ + x0sinθ)，（其中i从0至n-1）
+此时，已知条件有三个x0、y0和θ。通过16次迭代，我们可以得到xn和yn。而式中的∏cosθi是个随
+i变化的值，我们可以预先将其值存入系统中。
+然后，我们人为设置x0=∏cosθi，y0=0，则根据等式，xn=cosθ，yn=sinθ。其中1/∏cosθi
+的值我们也同样预先存入系统中。如此，我们就实现了正弦和余弦操作了。
+二、CORDIC的具体操作流程介绍
+1、CORDIC的旋转模式
+由于算法较复杂，一休哥再总结一些具体的操作流程。
+1、 设置迭代次数为16，则x0 = 0.607253，y0 = 0，并输入待计算的角度θ，θ在[-99.7°，99.7°]
+范围内。
+木秀于林,冲迎风霜 -- 每天积累一点点 1171 / 1226
+
+## 第 272 页
+
+2、 根据三个迭代公式进行迭代，i从0至15：
+xi+1 = xi – d iy i2-i
+yi+1 = yi + d ix i2-i
+zi+1 = zi - diθi
+注：z0 = θ，di与zi同符号。
+3、 经过16次迭代计算后，得到的x16 和y16分别为cosθ和sinθ。
+至此，关于CORDIC的三角函数cosθ和sinθ的计算原理讲解结束。
+关于CORDIC算法计算三角函数cosθ和sinθ的MATLAB代码如下所示：
+closeall;
+clear;
+clc;
+%初始化
+16%迭代次数
+die= ;
+zeros 11
+x= (die+ , );
+zeros 11
+y= (die+ , );
+zeros 11
+z= (die+ , );
+1 0.607253%初始设置
+x( )= ;
+1 pi4%待求角度θ
+z( )= / ;
+%迭代操作
+fori 1
+= :die
+if i 0
+z( )>=
+1
+d= ;
+else
+1
+d=- ;
+end
+i 1 i i 2 i 1
+x( + )=x( )-d*y( )*( ^(-( - )));
+i 1 i i 2 i 1
+y( + )=y( )+d*x( )*( ^(-( - )));
+i 1 i atan2 i 1
+z( + )=z( )-d* ( ^(-( - )));
+end
+17 10
+cosa=vpa(x( ), )
+17 10
+sina=vpa(y( ), )
+17 10
+c=vpa(z( ), )
+2、CORDIC的向量模式
+讲完了旋转模式后，我们接着讲讲向量模式下的圆坐标系。
+在这里，我们需从头来过了，假设在xy坐标系中有一个点P0（x0，y0），将P0点绕原点旋转θ角后得到
+点Pn（xn，0），θ在[-99.7°，99.7°]范围内。
+于是可以得到P0和Pn的关系：
+xn = x0cosθ – y0sinθ = cosθ(x0 – y0tanθ)
+yn = y0cosθ + x0sinθ = cosθ(y0 + x0tanθ) = 0
+如何得到Pn（xn，yn）一直是我们的目标。而此时，我们还是列出那几个等式：
+根据三个迭代公式进行迭代，i从0至15：
+xi+1 = xi – d iy i2-i
+yi+1 = yi + d ix i2-i
+zi+1 = zi - diθi
+木秀于林,冲迎风霜 -- 每天积累一点点 1172 / 1226
+
+## 第 273 页
+
+不过此时我们尝试改变初始条件：
+设置迭代次数为16，则x0 = x，y0 = y，z0 = 0，di与yi的符号相反。表示，经过n次旋转，使Pn靠
+近x轴。
+因此，当迭代结束之后，Pn将近似接近x轴，此时yn = 0，可知旋转了θ，即zn = θ = arctan(y/x)。
+而
+xn = 1/∏cosθi(x0cosθ – y0sinθ)，（其中i从0至n-1）
+yn = 1/∏cosθi(y0cosθ + x0sinθ)，（其中i从0至n-1）
+因此，可得ycosθ + xsinθ = 0，
+xn = 1/∏cosθi(xcosθ – ysinθ) = 1/∏cosθi{ [ (xcosθ – ysinθ)^2]^(1/2)}
+= 1/∏cosθi{ [ x2cos2θ + y2sin2θ – 2xysinθcosθ]^(1/2)}
+= 1/∏cosθi{ [ x2cos2θ + y2sin2θ + y2 cos2θ + x2sin2θ]^(1/2)}
+= 1/∏cosθi{ [ x2 + y2]^(1/2)}
+由上可以知道，我们通过迭代，就算出了反正切函数zn= θ =arctan(y/x)，以及向量OP0（x，y）的长
+度 d = xn * ∏cosθi。
+关于反正切函数，一休哥要多啰嗦几句了，由于θ在[-99.7°，99.7°]范围内，所以我们输入向量OP0（x，
+y）时，需要保证其在第一、四象限。
+关于CORDIC算法计算反三角函数arctanθ的MATLAB代码如下所示：
+closeall;
+clear;
+clc;
+%初始化
+16%迭代次数
+die= ;
+zeros 11
+x= (die+ , );
+zeros 11
+y= (die+ , );
+zeros 11
+z= (die+ , );
+1 100%初始设置
+x( )= ;
+1 200%初始设置
+y( )= ;
+0.607253%初始设置
+k= ;
+%迭代操作
+fori 1
+= :die
+if i 0
+y( )>=
+1
+d=- ;
+else
+1
+d= ;
+end
+i 1 i i 2 i 1
+x( + )=x( )-d*y( )*( ^(-( - )));
+i 1 i i 2 i 1
+y( + )=y( )+d*x( )*( ^(-( - )));
+i 1 i atan2 i 1
+z( + )=z( )-d* ( ^(-( - )));
+end
+17 10
+d=vpa(x( )*k, )
+17 10
+a=vpa(y( ), )
+17 10
+c=vpa(rad2deg(z( )), )
+三、CORDIC的旋转模式——Verilog仿真
+木秀于林,冲迎风霜 -- 每天积累一点点 1173 / 1226
+
+## 第 274 页
+
+一休哥在编写CORDIC算法时，采用了16级流水线，仿真效果十分明显。以下是顶层文件的代码。
+为了避免浮点运算，为了满足精度要求，一休哥对每个变量都放大了2^16倍，并且引入了有符号型reg和
+算术右移。
+关于Verilog代码的编写，一休哥已经不想多说了，因为代码是完全符合我之前所讲的CORDIC的原理与
+MATLAB仿真代码。相信大家在看完本文的前两个部分之后，对Verilog的理解应该不是难事儿。
+moduleCordic_Test
+(
+CLK_50M,RST_N,
+Phase,
+Sin,Cos,Error
+);
+input CLK_50M;
+input RST_N;
+310
+input [ : ] Phase;
+310
+output [ : ] Sin;
+310
+output [ : ] Cos;
+310
+output [ : ] Error;
+32'd2949120 45度 2 16 tan45=1
+`definerot0 // * ^
+32'd1740992 26.5651度 2 16 tan26.5651=0.5 >>1
+`definerot1 // * ^
+32'd919872 14.0362度 2 16 tan~=0.25 => >>2
+`definerot2 // * ^
+32'd466944 7.1250度 2 16 tan~ = 0.125 => >>3
+`definerot3 // * ^
+32'd234368 3.5763度 2 16 => >>4
+`definerot4 // * ^
+32'd117312 1.7899度 2 16 => >>5
+`definerot5 // * ^
+32'd58688 0.8952度 2 16 => >>6
+`definerot6 // * ^
+32'd29312 0.4476度 2 16 => >>7
+`definerot7 // * ^
+32'd14656 0.2238度 2 16 => >>8
+`definerot8 // * ^
+32'd7360 0.1119度 2 16 => >>9
+`definerot9 // * ^
+32'd3648 0.0560度 2 16 => >>10
+`definerot10 // * ^
+32'd1856 0.0280度 2 16 => >>11
+`definerot11 // * ^
+32'd896 0.0140度 2 16 => >>12
+`definerot12 // * ^
+32'd448 0.0070度 2 16 => >>13
+`definerot13 // * ^
+32'd256 0.0035度 2 16 => >>14
+`definerot14 // * ^
+32'd128 0.0018度 2 16 tan~=3.1415926e(-5)
+`definerot15 // * ^
+16
+parameterPipeline= ;
+32'h09b74 0.607253 2 1632'h09b74
+parameterK= ; //K= * ^ , ,
+signed 310
+reg [ : ] Sin;
+signed 310
+reg [ : ] Cos;
+signed 310
+reg [ : ] Error;
+signed 310 0 0 0
+reg [ : ] x0= ,y0= ,z0= ;
+signed 310 0 0 0
+reg [ : ] x1= ,y1= ,z1= ;
+木秀于林,冲迎风霜 -- 每天积累一点点 1174 / 1226
+
+## 第 275 页
+
+signed 310 0 0 0
+reg [ : ] x2= ,y2= ,z2= ;
+signed 310 0 0 0
+reg [ : ] x3= ,y3= ,z3= ;
+signed 310 0 0 0
+reg [ : ] x4= ,y4= ,z4= ;
+signed 310 0 0 0
+reg [ : ] x5= ,y5= ,z5= ;
+signed 310 0 0 0
+reg [ : ] x6= ,y6= ,z6= ;
+signed 310 0 0 0
+reg [ : ] x7= ,y7= ,z7= ;
+signed 310 0 0 0
+reg [ : ] x8= ,y8= ,z8= ;
+signed 310 0 0 0
+reg [ : ] x9= ,y9= ,z9= ;
+signed 310 0 0 0
+reg [ : ] x10= ,y10= ,z10= ;
+signed 310 0 0 0
+reg [ : ] x11= ,y11= ,z11= ;
+signed 310 0 0 0
+reg [ : ] x12= ,y12= ,z12= ;
+signed 310 0 0 0
+reg [ : ] x13= ,y13= ,z13= ;
+signed 310 0 0 0
+reg [ : ] x14= ,y14= ,z14= ;
+signed 310 0 0 0
+reg [ : ] x15= ,y15= ,z15= ;
+signed 310 0 0 0
+reg [ : ] x16= ,y16= ,z16= ;
+10 0
+reg [ : ] Quadrant[Pipeline: ];
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x0<= ;
+1'b0
+y0<= ;
+1'b0
+z0<= ;
+end
+else
+begin
+x0<=K;
+32'd0
+y0<= ;
+150 16
+z0<=Phase[ : ]<< ;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x1<= ;
+1'b0
+y1<= ;
+1'b0
+z1<= ;
+end
+elseif 31
+(z0[ ])
+begin
+x1<=x0+y0;
+木秀于林,冲迎风霜 -- 每天积累一点点 1175 / 1226
+
+## 第 276 页
+
+y1<=y0-x0;
+z1<=z0+`rot0;
+end
+else
+begin
+x1<=x0-y0;
+y1<=y0+x0;
+z1<=z0-`rot0;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x2<= ;
+1'b0
+y2<= ;
+1'b0
+z2<= ;
+end
+elseif 31
+(z1[ ])
+begin
+1
+x2<=x1+(y1>>> );
+1
+y2<=y1-(x1>>> );
+z2<=z1+`rot1;
+end
+else
+begin
+1
+x2<=x1-(y1>>> );
+1
+y2<=y1+(x1>>> );
+z2<=z1-`rot1;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x3<= ;
+1'b0
+y3<= ;
+1'b0
+z3<= ;
+end
+elseif 31
+(z2[ ])
+begin
+2
+x3<=x2+(y2>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1176 / 1226
+
+## 第 277 页
+
+2
+y3<=y2-(x2>>> );
+z3<=z2+`rot2;
+end
+else
+begin
+2
+x3<=x2-(y2>>> );
+2
+y3<=y2+(x2>>> );
+z3<=z2-`rot2;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x4<= ;
+1'b0
+y4<= ;
+1'b0
+z4<= ;
+end
+elseif 31
+(z3[ ])
+begin
+3
+x4<=x3+(y3>>> );
+3
+y4<=y3-(x3>>> );
+z4<=z3+`rot3;
+end
+else
+begin
+3
+x4<=x3-(y3>>> );
+3
+y4<=y3+(x3>>> );
+z4<=z3-`rot3;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x5<= ;
+1'b0
+y5<= ;
+1'b0
+z5<= ;
+end
+elseif 31
+(z4[ ])
+begin
+4
+x5<=x4+(y4>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1177 / 1226
+
+## 第 278 页
+
+4
+y5<=y4-(x4>>> );
+z5<=z4+`rot4;
+end
+else
+begin
+4
+x5<=x4-(y4>>> );
+4
+y5<=y4+(x4>>> );
+z5<=z4-`rot4;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x6<= ;
+1'b0
+y6<= ;
+1'b0
+z6<= ;
+end
+elseif 31
+(z5[ ])
+begin
+5
+x6<=x5+(y5>>> );
+5
+y6<=y5-(x5>>> );
+z6<=z5+`rot5;
+end
+else
+begin
+5
+x6<=x5-(y5>>> );
+5
+y6<=y5+(x5>>> );
+z6<=z5-`rot5;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x7<= ;
+1'b0
+y7<= ;
+1'b0
+z7<= ;
+end
+elseif 31
+(z6[ ])
+begin
+6
+x7<=x6+(y6>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1178 / 1226
+
+## 第 279 页
+
+6
+y7<=y6-(x6>>> );
+z7<=z6+`rot6;
+end
+else
+begin
+6
+x7<=x6-(y6>>> );
+6
+y7<=y6+(x6>>> );
+z7<=z6-`rot6;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x8<= ;
+1'b0
+y8<= ;
+1'b0
+z8<= ;
+end
+elseif 31
+(z7[ ])
+begin
+7
+x8<=x7+(y7>>> );
+7
+y8<=y7-(x7>>> );
+z8<=z7+`rot7;
+end
+else
+begin
+7
+x8<=x7-(y7>>> );
+7
+y8<=y7+(x7>>> );
+z8<=z7-`rot7;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x9<= ;
+1'b0
+y9<= ;
+1'b0
+z9<= ;
+end
+elseif 31
+(z8[ ])
+begin
+8
+x9<=x8+(y8>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1179 / 1226
+
+## 第 280 页
+
+8
+y9<=y8-(x8>>> );
+z9<=z8+`rot8;
+end
+else
+begin
+8
+x9<=x8-(y8>>> );
+8
+y9<=y8+(x8>>> );
+z9<=z8-`rot8;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x10<= ;
+1'b0
+y10<= ;
+1'b0
+z10<= ;
+end
+elseif 31
+(z9[ ])
+begin
+9
+x10<=x9+(y9>>> );
+9
+y10<=y9-(x9>>> );
+z10<=z9+`rot9;
+end
+else
+begin
+9
+x10<=x9-(y9>>> );
+9
+y10<=y9+(x9>>> );
+z10<=z9-`rot9;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x11<= ;
+1'b0
+y11<= ;
+1'b0
+z11<= ;
+end
+elseif 31
+(z10[ ])
+begin
+10
+x11<=x10+(y10>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1180 / 1226
+
+## 第 281 页
+
+10
+y11<=y10-(x10>>> );
+z11<=z10+`rot10;
+end
+else
+begin
+10
+x11<=x10-(y10>>> );
+10
+y11<=y10+(x10>>> );
+z11<=z10-`rot10;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x12<= ;
+1'b0
+y12<= ;
+1'b0
+z12<= ;
+end
+elseif 31
+(z11[ ])
+begin
+11
+x12<=x11+(y11>>> );
+11
+y12<=y11-(x11>>> );
+z12<=z11+`rot11;
+end
+else
+begin
+11
+x12<=x11-(y11>>> );
+11
+y12<=y11+(x11>>> );
+z12<=z11-`rot11;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x13<= ;
+1'b0
+y13<= ;
+1'b0
+z13<= ;
+end
+elseif 31
+(z12[ ])
+begin
+12
+x13<=x12+(y12>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1181 / 1226
+
+## 第 282 页
+
+12
+y13<=y12-(x12>>> );
+z13<=z12+`rot12;
+end
+else
+begin
+12
+x13<=x12-(y12>>> );
+12
+y13<=y12+(x12>>> );
+z13<=z12-`rot12;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x14<= ;
+1'b0
+y14<= ;
+1'b0
+z14<= ;
+end
+elseif 31
+(z13[ ])
+begin
+13
+x14<=x13+(y13>>> );
+13
+y14<=y13-(x13>>> );
+z14<=z13+`rot13;
+end
+else
+begin
+13
+x14<=x13-(y13>>> );
+13
+y14<=y13+(x13>>> );
+z14<=z13-`rot13;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x15<= ;
+1'b0
+y15<= ;
+1'b0
+z15<= ;
+end
+elseif 31
+(z14[ ])
+begin
+14
+x15<=x14+(y14>>> );
+木秀于林,冲迎风霜 -- 每天积累一点点 1182 / 1226
+
+## 第 283 页
+
+14
+y15<=y14-(x14>>> );
+z15<=z14+`rot14;
+end
+else
+begin
+14
+x15<=x14-(y14>>> );
+14
+y15<=y14+(x14>>> );
+z15<=z14-`rot14;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x16<= ;
+1'b0
+y16<= ;
+1'b0
+z16<= ;
+end
+elseif 31
+(z15[ ])
+begin
+15
+x16<=x15+(y15>>> );
+15
+y16<=y15-(x15>>> );
+z16<=z15+`rot15;
+end
+else
+begin
+15
+x16<=x15-(y15>>> );
+15
+y16<=y15+(x15>>> );
+z16<=z15-`rot15;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+0 1'b0
+Quadrant[ ]<= ;
+1 1'b0
+Quadrant[ ]<= ;
+2 1'b0
+Quadrant[ ]<= ;
+3 1'b0
+Quadrant[ ]<= ;
+4 1'b0
+Quadrant[ ]<= ;
+5 1'b0
+Quadrant[ ]<= ;
+6 1'b0
+Quadrant[ ]<= ;
+木秀于林,冲迎风霜 -- 每天积累一点点 1183 / 1226
+
+## 第 284 页
+
+7 1'b0
+Quadrant[ ]<= ;
+8 1'b0
+Quadrant[ ]<= ;
+9 1'b0
+Quadrant[ ]<= ;
+10 1'b0
+Quadrant[ ]<= ;
+11 1'b0
+Quadrant[ ]<= ;
+12 1'b0
+Quadrant[ ]<= ;
+13 1'b0
+Quadrant[ ]<= ;
+14 1'b0
+Quadrant[ ]<= ;
+15 1'b0
+Quadrant[ ]<= ;
+16 1'b0
+Quadrant[ ]<= ;
+end
+else
+begin
+0 1716
+Quadrant[ ]<=Phase[ : ];
+1 0
+Quadrant[ ]<=Quadrant[ ];
+2 1
+Quadrant[ ]<=Quadrant[ ];
+3 2
+Quadrant[ ]<=Quadrant[ ];
+4 3
+Quadrant[ ]<=Quadrant[ ];
+5 4
+Quadrant[ ]<=Quadrant[ ];
+6 5
+Quadrant[ ]<=Quadrant[ ];
+7 6
+Quadrant[ ]<=Quadrant[ ];
+8 7
+Quadrant[ ]<=Quadrant[ ];
+9 8
+Quadrant[ ]<=Quadrant[ ];
+10 9
+Quadrant[ ]<=Quadrant[ ];
+11 10
+Quadrant[ ]<=Quadrant[ ];
+12 11
+Quadrant[ ]<=Quadrant[ ];
+13 12
+Quadrant[ ]<=Quadrant[ ];
+14 13
+Quadrant[ ]<=Quadrant[ ];
+15 14
+Quadrant[ ]<=Quadrant[ ];
+16 15
+Quadrant[ ]<=Quadrant[ ];
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+Cos<= ;
+1'b0
+Sin<= ;
+1'b0
+Error<= ;
+end
+else
+begin
+Error<=z16;
+木秀于林,冲迎风霜 -- 每天积累一点点 1184 / 1226
+
+## 第 285 页
+
+case 16
+(Quadrant[ ])
+2'b00 if isin
+:// thePhase firstQuadrant,theSin(X)=Sin(A),Cos(X)=Cos(A)
+begin
+Cos<=x16;
+Sin<=y16;
+end
+2'b01 if isin
+:// thePhase secondQuadrant,the
+90 90
+Sin(X)=Sin(A+ )=CosA,Cos(X)=Cos(A+ )=-SinA
+begin
+1'b1
+Cos<=~(y16)+ ;//-Sin
+Sin<=x16;//Cos
+end
+2'b10 if isin
+:// thePhase thirdQuadrant,the
+180 180
+Sin(X)=Sin(A+ )=-SinA,Cos(X)=Cos(A+ )=-CosA
+begin
+1'b1
+Cos<=~(x16)+ ;//-Cos
+1'b1
+Sin<=~(y16)+ ;//-Sin
+end
+2'b11 if isin
+:// thePhase forthQuadrant,the
+270 270
+Sin(X)=Sin(A+ )=-CosA,Cos(X)=Cos(A+ )=SinA
+begin
+Cos<=y16;//Sin
+1'b1
+Sin<=~(x16)+ ;//-Cos
+end
+endcase
+end
+end
+endmodule
+理解:
+可以理解为采用2分法来实现,不过不是根据角度的二分法,而是tanQ的二分法,
+因为tanq在-pi/2 ~ pi/2是单调的,所以可以使用二分发,在应用中可以只考
+虑第一象限,其它象限可以变换.
+具体过程如下:
+先假定初始角度是0 -> 旋转45 -> 根据目标角度-已旋转的角度(第一次旋转的
+角度为45)结果决定是加第二个角度还是减第二个角度 -> 根据目标角度-已旋
+转的角度(第二次旋转的角度为26.5651)结果决定是加第三个角度还是减第三
+个角度……… 一直到旋转16次,这个16次是认为规定,因为旋转16次误差已
+经很小,一般可以满足设计;其中每次旋转的角度可以预先计算出来.
+在实际应用中可以只计算0~90度,其它角度可以事先换算出来,
+下面是修改后的代码,输入的变量(可以是小数,但范围在0~90度)需要自己先放
+大2^16倍(取整数部分),注意输入只支持 0~90 度
+moduleCordic_Test
+木秀于林,冲迎风霜 -- 每天积累一点点 1185 / 1226
+
+## 第 286 页
+
+(
+CLK_50M,RST_N,
+Phase,
+Sin,Cos,Error
+);
+input CLK_50M;
+input RST_N;
+250
+input [ : ] Phase;
+表示象限 度占 放大 倍左移 位 则占 多留 为了 对齐不容易出错
+//[25:24] ;0~90 7bit, 2^16 ( 16 ), 23bit, 1bit 4bit/ , ,
+这个数据要外部处理好如果要输入 度则配置第 象限 度
+, 275 , 4 (2’b11),85 (85*2^16)
+310
+output [ : ] Sin;
+310
+output [ : ] Cos;
+310
+output [ : ] Error;
+32'd2949120 45度 2 16 tan45=1
+`definerot0 // * ^
+32'd1740992 26.5651度 2 16 tan26.5651=0.5 >>1
+`definerot1 // * ^
+32'd919872 14.0362度 2 16 tan~=0.25 => >>2
+`definerot2 // * ^
+32'd466944 7.1250度 2 16 tan~ = 0.125 => >>3
+`definerot3 // * ^
+32'd234368 3.5763度 2 16 => >>4
+`definerot4 // * ^
+32'd117312 1.7899度 2 16 => >>5
+`definerot5 // * ^
+32'd58688 0.8952度 2 16 => >>6
+`definerot6 // * ^
+32'd29312 0.4476度 2 16 => >>7
+`definerot7 // * ^
+32'd14656 0.2238度 2 16 => >>8
+`definerot8 // * ^
+32'd7360 0.1119度 2 16 => >>9
+`definerot9 // * ^
+32'd3648 0.0560度 2 16 => >>10
+`definerot10 // * ^
+32'd1856 0.0280度 2 16 => >>11
+`definerot11 // * ^
+32'd896 0.0140度 2 16 => >>12
+`definerot12 // * ^
+32'd448 0.0070度 2 16 => >>13
+`definerot13 // * ^
+32'd256 0.0035度 2 16 => >>14
+`definerot14 // * ^
+32'd128 0.0018度 2 16 tan~=3.1415926e(-5)
+`definerot15 // * ^
+16
+parameterPipeline= ;
+32'h09b74 0.607253 2 1632'h09b74
+parameterK= ; //K= * ^ , ,
+signed 310
+reg [ : ] Sin;
+signed 310
+reg [ : ] Cos;
+signed 310
+reg [ : ] Error;
+signed 310 0 0 0
+reg [ : ] x0= ,y0= ,z0= ;
+signed 310 0 0 0
+reg [ : ] x1= ,y1= ,z1= ;
+signed 310 0 0 0
+reg [ : ] x2= ,y2= ,z2= ;
+signed 310 0 0 0
+reg [ : ] x3= ,y3= ,z3= ;
+signed 310 0 0 0
+reg [ : ] x4= ,y4= ,z4= ;
+signed 310 0 0 0
+reg [ : ] x5= ,y5= ,z5= ;
+木秀于林,冲迎风霜 -- 每天积累一点点 1186 / 1226
+
+## 第 287 页
+
+signed 310 0 0 0
+reg [ : ] x6= ,y6= ,z6= ;
+signed 310 0 0 0
+reg [ : ] x7= ,y7= ,z7= ;
+signed 310 0 0 0
+reg [ : ] x8= ,y8= ,z8= ;
+signed 310 0 0 0
+reg [ : ] x9= ,y9= ,z9= ;
+signed 310 0 0 0
+reg [ : ] x10= ,y10= ,z10= ;
+signed 310 0 0 0
+reg [ : ] x11= ,y11= ,z11= ;
+signed 310 0 0 0
+reg [ : ] x12= ,y12= ,z12= ;
+signed 310 0 0 0
+reg [ : ] x13= ,y13= ,z13= ;
+signed 310 0 0 0
+reg [ : ] x14= ,y14= ,z14= ;
+signed 310 0 0 0
+reg [ : ] x15= ,y15= ,z15= ;
+signed 310 0 0 0
+reg [ : ] x16= ,y16= ,z16= ;
+10 0
+reg [ : ] Quadrant[Pipeline: ];
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x0<= ;
+1'b0
+y0<= ;
+1'b0
+z0<= ;
+end
+else
+begin
+x0<=K;
+32'd0
+y0<= ;
+150 16 这个地方与原始文件不一样
+//z0<=Phase[ : ]<< ;//
+0 这个地方与原始文件不一样
+z0<=Phase[23: ];//
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x1<= ;
+1'b0
+y1<= ;
+1'b0
+z1<= ;
+end
+elseif 31
+(z0[ ])
+begin
+x1<=x0+y0;
+y1<=y0-x0;
+z1<=z0+`rot0;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1187 / 1226
+
+## 第 288 页
+
+else
+begin
+x1<=x0-y0;
+y1<=y0+x0;
+z1<=z0-`rot0;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x2<= ;
+1'b0
+y2<= ;
+1'b0
+z2<= ;
+end
+elseif 31
+(z1[ ])
+begin
+1
+x2<=x1+(y1>>> );
+1
+y2<=y1-(x1>>> );
+z2<=z1+`rot1;
+end
+else
+begin
+1
+x2<=x1-(y1>>> );
+1
+y2<=y1+(x1>>> );
+z2<=z1-`rot1;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x3<= ;
+1'b0
+y3<= ;
+1'b0
+z3<= ;
+end
+elseif 31
+(z2[ ])
+begin
+2
+x3<=x2+(y2>>> );
+2
+y3<=y2-(x2>>> );
+z3<=z2+`rot2;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1188 / 1226
+
+## 第 289 页
+
+else
+begin
+2
+x3<=x2-(y2>>> );
+2
+y3<=y2+(x2>>> );
+z3<=z2-`rot2;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x4<= ;
+1'b0
+y4<= ;
+1'b0
+z4<= ;
+end
+elseif 31
+(z3[ ])
+begin
+3
+x4<=x3+(y3>>> );
+3
+y4<=y3-(x3>>> );
+z4<=z3+`rot3;
+end
+else
+begin
+3
+x4<=x3-(y3>>> );
+3
+y4<=y3+(x3>>> );
+z4<=z3-`rot3;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x5<= ;
+1'b0
+y5<= ;
+1'b0
+z5<= ;
+end
+elseif 31
+(z4[ ])
+begin
+4
+x5<=x4+(y4>>> );
+4
+y5<=y4-(x4>>> );
+z5<=z4+`rot4;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1189 / 1226
+
+## 第 290 页
+
+else
+begin
+4
+x5<=x4-(y4>>> );
+4
+y5<=y4+(x4>>> );
+z5<=z4-`rot4;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x6<= ;
+1'b0
+y6<= ;
+1'b0
+z6<= ;
+end
+elseif 31
+(z5[ ])
+begin
+5
+x6<=x5+(y5>>> );
+5
+y6<=y5-(x5>>> );
+z6<=z5+`rot5;
+end
+else
+begin
+5
+x6<=x5-(y5>>> );
+5
+y6<=y5+(x5>>> );
+z6<=z5-`rot5;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x7<= ;
+1'b0
+y7<= ;
+1'b0
+z7<= ;
+end
+elseif 31
+(z6[ ])
+begin
+6
+x7<=x6+(y6>>> );
+6
+y7<=y6-(x6>>> );
+z7<=z6+`rot6;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1190 / 1226
+
+## 第 291 页
+
+else
+begin
+6
+x7<=x6-(y6>>> );
+6
+y7<=y6+(x6>>> );
+z7<=z6-`rot6;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x8<= ;
+1'b0
+y8<= ;
+1'b0
+z8<= ;
+end
+elseif 31
+(z7[ ])
+begin
+7
+x8<=x7+(y7>>> );
+7
+y8<=y7-(x7>>> );
+z8<=z7+`rot7;
+end
+else
+begin
+7
+x8<=x7-(y7>>> );
+7
+y8<=y7+(x7>>> );
+z8<=z7-`rot7;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x9<= ;
+1'b0
+y9<= ;
+1'b0
+z9<= ;
+end
+elseif 31
+(z8[ ])
+begin
+8
+x9<=x8+(y8>>> );
+8
+y9<=y8-(x8>>> );
+z9<=z8+`rot8;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1191 / 1226
+
+## 第 292 页
+
+else
+begin
+8
+x9<=x8-(y8>>> );
+8
+y9<=y8+(x8>>> );
+z9<=z8-`rot8;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x10<= ;
+1'b0
+y10<= ;
+1'b0
+z10<= ;
+end
+elseif 31
+(z9[ ])
+begin
+9
+x10<=x9+(y9>>> );
+9
+y10<=y9-(x9>>> );
+z10<=z9+`rot9;
+end
+else
+begin
+9
+x10<=x9-(y9>>> );
+9
+y10<=y9+(x9>>> );
+z10<=z9-`rot9;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x11<= ;
+1'b0
+y11<= ;
+1'b0
+z11<= ;
+end
+elseif 31
+(z10[ ])
+begin
+10
+x11<=x10+(y10>>> );
+10
+y11<=y10-(x10>>> );
+z11<=z10+`rot10;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1192 / 1226
+
+## 第 293 页
+
+else
+begin
+10
+x11<=x10-(y10>>> );
+10
+y11<=y10+(x10>>> );
+z11<=z10-`rot10;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x12<= ;
+1'b0
+y12<= ;
+1'b0
+z12<= ;
+end
+elseif 31
+(z11[ ])
+begin
+11
+x12<=x11+(y11>>> );
+11
+y12<=y11-(x11>>> );
+z12<=z11+`rot11;
+end
+else
+begin
+11
+x12<=x11-(y11>>> );
+11
+y12<=y11+(x11>>> );
+z12<=z11-`rot11;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x13<= ;
+1'b0
+y13<= ;
+1'b0
+z13<= ;
+end
+elseif 31
+(z12[ ])
+begin
+12
+x13<=x12+(y12>>> );
+12
+y13<=y12-(x12>>> );
+z13<=z12+`rot12;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1193 / 1226
+
+## 第 294 页
+
+else
+begin
+12
+x13<=x12-(y12>>> );
+12
+y13<=y12+(x12>>> );
+z13<=z12-`rot12;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x14<= ;
+1'b0
+y14<= ;
+1'b0
+z14<= ;
+end
+elseif 31
+(z13[ ])
+begin
+13
+x14<=x13+(y13>>> );
+13
+y14<=y13-(x13>>> );
+z14<=z13+`rot13;
+end
+else
+begin
+13
+x14<=x13-(y13>>> );
+13
+y14<=y13+(x13>>> );
+z14<=z13-`rot13;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x15<= ;
+1'b0
+y15<= ;
+1'b0
+z15<= ;
+end
+elseif 31
+(z14[ ])
+begin
+14
+x15<=x14+(y14>>> );
+14
+y15<=y14-(x14>>> );
+z15<=z14+`rot14;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1194 / 1226
+
+## 第 295 页
+
+else
+begin
+14
+x15<=x14-(y14>>> );
+14
+y15<=y14+(x14>>> );
+z15<=z14-`rot14;
+end
+end
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+x16<= ;
+1'b0
+y16<= ;
+1'b0
+z16<= ;
+end
+elseif 31
+(z15[ ])
+begin
+15
+x16<=x15+(y15>>> );
+15
+y16<=y15-(x15>>> );
+z16<=z15+`rot15;
+end
+else
+begin
+15
+x16<=x15-(y15>>> );
+15
+y16<=y15+(x15>>> );
+z16<=z15-`rot15;
+end
+end
+下面代码不用
+//
+/*
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+0 1'b0
+Quadrant[ ]<= ;
+1 1'b0
+Quadrant[ ]<= ;
+2 1'b0
+Quadrant[ ]<= ;
+3 1'b0
+Quadrant[ ]<= ;
+4 1'b0
+Quadrant[ ]<= ;
+5 1'b0
+Quadrant[ ]<= ;
+6 1'b0
+Quadrant[ ]<= ;
+7 1'b0
+Quadrant[ ]<= ;
+8 1'b0
+Quadrant[ ]<= ;
+木秀于林,冲迎风霜 -- 每天积累一点点 1195 / 1226
+
+## 第 296 页
+
+9 1'b0
+Quadrant[ ]<= ;
+10 1'b0
+Quadrant[ ]<= ;
+11 1'b0
+Quadrant[ ]<= ;
+12 1'b0
+Quadrant[ ]<= ;
+13 1'b0
+Quadrant[ ]<= ;
+14 1'b0
+Quadrant[ ]<= ;
+15 1'b0
+Quadrant[ ]<= ;
+16 1'b0
+Quadrant[ ]<= ;
+end
+else
+begin
+0 1716
+Quadrant[ ]<=Phase[ : ];
+1 0
+Quadrant[ ]<=Quadrant[ ];
+2 1
+Quadrant[ ]<=Quadrant[ ];
+3 2
+Quadrant[ ]<=Quadrant[ ];
+4 3
+Quadrant[ ]<=Quadrant[ ];
+5 4
+Quadrant[ ]<=Quadrant[ ];
+6 5
+Quadrant[ ]<=Quadrant[ ];
+7 6
+Quadrant[ ]<=Quadrant[ ];
+8 7
+Quadrant[ ]<=Quadrant[ ];
+9 8
+Quadrant[ ]<=Quadrant[ ];
+10 9
+Quadrant[ ]<=Quadrant[ ];
+11 10
+Quadrant[ ]<=Quadrant[ ];
+12 11
+Quadrant[ ]<=Quadrant[ ];
+13 12
+Quadrant[ ]<=Quadrant[ ];
+14 13
+Quadrant[ ]<=Quadrant[ ];
+15 14
+Quadrant[ ]<=Quadrant[ ];
+16 15
+Quadrant[ ]<=Quadrant[ ];
+end
+end
+*/
+or
+always@(posedgeCLK_50M negedgeRST_N)
+begin
+if
+(!RST_N)
+begin
+1'b0
+Cos<= ;
+1'b0
+Sin<= ;
+1'b0
+Error<= ;
+end
+else
+begin
+Error<=z16;
+下面代码与原始文件不同
+//
+case
+(Phase[25:24])
+木秀于林,冲迎风霜 -- 每天积累一点点 1196 / 1226
+
+## 第 297 页
+
+2'b00 if isin
+:// thePhase firstQuadrant,theSin(X)=Sin(A),Cos(X)=Cos(A)
+begin
+Cos<=x16;
+Sin<=y16;
+end
+2'b01
+:
+begin
+Cos<=~x16;
+Sin<=y16;
+end
+2'b10
+:
+begin
+Cos<=~(x16);
+Sin<=~(y16);
+end
+2'b11
+:
+begin
+Cos<=x16;
+Sin<=~(y16);
+end
+endcase
+end
+end
+endmodule
+带反正切函数的部分设计
+下面是带反正切函数的部分设计,正切为正数，负数可以根据基本函数关系变换
+到正数。
+module Cordic
+(
+clk,
+rst_n,
+Phase,
+enable,
+angletan, //1:反正切算法 0：正余弦函数
+tan_value,//正切值
+Sin,
+Cos,
+Error //当为反正切算法时，此内容为对应的角度
+);
+input clk;
+input rst_n;
+木秀于林,冲迎风霜 -- 每天积累一点点 1197 / 1226
+
+## 第 298 页
+
+input enable;
+input angletan;
+input [31:0] tan_value;
+input [31:0] Phase;
+output [31:0] Sin;
+output [31:0] Cos;
+output [31:0] Error;
+`define rot0 32'd2949120 //45'C *2^16 tanx0=1 =>
+x=45c
+`define rot1 32'd1740992 //26.5651'C *2^16 tanx1>>1 =>
+x=26.5651 c
+`define rot2 32'd919872 //14.0362'C *2^16 tanx2=1>>2 =>
+x=14.0362 c
+`define rot3 32'd466944 //7.1250'C *2^16
+`define rot4 32'd234368 //3.5763'C *2^16
+`define rot5 32'd117312 //1.7899'C *2^16
+`define rot6 32'd58688 //0.8952'C *2^16
+`define rot7 32'd29312 //0.4476'C *2^16
+`define rot8 32'd14656 //0.2238'C *2^16
+`define rot9 32'd7360 //0.1119'C *2^16
+`define rot10 32'd3648 //0.0560'C *2^16
+`define rot11 32'd1856 //0.0280'C *2^16
+`define rot12 32'd896 //0.0140'C *2^16
+`define rot13 32'd448 //0.0070'C *2^16
+`define rot14 32'd256 //0.0035'C *2^16
+`define rot15 32'd128 //0.0018'C *2^16 tanx15=1>>15
+=>x=0.0018 c
+parameter Pipeline = 16;
+parameter K = 32'h09b74; //K=0.607253*2^16,32'h09b74,
+cosx0*cosx1*....*cosx15 = 0.607253
+reg signed [31:0] Sin;
+reg signed [31:0] Cos;
+reg signed [31:0] Error;
+reg signed [31:0] x0, y0, z0;
+reg signed [31:0] x1, y1, z1;
+reg signed [31:0] x2, y2, z2;
+reg signed [31:0] x3, y3, z3;
+reg signed [31:0] x4, y4, z4;
+reg signed [31:0] x5, y5, z5;
+reg signed [31:0] x6, y6, z6;
+reg signed [31:0] x7, y7, z7;
+木秀于林,冲迎风霜 -- 每天积累一点点 1198 / 1226
+
+## 第 299 页
+
+reg signed [31:0] x8, y8, z8;
+reg signed [31:0] x9, y9, z9;
+reg signed [31:0] x10, y10, z10;
+reg signed [31:0] x11, y11, z11;
+reg signed [31:0] x12, y12, z12;
+reg signed [31:0] x13, y13, z13;
+reg signed [31:0] x14, y14, z14;
+reg signed [31:0] x15, y15, z15;
+reg signed [31:0] x16, y16, z16;
+reg [ 1:0] Quadrant [Pipeline:0];
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x0 <= 1'b0;
+y0 <= 1'b0;
+z0 <= 1'b0;
+end
+else if(enable) begin
+if (angletan)begin
+x0 <= 1<<16;;
+y0 <= tan_value; //sin0 == 0
+z0 <= 0;
+end
+else begin
+x0 <= K;
+y0 <= 32'd0; //sin0 == 0
+//z0 <= Phase[15:0] << 16;
+z0 <= Phase[23:0];
+end
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x1 <= 1'b0;
+y1 <= 1'b0;
+z1 <= 1'b0;
+end
+else if(angletan)begin
+if(y0[31])
+木秀于林,冲迎风霜 -- 每天积累一点点 1199 / 1226
+
+## 第 300 页
+
+begin
+x1 <= x0 - y0;
+y1 <= y0 + x0;
+z1 <= z0 - `rot0;
+end
+else
+begin
+x1 <= x0 + y0;
+y1 <= y0 - x0;
+z1 <= z0 + `rot0;
+end
+end
+else begin
+if(z0[31])begin
+x1 <= x0 + y0;
+y1 <= y0 - x0;
+z1 <= z0 + `rot0;
+end
+else begin
+x1 <= x0 - y0;
+y1 <= y0 + x0;
+z1 <= z0 - `rot0;
+end
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x2 <= 1'b0;
+y2 <= 1'b0;
+z2 <= 1'b0;
+end
+else if(angletan)begin
+if(y1[31])
+begin
+x2 <= x1 - (y1 >>> 1);
+y2 <= y1 + (x1 >>> 1);
+z2 <= z1 - `rot1;
+end
+else
+begin
+木秀于林,冲迎风霜 -- 每天积累一点点 1200 / 1226
+
+## 第 301 页
+
+x2 <= x1 + (y1 >>> 1);
+y2 <= y1 - (x1 >>> 1);
+z2 <= z1 + `rot1;
+end
+end
+else begin
+if(z1[31])
+begin
+x2 <= x1 + (y1 >>> 1);
+y2 <= y1 - (x1 >>> 1);
+z2 <= z1 + `rot1;
+end
+else
+begin
+x2 <= x1 - (y1 >>> 1);
+y2 <= y1 + (x1 >>> 1);
+z2 <= z1 - `rot1;
+end
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x3 <= 1'b0;
+y3 <= 1'b0;
+z3 <= 1'b0;
+end
+else if(angletan)begin
+if(y2[31])
+begin
+x3 <= x2 - (y2 >>> 2);
+y3 <= y2 + (x2 >>> 2);
+z3 <= z2 - `rot2;
+end
+else
+begin
+x3 <= x2 + (y2 >>> 2);
+y3 <= y2 - (x2 >>> 2);
+z3 <= z2 + `rot2;
+end
+end
+else if(z2[31])
+木秀于林,冲迎风霜 -- 每天积累一点点 1201 / 1226
+
+## 第 302 页
+
+begin
+x3 <= x2 + (y2 >>> 2);
+y3 <= y2 - (x2 >>> 2);
+z3 <= z2 + `rot2;
+end
+else
+begin
+x3 <= x2 - (y2 >>> 2);
+y3 <= y2 + (x2 >>> 2);
+z3 <= z2 - `rot2;
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x4 <= 1'b0;
+y4 <= 1'b0;
+z4 <= 1'b0;
+end
+else if(angletan)begin
+if(y3[31])
+begin
+x4 <= x3 - (y3 >>> 3);
+y4 <= y3 + (x3 >>> 3);
+z4 <= z3 - `rot3;
+end
+else
+begin
+x4 <= x3 + (y3 >>> 3);
+y4 <= y3 - (x3 >>> 3);
+z4 <= z3 + `rot3;
+end
+end
+else if(z3[31])
+begin
+x4 <= x3 + (y3 >>> 3);
+y4 <= y3 - (x3 >>> 3);
+z4 <= z3 + `rot3;
+end
+else
+begin
+x4 <= x3 - (y3 >>> 3);
+木秀于林,冲迎风霜 -- 每天积累一点点 1202 / 1226
+
+## 第 303 页
+
+y4 <= y3 + (x3 >>> 3);
+z4 <= z3 - `rot3;
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x5 <= 1'b0;
+y5 <= 1'b0;
+z5 <= 1'b0;
+end
+else if(angletan)begin
+if(y4[31])
+begin
+x5 <= x4 - (y4 >>> 4);
+y5 <= y4 + (x4 >>> 4);
+z5 <= z4 - `rot4;
+end
+else
+begin
+x5 <= x4 + (y4 >>> 4);
+y5 <= y4 - (x4 >>> 4);
+z5 <= z4 + `rot4;
+end
+end
+else if(z4[31])
+begin
+x5 <= x4 + (y4 >>> 4);
+y5 <= y4 - (x4 >>> 4);
+z5 <= z4 + `rot4;
+end
+else
+begin
+x5 <= x4 - (y4 >>> 4);
+y5 <= y4 + (x4 >>> 4);
+z5 <= z4 - `rot4;
+end
+end
+………
+木秀于林,冲迎风霜 -- 每天积累一点点 1203 / 1226
+
+## 第 304 页
+
+Perl 生成 code
+由于代码重复度很高，可以用perl脚本实现代码自动生成，如下：
+#!/usr/bin/perl
+#use autodie;
+print ("hell0,world!\n");
+my $width_num = 31 ;
+my $reg_num = 17 ;
+my $end = "\n";
+my $success = open FILE, ">cordic_auto_gen.sv";
+if (!$success){
+print "error opening file \n"
+}
+print FILE "module Cordic\n";
+print FILE "(\n";
+print FILE " clk,\n";;
+print FILE " rst_n,\n";
+print FILE " Phase,\n";
+print FILE " enable,\n";
+print FILE " angletan,\n";
+print FILE " tan_value,\n";
+print FILE " Sin,\n";
+print FILE " Cos,\n";
+print FILE " Error\n";
+print FILE ");\n";
+print FILE "parameter Pipeline = 16;\n";
+print FILE "parameter K = 32'h09b74; //K=0.607253*2^16,32'h09b74,
+cosx0*cosx1*....*cosx15 = 0.607253\n";
+print FILE "input clk;\n";
+print FILE "input rst_n;\n";
+print FILE "input enable;\n";
+print FILE "input angletan;\n";
+print FILE "input [ $width_num:0] tan_value;\n";
+print FILE "input [ $width_num:0] Phase;\n";
+print FILE "output [ $width_num:0] Sin;\n";
+print FILE "output [ $width_num:0] Cos;\n";
+print FILE "output [ $width_num:0] Error;\n";
+木秀于林,冲迎风霜 -- 每天积累一点点 1204 / 1226
+
+## 第 305 页
+
+print FILE "`define rot0 45*(2<<16) //tanx0=1
+=> x=45c\n";
+print FILE "`define rot1 26.5651*(2<<16) //tanx1>>1 =>
+x=26.5651 c\n";
+print FILE "`define rot2 14.0362*(2<<16) //tanx2=1>>2
+=> x=14.0362 c\n";
+print FILE "`define rot3 7.1250*(2<<16) \n";
+print FILE "`define rot4 3.5763*(2<<16) \n";
+print FILE "`define rot5 1.7899*(2<<16) \n";
+print FILE "`define rot6 0.8952*(2<<16) \n";
+print FILE "`define rot7 0.4476*(2<<16) \n";
+print FILE "`define rot8 0.2238*(2<<16) \n";
+print FILE "`define rot9 0.1119*(2<<16) \n";
+print FILE "`define rot10 0.0560*(2<<16) \n";
+print FILE "`define rot11 0.0280*(2<<16) \n";
+print FILE "`define rot12 0.0140*(2<<16) \n";
+print FILE "`define rot13 0.0070*(2<<16) \n";
+print FILE "`define rot14 0.0035*(2<<16) \n";
+print FILE "`define rot15 0.0018*(2<<16) // tanx15=1>>15
+=>x=0.0018 c\n";
+print FILE "reg signed [$width_num:0] Sin;\n";
+print FILE "reg signed [$width_num:0] Cos;\n";
+print FILE "reg signed [$width_num:0] Error;\n";
+my $len = 0;
+for($len=0;$len<$reg_num;$len++){
+print FILE "reg signed [$width_num:0] x($len), y($len),
+z($len);\n";
+}
+print FILE "always @ (posedge clk or negedge rst_n)\n";
+print FILE "begin\n";
+print FILE " if(!rst_n)\n";
+print FILE " begin\n";
+print FILE " x0 <= 1'b0;\n " ;
+print FILE " y0 <= 1'b0;\n";
+print FILE " z0 <= 1'b0;\n";
+print FILE " end\n";
+print FILE " else if(enable) begin \n";
+print FILE " if (angletan)begin \n";
+print FILE " x0 <= 1<<16; \n" ;
+print FILE " y0 <= tan_value; //sin0 == 0\n";
+print FILE " z0 <= 0;\n";
+木秀于林,冲迎风霜 -- 每天积累一点点 1205 / 1226
+
+## 第 306 页
+
+print FILE " end \n";
+print FILE " else begin\n";
+print FILE " x0 <= K; \n ";
+print FILE " y0 <= 32'd0; //sin0 == 0 \n" ;
+print FILE " //z0 <= Phase[15:0] << 16; \n";
+print FILE " z0 <= Phase[23:0]; \n";
+print FILE " end \n";
+print FILE " end \n";
+print FILE "end \n";
+my $len = 1;
+my $lenx = 0;
+for($len=1;$len<$reg_num;$len++){
+$lenx = $len - 1;
+print FILE "always @ (posedge clk or negedge rst_n) \n";
+print FILE "begin \n";
+print FILE " if(!rst_n) \n";
+print FILE " begin \n";
+print FILE " x$len <= 1'b0 ; \n" ;
+print FILE " y$len <= 1'b0; \n";
+print FILE " z$len <= 1'b0; \n";
+print FILE " end \n";
+print FILE " else if(angletan) begin \n" ;
+print FILE " if(y($lenx)[31]) begin \n" ;
+print FILE " x$len <= x$lenx - y$lenx; \n";
+print FILE " y$len <= y$lenx + x$lenx; \n";
+print FILE " z$len <= z$lenx - `rot$lenx; \n";
+print FILE " end \n " ;
+print FILE " else begin \n" ;
+print FILE " x$len <= x$lenx + y$lenx; \n";
+print FILE " y$len <= y$lenx - x$lenx; \n";
+print FILE " z$len <= z$lenx + `rot$lenx; \n";
+print FILE " end \n" ;
+print FILE " end \n" ;
+print FILE " else begin \n";
+print FILE " if(z($lenx)[31])begin \n";
+print FILE " x$len <= x$lenx + y$lenx; \n";
+print FILE " y$len <= y$lenx - x$lenx; \n";
+print FILE " z$len <= z$lenx + `rot$lenx; \n";
+print FILE " end \n";
+print FILE " else begin \n";
+print FILE " x$len <= x$lenx - y$lenx; \n";
+print FILE " y$len <= y$lenx + x$lenx; \n";
+木秀于林,冲迎风霜 -- 每天积累一点点 1206 / 1226
+
+## 第 307 页
+
+print FILE " z$len <= z$lenx - `rot$lenx; \n";
+print FILE " end \n";
+print FILE " end \n";
+print FILE "end \n";
+}
+print FILE "always @ (posedge clk or negedge rst_n)\n";
+print FILE "begin\n";
+print FILE " if(!rst_n) begin\n";
+print FILE " Cos <= 1'b0;\n";
+print FILE " Sin <= 1'b0;\n";
+print FILE " Error <= 1'b0;\n";
+print FILE " end\n";
+print FILE " else begin\n";
+print FILE " Error <= z16;\n";
+print FILE " case(Phase[25:24])\n";
+print FILE " 2'b00: //if the Phase is in first Quadrant,\n";
+print FILE " begin\n";
+print FILE " Cos <= x16;\n";
+print FILE " Sin <= y16;\n";
+print FILE " end\n";
+print FILE " 2'b01: //if the Phase is in second Quadrant,\n";
+print FILE " begin\n";
+print FILE " Cos <= ~(y16) ;//-Sin\n";
+print FILE " Sin <= y16;//Cos\n";
+print FILE " end\n";
+print FILE " 2'b10: //if the Phase is in third Quadrant,t\n";
+print FILE " begin\n";
+print FILE " Cos <= ~(x16) ;//-Cos\n";
+print FILE " Sin <= ~(y16) ;//-Sin\n";
+print FILE " end\n";
+print FILE " 2'b11: //if the Phase is in forth Quadrant,\n";
+print FILE " begin\n";
+print FILE " Cos <= x16;//Sin\n";
+print FILE " Sin <= ~(y16) ;//-Cos\n";
+print FILE " end\n";
+print FILE " endcase\n";
+print FILE " end\n";
+print FILE "end\n";
+print FILE "endmodule\n";
+木秀于林,冲迎风霜 -- 每天积累一点点 1207 / 1226
+
+## 第 308 页
+
+优化版本
+只用一组寄存器及计数器来实现
+module Cordic
+(
+clk,
+rst_n,
+Phase,
+enable,
+angletan, /无此功能
+tan_value, //无此功能
+Quadrant, //表示哪个象限
+Sin,
+Cos,
+Error
+);
+parameter Pipeline = 8; //计算8次则放大8倍,对应8级流水
+input clk;
+input rst_n;
+input enable;
+input angletan;
+input [Pipeline*2-1:0] tan_value;
+input [1:0] Quadrant;
+input [Pipeline*2-1:0] Phase;
+output [Pipeline*2-1:0] Sin;
+output [Pipeline*2-1:0] Cos;
+output [Pipeline*2-1:0] Error;
+parameter K = 0.607253*('h1<<<Pipeline);
+//K=0.607253*2^16,32'h09b74, cosx0*cosx1*....*cosx15 = 0.607253
+//parameter K = 32'h09b74; //K=0.607253*2^16,32'h09b74,
+cosx0*cosx1*....*cosx15 = 0.607253
+parameter rot0 = 45* ('h1<<<Pipeline) ;//tanx0=1
+=> x=45c
+parameter rot1 = 26.5651 *('h1<<<Pipeline ) ;// tanx1>>1 =>
+x=26.5651 c
+parameter rot2 = 14.0362 *('h1<<<Pipeline ) ;// tanx2=1>>2 =>
+x=14.0362 c
+parameter rot3 = 7.1250 *('h1<<<Pipeline ) ;//
+parameter rot4 = 3.5763 *('h1<<<Pipeline ) ;//
+parameter rot5 = 1.7899 *('h1<<<Pipeline ) ;//
+木秀于林,冲迎风霜 -- 每天积累一点点 1208 / 1226
+
+## 第 309 页
+
+parameter rot6 = 0.8952 *('h1<<<Pipeline ) ;//
+parameter rot7 = 0.4476 *('h1<<<Pipeline ) ;//
+parameter rot8 = 0.2238 *('h1<<<Pipeline ) ;//
+parameter rot9 = 0.1119 *('h1<<<Pipeline ) ;//
+parameter rot10 = 0.0560 *('h1<<<Pipeline ) ;//
+parameter rot11 = 0.0280 *('h1<<<Pipeline ) ;//
+parameter rot12 = 0.0140 *('h1<<<Pipeline ) ;//
+parameter rot13 = 0.0070 *('h1<<<Pipeline ) ;//
+parameter rot14 = 0.0035 *('h1<<<Pipeline ) ;//
+parameter rot15 = 0.0018 *('h1<<<Pipeline ) ;// tanx15=1>>15
+=>x=0.0018 c
+reg signed [Pipeline*2-1:0] Sin;
+reg signed [Pipeline*2-1:0] Cos;
+reg signed [Pipeline*2-1:0] Error;
+reg signed [Pipeline*2-1:0] x0, y0, z0;
+reg [4:0] step_cnt;
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+step_cnt <= 5'b0;
+end
+else if(enable) begin
+if(step_cnt!=(Pipeline))begin
+step_cnt <= step_cnt+5'h1;
+end
+end
+else begin
+step_cnt <= 5'b0;
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+x0 <= 1'b0;
+y0 <= 1'b0;
+z0 <= 1'b0;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1209 / 1226
+
+## 第 310 页
+
+else if(!enable) begin
+x0 <= K;
+y0 <= 0; //sin0 == 0
+z0 <= Phase;
+end
+else begin
+if(step_cnt==Pipeline)begin
+x0 <= x0 ;
+y0 <= y0 ;
+z0 <= z0 ;
+end
+else begin
+case(step_cnt)
+4'h0: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + y0;
+y0 <= y0 - x0;
+end
+else begin
+x0 <= x0 - y0;
+y0 <= y0 + x0;
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot0;
+end
+else begin
+z0 <= z0 - rot0;
+end
+end
+4'h1: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 1);
+y0 <= y0 - (x0 >>> 1);
+end
+else begin
+x0 <= x0 - (y0 >>> 1);
+y0 <= y0 + (x0 >>> 1);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot1;
+end
+else begin
+z0 <= z0 - rot1;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1210 / 1226
+
+## 第 311 页
+
+end
+4'h2: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 2);
+y0 <= y0 - (x0 >>> 2);
+end
+else begin
+x0 <= x0 - (y0 >>> 2);
+y0 <= y0 + (x0 >>> 2);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot2;
+end
+else begin
+z0 <= z0 - rot2;
+end
+end
+4'h3: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 3);
+y0 <= y0 - (x0 >>> 3);
+end
+else begin
+x0 <= x0 - (y0 >>> 3);
+y0 <= y0 + (x0 >>> 3);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot3;
+end
+else begin
+z0 <= z0 - rot3;
+end
+end
+4'h4: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 4);
+y0 <= y0 - (x0 >>> 4);
+end
+else begin
+x0 <= x0 - (y0 >>> 4);
+y0 <= y0 + (x0 >>> 4);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot4;
+木秀于林,冲迎风霜 -- 每天积累一点点 1211 / 1226
+
+## 第 312 页
+
+end
+else begin
+z0 <= z0 - rot4;
+end
+end
+4'h5: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 5);
+y0 <= y0 - (x0 >>> 5);
+end
+else begin
+x0 <= x0 - (y0 >>> 5);
+y0 <= y0 + (x0 >>> 5);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot5;
+end
+else begin
+z0 <= z0 - rot5;
+end
+end
+4'h6: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 6);
+y0 <= y0 - (x0 >>> 6);
+end
+else begin
+x0 <= x0 - (y0 >>> 6);
+y0 <= y0 + (x0 >>> 6);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot6;
+end
+else begin
+z0 <= z0 - rot6;
+end
+end
+4'h7: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 7);
+y0 <= y0 - (x0 >>> 7);
+end
+else begin
+x0 <= x0 - (y0 >>> 7);
+木秀于林,冲迎风霜 -- 每天积累一点点 1212 / 1226
+
+## 第 313 页
+
+y0 <= y0 + (x0 >>> 7);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot7;
+end
+else begin
+z0 <= z0 - rot7;
+end
+end
+4'h8: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 8);
+y0 <= y0 - (x0 >>> 8);
+end
+else begin
+x0 <= x0 - (y0 >>> 8);
+y0 <= y0 + (x0 >>> 8);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot8;
+end
+else begin
+z0 <= z0 - rot8;
+end
+end
+4'h9: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 9);
+y0 <= y0 - (x0 >>> 9);
+end
+else begin
+x0 <= x0 - (y0 >>> 9);
+y0 <= y0 + (x0 >>> 9);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot9;
+end
+else begin
+z0 <= z0 - rot9;
+end
+end
+4'ha: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 10);
+木秀于林,冲迎风霜 -- 每天积累一点点 1213 / 1226
+
+## 第 314 页
+
+y0 <= y0 - (x0 >>> 10);
+end
+else begin
+x0 <= x0 - (y0 >>> 10);
+y0 <= y0 + (x0 >>> 10);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot10;
+end
+else begin
+z0 <= z0 - rot10;
+end
+end
+4'hb: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 11);
+y0 <= y0 - (x0 >>> 11);
+end
+else begin
+x0 <= x0 - (y0 >>> 11);
+y0 <= y0 + (x0 >>> 11);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot11;
+end
+else begin
+z0 <= z0 - rot11;
+end
+end
+4'hc: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 12);
+y0 <= y0 - (x0 >>> 12);
+end
+else begin
+x0 <= x0 - (y0 >>> 12);
+y0 <= y0 + (x0 >>> 12);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot12;
+end
+else begin
+z0 <= z0 - rot12;
+end
+木秀于林,冲迎风霜 -- 每天积累一点点 1214 / 1226
+
+## 第 315 页
+
+end
+4'hd: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 13);
+y0 <= y0 - (x0 >>> 13);
+end
+else begin
+x0 <= x0 - (y0 >>> 13);
+y0 <= y0 + (x0 >>> 13);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot13;
+end
+else begin
+z0 <= z0 - rot13;
+end
+end
+4'he: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 14);
+y0 <= y0 - (x0 >>> 14);
+end
+else begin
+x0 <= x0 - (y0 >>> 14);
+y0 <= y0 + (x0 >>> 14);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot14;
+end
+else begin
+z0 <= z0 - rot14;
+end
+end
+4'hf: begin
+if(z0[Pipeline*2-1])begin
+x0 <= x0 + (y0 >>> 15);
+y0 <= y0 - (x0 >>> 15);
+end
+else begin
+x0 <= x0 - (y0 >>> 15);
+y0 <= y0 + (x0 >>> 15);
+end
+if(z0[Pipeline*2-1]) begin
+z0 <= z0 + rot15;
+木秀于林,冲迎风霜 -- 每天积累一点点 1215 / 1226
+
+## 第 316 页
+
+end
+else begin
+z0 <= z0 - rot15;
+end
+end
+default:begin
+x0 <= x0;
+y0 <= y0;
+z0 <= z0;
+end
+endcase
+end
+end
+end
+always @ (posedge clk or negedge rst_n)
+begin
+if(!rst_n)
+begin
+Cos <= 1'b0;
+Sin <= 1'b0;
+Error <= 1'b0;
+end
+else
+begin
+if(step_cnt==(Pipeline*+1))begin
+Error <= z0;
+case(Quadrant)
+2'b00: //if the Phase is in first Quadrant,the
+Sin(X)=Sin(A),Cos(X)=Cos(A)
+begin
+Cos <= x0;
+Sin <= y0;
+end
+2'b01: //if the Phase is in second Quadrant,the
+Sin(X)=Sin(A+90)=CosA,Cos(X)=Cos(A+90)=-SinA
+begin
+Cos <= ~(y0) ;//-Sin
+Sin <= y0;//Cos
+end
+2'b10: //if the Phase is in third Quadrant,the
+Sin(X)=Sin(A+180)=-SinA,Cos(X)=Cos(A+180)=-CosA
+begin
+木秀于林,冲迎风霜 -- 每天积累一点点 1216 / 1226
+
+## 第 317 页
+
+Cos <= ~(x0) ;//-Cos
+Sin <= ~(y0) ;//-Sin
+end
+2'b11: //if the Phase is in forth Quadrant,the
+Sin(X)=Sin(A+270)=-CosA,Cos(X)=Cos(A+270)=SinA
+begin
+Cos <= x0;//Sin
+Sin <= ~(y0) ;//-Cos
+end
+endcase
+end
+end
+end
+endmodule
+用于验证的 cos,sin 模型
+实际是根据rtl转化过来,不能用于模型,但因为验证正确,可以作为模型.用于
+计算fft系数
+支持负数处理,但可以全部用正数,负角度可以转化为正角度,输入范围为(0~90
+度)
+task cos_sin(input real angle, output bit signed [31:0]
+cos_result,output bit signed [31:0] sin_result);
+real shift16 ;
+bit signed [31:0] x[16] ,y[16] ,z[16] ;
+bit[31:0] rot[16];
+rot[00] = 32'd2949120;
+rot[01] = 32'd1740992;
+rot[02] = 32'd919872 ;
+rot[03] = 32'd466944 ;
+rot[04] = 32'd234368 ;
+rot[05] = 32'd117312 ;
+rot[06] = 32'd58688 ;
+rot[07] = 32'd29312 ;
+rot[08] = 32'd14656 ;
+rot[09] = 32'd7360 ;
+rot[10] = 32'd3648 ;
+rot[11] = 32'd1856 ;
+rot[12] = 32'd896 ;
+rot[13] = 32'd448 ;
+rot[14] = 32'd256 ;
+rot[15] = 32'd128 ;
+shift16 = angle* (32'h1<<<16);
+x[0] = 32'h09b74;
+木秀于林,冲迎风霜 -- 每天积累一点点 1217 / 1226
+
+## 第 318 页
+
+y[0] = 32'd0;
+z[0] = shift16;
+for(int i=1;i<17;i++)begin
+if(z[i-1][31])begin
+x[i] = x[i-1] + (y[i-1]>>>(i-1));
+y[i] = y[i-1] - (x[i-1]>>>(i-1));
+z[i] = z[i-1] + rot[i-1];
+end
+else begin
+x[i] = x[i-1] - (y[i-1]>>>(i-1));
+y[i] = y[i-1] + (x[i-1]>>>(i-1));
+z[i] = z[i-1] - rot[i-1];
+end
+end
+cos_result = x[15];
+sin_result = y[15];
+print_decimal(cos_result,16);
+print_decimal(sin_result,16);
+endtask
+deci表示用多少bit来表示小数,下面是16bit表示整数,16bit表示小数
+task print_decimal(input[31:0] datain,input int deci);//16 bit decimal
+int datatemp;
+string sig[2];
+bit get_sig;
+sig[1] ="-";
+sig[0] ="";
+datatemp =0;
+get_sig= datain[31];
+if(get_sig) datain= ~datain+32'h1;
+for(int i=0;i<deci;i++)begin
+datatemp = datain[deci-1-i]*(5000000>>i) +datatemp;
+end
+if(datatemp>=1000000)
+$display("%0h changto is %s%0d.%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else if(datatemp>=100000)
+$display("%0h changto is %s%0d.0%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else if(datatemp>=10000)
+$display("%0h changto is %s%0d.00%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else if(datatemp>=1000)
+木秀于林,冲迎风霜 -- 每天积累一点点 1218 / 1226
+
+## 第 319 页
+
+$display("%0h changto is %s%0d.000%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else if(datatemp>=100)
+$display("%0h changto is %s%0d.0000%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else if(datatemp>=10)
+$display("%0h changto is %s%0d.00000%0d",
+datain,get_sig?sig[1]:sig[0], datain>>deci,datatemp);
+else
+$display("%0h changto
+is %s%0d.000000%0d",datain,get_sig?sig[1]:sig[0],
+datain>>deci,datatemp);
+endtask
+几种触控技术分析
+木秀于林,冲迎风霜 -- 每天积累一点点 1219 / 1226
+
+## 第 320 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1220 / 1226
+
+## 第 321 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1221 / 1226
+
+## 第 322 页
+
+木秀于林,冲迎风霜 -- 每天积累一点点 1222 / 1226
+
+## 第 323 页
+
+触摸后电容变小?冲放电更快?
+木秀于林,冲迎风霜 -- 每天积累一点点 1223 / 1226
+
+## 第 324 页
+
+通讯设计注意点(i2c,uart,spi 等)
+I2c master 电路
+时序:
+木秀于林,冲迎风霜 -- 每天积累一点点 1224 / 1226
+
+## 第 325 页
+
+连续发送数据时不需要start,stop信号,这两个信号表示贞信号的开始和结束.
+启动波形
+设计波形
+花了5拍时钟,正常设计
+停止波形
+木秀于林,冲迎风霜 -- 每天积累一点点 1225 / 1226
+
+## 第 326 页
+
+5拍时钟,正常设计
+设计时序
+发送数据时,比5个时钟多了红蓝间隔的时间,此处时间是用来检测从设备是否
+拉低了时钟(主要是外部来的信号需要做滤波处理),也就是当主机要把时钟拉高
+时,需要检测从设备是否拉住了时钟,如果拉住了,则不能发送数据!等从机释放
+后再发送数据.当数据线被从设备拉低,则重新传输数据---此为i2c协议规定
+注意:由于i2c要求总线上要上拉电阻,所以设计时,当需要输出高电平,则把io
+口设置为输入态,当要输出低电平,则把io口设置为输出态,而输出数据可以固
+定为0;
+木秀于林,冲迎风霜 -- 每天积累一点点 1226 / 1226

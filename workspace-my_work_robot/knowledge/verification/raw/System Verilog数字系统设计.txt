@@ -1,0 +1,37 @@
+# System Verilog数字系统设计
+
+文件: D:\飞书\验证书籍\System Verilog数字系统设计\System Verilog数字系统设计.pdf
+总页数: 2
+
+---
+
+
+## 第 2 页
+
+<<System Verilog数字系统设计（影印版）>>
+猛点这里下载全部内容
+目录：
+ListofFigures
+ListofTables
+Preface
+Acknowledgments
+AbouttheAuthor
+1.Introduction
+2.CombinationalLogicDesign
+3.CombinationalLogicUsingSystemVerilogGateModels
+4.CombinationalBuildingBlocks
+5.SystemVerilogModelsofSequentialLogicBlocks
+6.SynchronousSequentialDesign
+7.ComplexSequentialSystems
+8.WritingTestbenches
+9.SystemVerilogSimulation
+10.SystemVerilogSynthesis
+11.TestingDigitalSystems
+12.DesignforTestability
+13.AsynchronousSequentialDesign
+14.InterfacingwiththeAnalogWorld
+A.SystemVerilogandVerilog
+AnswerstoSelectedExercises
+Bibliography
+Index
+猛点这里下载全部内容

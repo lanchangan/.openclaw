@@ -1,0 +1,993 @@
+# 利用Systemverilog+UVM搭建SOC及ASIC的RTL验证环
+
+文件: D:\飞书\验证书籍\利用Systemverilog+UVM搭建SOC及ASIC的RTL验证环.pdf
+总页数: 50
+
+---
+
+
+## 第 1 页
+
+基于 SSSSVVVV++++UUUUVVVVMMMM 搭建 SSSSOOOOCCCC////AAAASSSSIIIICCCC 验证平台
+UVM-1.1中提供了一个UBUS的例子，但是该例子对于刚刚入门的人来说还是需要一定时
+间去消化的，本文对该例子进行一步一步的简化，可以帮助理解。
+[[[[1111----1111]]]] 如何顺序的写 UUUUVVVVMMMM 平台（1111）----BBBBaaaassssiiiicccc
+1. 平台可以在前期规划好，但是对于搭建平台的人来说，调试永远是最大的问题，如果都
+将一个个component都写完了，调试起来还是有点痛苦的，所以我更倾向于一步一步的
+调试平台；先写一个可以pass 的基本平台，然后在不断的扩展该平台，最后在各个
+component中加入所需要的function或者task。当然，当对搭建平台数量以后，现在基
+本对平台中的component一次性搭建完成，然后调试并添加需要的function或者task即
+可。
+2. 最简单的UVM平台，一个interface，一个DUT，一个TOP，一个test，一个ENV就
+可以工作了，然后慢慢的添加各个component；
+3. 写interface
+4. 写topmodule，在top中例化DUT，interface和DUT在top中include
+uuuuvvvvmmmm____ccccoooonnnnffffiiiigggg____ddddbbbb####((((vvvviiiirrrrttttuuuuaaaalllluuuubbbbuuuussss____iiiiffff))))::::::::sssseeeetttt((((uuuuvvvvmmmm____rrrrooooooootttt::::::::ggggeeeetttt(((()))),,,,""""****"""",,,,""""vvvviiiiffff"""",,,,vvvviiiiffff))));;;;
+1
+
+## 第 2 页
+
+rrrruuuunnnn____tttteeeesssstttt(((())));;;;
+5. 写Makefile，此时编译可以通过
+6. 写自定义的package，然后在top中include 该package
+ttttyyyyppppeeeeddddeeeeffffuuuuvvvvmmmm____ccccoooonnnnffffiiiigggg____ddddbbbb####((((vvvviiiirrrrttttuuuuaaaalllluuuubbbbuuuussss____iiiiffff))))uuuubbbbuuuussss____vvvviiiiffff____ccccoooonnnnffffiiiigggg;;;;
+ttttyyyyppppeeeeddddeeeeffffvvvviiiirrrrttttuuuuaaaalllluuuubbbbuuuussss____iiiiffffuuuubbbbuuuussss____vvvviiiiffff;;;;
+后来证明，这两句话在uuuubbbbuuuussss的eeeennnnvvvv中根本没有用上；
+7. 定义Environment，并将该文件加入到自定义的package中，这个时候编译不能通过
+此处的ggggeeeetttt和ttttoooopppp中的sssseeeetttt是一对，如果ttttoooopppp中没有sssseeeetttt则会报告·uuuuvvvvmmmm____ffffaaaattttaaaallll中的错误
+iiiiffff((((!!!!uuuuvvvvmmmm____ccccoooonnnnffffiiiigggg____ddddbbbb####((((vvvviiiirrrrttttuuuuaaaalllluuuubbbbuuuussss____iiiiffff))))::::::::ggggeeeetttt((((tttthhhhiiiissss,,,,"""""""",,,,""""vvvviiiiffff"""",,,,vvvviiiiffff))))))))
+````uuuuvvvvmmmm____ffffaaaattttaaaallll((((""""NNNNOOOOVVVVIIIIFFFF"""",,,,{{{{""""vvvviiiirrrrttttuuuuaaaallll iiiinnnntttteeeerrrrffffaaaacccceeee mmmmuuuusssstttt bbbbeeee sssseeeetttt ffffoooorrrr::::
+"""",,,,ggggeeeetttt____ffffuuuullllllll____nnnnaaaammmmeeee(((()))),,,,""""....vvvviiiiffff""""}}}}))));;;;
+8. 定义base_test，需要在top中include 该test文件，并在makefile中加入编译该test的
+命令；此时可以再次编译通过，并运行最basic的testcase
+2
+
+## 第 3 页
+
+编译第一次通过
+总结一：在一个芯片的验证平台中，总会给一个最bbbbaaaassssiiiicccc的bbbbaaaasssseeee____tttteeeesssstttt，但是可能每个人
+负责验证的部分是不一样的，比如说我要验证 UUUUSSSSBBBB，那我一定会从 bbbbaaaasssseeee____tttteeeesssstttt中派生一个
+uuuussssbbbb____bbbbaaaasssseeee____tttteeeesssstttt来给自己用，这样我可以在uuuussssbbbb____bbbbaaaasssseeee____tttteeeesssstttt加入任何我想要的函数，而不会影
+响到其他人。
+总结二：如何从tttteeeesssstttt中传递参数到ttttoooopppp____ttttbbbb,,,,如果用uuuuvvvvmmmm____ccccoooonnnnffffiiiigggg____ddddbbbb在bbbbaaaasssseeee____tttteeeesssstttt中设置变
+量的值，那么这些变量在eeeennnnvvvviiiirrrroooonnnnmmmmeeeennnntttt////aaaaggggeeeennnntttt////ddddiiiirrrrvvvveeeerrrr等等中可以ggggeeeetttt到的，但是在ttttoooopppp____ttttbbbb中
+不能ggggeeeetttt到的？采用下面的方式就可以
+uuuuvvvvmmmm____ccccoooonnnnffffiiiigggg____ddddbbbb####((((iiiinnnntttt))))::::::::sssseeeetttt((((nnnnuuuullllllll,,,,""""uuuuvvvvmmmm____tttteeeesssstttt____ttttoooopppp"""",,,,""""sssseeeetttt____uuuussssbbbb____ssssiiiinnnngggglllleeee____tttteeeesssstttt"""",,,,1111))));;;;
+总结三：需要注意的是，不要把定义iiiinnnntttteeeerrrrffffaaaacccceeee的文件iiiinnnncccclllluuuuddddeeee在ppppaaaacccckkkkaaaaggggeeee中，这会导致
+编译不过的。
+3
+
+## 第 4 页
+
+总结四：uuuuvvvvmmmm____rrrreeeeppppoooorrrrtttt____iiiinnnnffffoooo和宏````uuuuvvvvmmmm____iiiinnnnffffoooo在用法是没有区别的，都是用来打印消息的。
+[[[[1111----2222]]]] 如何顺序的写 UUUUVVVVMMMM 平台（2222）----MMMMaaaasssstttteeeerrrrAAAAggggeeeennnntttt
+9. 定义sequenceitem，注意，一种类型的transaction需要对应一个driver；
+````uuuuvvvvmmmm____oooobbbbjjjjeeeecccctttt____uuuuttttiiiillllssss____bbbbeeeeggggiiiinnnn((((uuuubbbbuuuussss____ttttrrrraaaannnnssssffffeeeerrrr))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____iiiinnnntttt ((((aaaaddddddddrrrr,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____eeeennnnuuuummmm ((((uuuubbbbuuuussss____rrrreeeeaaaadddd____wwwwrrrriiiitttteeee____eeeennnnuuuummmm,,,,rrrreeeeaaaadddd____wwwwrrrriiiitttteeee,,,,UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____iiiinnnntttt ((((ssssiiiizzzzeeee,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____aaaarrrrrrrraaaayyyy____iiiinnnntttt((((ddddaaaattttaaaa,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____aaaarrrrrrrraaaayyyy____iiiinnnntttt((((wwwwaaaaiiiitttt____ssssttttaaaatttteeee,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____iiiinnnntttt ((((eeeerrrrrrrroooorrrr____ppppoooossss,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____iiiinnnntttt ((((ttttrrrraaaannnnssssmmmmiiiitttt____ddddeeeellllaaaayyyy,,,,UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____ssssttttrrrriiiinnnngggg ((((mmmmaaaasssstttteeeerrrr,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT||||UUUUVVVVMMMM____NNNNOOOOCCCCOOOOMMMMPPPPAAAARRRREEEE))))
+````uuuuvvvvmmmm____ffffiiiieeeelllldddd____ssssttttrrrriiiinnnngggg ((((ssssllllaaaavvvveeee,,,, UUUUVVVVMMMM____DDDDEEEEFFFFAAAAUUUULLLLTTTT||||UUUUVVVVMMMM____NNNNOOOOCCCCOOOOMMMMPPPPAAAARRRREEEE))))
+````uuuuvvvvmmmm____oooobbbbjjjjeeeecccctttt____uuuuttttiiiillllssss____eeeennnndddd
+4
+
+## 第 5 页
+
+需要思考哪些内容需要在transaction中定义？
+10. 定义好了 transaction，就可以开始定义 base sequence 了；注意，在 base_sequence 的
+pre_body 和 post_body 中定义 raise_objection 和 drop_objection 是很有好处的；将 base
+sequence定义成虚基类，只有派生后才能进行实例化；
+5
+
+## 第 6 页
+
+11. 派生sequence；先派生出一个sequence用于平台调试
+12. 用了sequence，就该写sequencer了；sequencer是整个环境中最简单的部分；
+13. 有了sequencer，就可以定义driver了，定义好driver，然后需要在agent中进行例化；
+在driver中一定要getinterface，因为driver直接和DUT做交互;
+6
+
+## 第 7 页
+
+14. 注意在driver中如何写getsequence：
+15. 有了sequencer，driver，实际上就可以定义masteragent了，在agent中要实现dirver和
+sequencer的连接
+16. Agent实现了之后，就需要在env中例化
+7
+
+## 第 8 页
+
+17. 然后更改test_lib.sv，写一个从base_test派生出来的test，设置默认的sequence。和master
+的数量；
+18. 然后在ubus_pkg.sv中include各个component的文件，然后编译，修改一些语法错误，
+但是一直会出现如下错误：maketest_read_byte
+19. 错误的意思是说这个sequence不能够get到，在屏蔽掉设置默认的sequence后，编译
+可以正确的通过，但是此时平台中没有数据的流动，需要debug；
+8
+
+## 第 9 页
+
+20. 打开上面的屏蔽，到read_byte_seq中去，将taskbody()屏蔽掉也可以pass
+21. 到目前为止，该平台中有 ENV，agent，driver，sequencer，sequence，transaction了，
+可以进行最基本的test操作了，但是还需要monitor，scoreboard等等；
+总结一：driver（sequencer也是）是和发送的sequence类型有关的，也就是一个driver
+要发送的sequence的类型是固定死了的，那么我们需要将多种类型的sequence通
+过一个driver来发送要怎么办？其实将多种类型的sequence不要做成sequence，做
+成uvm_object，然后在一个大的uvm_object中random这些小的uvm_object（就是
+小的sequence），然后用这个最大的uvm_object来做sequence_item就对了。
+总结二：sequence_item中要具备哪些内容呢？严格的说是你当前module所要用到的所
+用dataflow的数据类型。
+总结三：别忘记在driver中 getinterface。
+[[[[1111----3333]]]] 如何顺序的写 UUUUVVVVMMMM 平台（3333）----MMMMaaaasssstttteeeerrrr MMMMoooonnnniiiittttoooorrrr
+22. 编写 master_monitor；该 component 的主要作用是收集driver 发出的各种数据类型的
+coverage。然后需要在agent中例化
+9
+
+## 第 10 页
+
+23. 在agent中对master 的monitor进行例化之后，master的部分就已经完成；
+24. 到目前为止，平台能动，但是没有 sequence在里面流动，所以时间是没有动的；需要
+在目前现有的资源下解决这个问题？这是因为在sequence中没有打开`uvm_do_*相关的
+函数；打开后时钟就开始动了，但是停止不下来，需要进一步debug
+25. 如何让平台停止下来呢？不能够停止是因为有一根信号没有驱动，导致一直等待
+10
+
+## 第 11 页
+
+26. 在top中对该信号进行驱动后，该平台就能自动停止了
+[[[[1111----4444]]]] 如何顺序的写 UUUUVVVVMMMM 平台（4444----1111）----SSSSllllaaaavvvveeeeAAAAggggeeeennnntttt
+27. 前面完成了该平台最基本的部分工作，这个时候这个平台会有一些动作了，但是还需要
+定义更多的东西，比如总线测试需要master和slave，DMA测试需要slavemodel，DDR
+控制器测试需要slavemodel，SPI/UART/IIC/IIS/PCIE等都需要另外的model，我更倾向
+于model和验证方法学是独立开来的，这样在从一种验证方法学切换到另外一个验证方
+法学后不需要修改model，比如像micron提供的DDRmodel和NNDmodel都是独立于
+验证方法学的；当然对于ubus总线测试则无所谓，因为整个DUT外面的东西都是不固
+定的；当然，如果能让slave固定则最好。
+28. Slavedriver的作用是返回Response，那么这个response的内容是从slave 的sequencer
+中来的，而 sequencer 的 item 则来自 slave sequence lib，所以需要首先写 slave 的
+sequence；slave有两种sequence，第一种返回读写类型，第二种返回地址和数据等；
+29. 先编写sequence，在package中include，编译可以通过；
+30. 编写slave_sequencer，在package中include，注意，并没有地方例化它，编译可以通过
+11
+
+## 第 12 页
+
+31. 编写slave_agent，并在slave_agent中例化sequencer，在package中include，注意，并
+没有地方例化这个agent，编译可以通过
+32. 然后需要做一系列动作，来设置slave的数量，并在env中例化slave_agent；
+33. 出现在slave部分,目前只有agent,sequencer,sequence,出现如下错误;
+UVM_ERROR @ 0:
+uvm_test_top.ubus_example_tb0.ubus0.slaves[0].sequencer.addr_ph_port [Connection Error]
+connectioncountof0doesnotmeetrequiredminimumof1
+这是因为在sequencer中声明了一个TLMport,但是一直没有连接它,所以需要屏蔽掉才
+可以;
+12
+
+## 第 13 页
+
+34. 完成上面的修改后，可以得到下面的结果：
+13
+
+## 第 14 页
+
+[[[[1111----5555]]]] 如何顺序的写 UUUUVVVVMMMM 平台（4444----2222）----SSSSllllaaaavvvveeee DDDDrrrriiiivvvveeeerrrr
+35. Slavedriver的作用是针对master的读写访问返回数据或者响应；当然还要驱动slave方
+面该驱动的信号，首先需要获得 Virtual interface。然后获得 slave_sequence_lib 中的
+sequence并驱动到总线上；
+14
+
+## 第 15 页
+
+36. 驱动总线这个地方还是有点不明白？resp获得到写的数据后会存放起来吗？待解决，这
+个确实会存放起来，在ubus_slave_req_lib.sv中的slave_memory_seq中的post_do函数
+中可以看到。
+37. Slave_driver写完后，就需要在slave_agent中例化它，并将slave_driver和slave_sequencer
+连接起来；在package中includeubus_slave_driver.sv；此时slave并不会发送任何数据
+15
+
+## 第 16 页
+
+出来，因为没有在test中设置defaultsequence；
+38. 我们需要让slave动起来，因为我们的case是读操作，那么就需要slave提供需要，所
+以需要在slave_sequence_lib.sv中加入一个memory的sequence；在pre_do中将要读取
+的数据准备好，在post_do中将写入的数据存起来；
+39. 在taskbody中将sequencer中的transpeek出来，不知道有什么用处，但是这个地方得
+到的req又是通过sequencer发送给driver的，需要更多的理解；
+16
+
+## 第 17 页
+
+40. 既然有了读写返回的sequence，就可以再test中设置slave的默认sequence了；
+read_modify_write_seq::type_id::get());
+uvm_config_db#(uvm_object_wrapper)::set(this,
+"ubus_example_tb0.ubus0.slaves[0].sequencer.run_phase",
+"default_sequence",
+slave_memory_seq::type_id::get());
+设置后出现如下错误：
+ncvlog: *E,NOIPRT (ubus_slave_seq_lib.sv,31|49): Unrecognized declaration
+'ubus_slave_sequencer'couldbeaspellingmistake[SystemVerilog].
+(`define macro: uvm_declare_p_sequencer
+[/home/dengf/uvm-1.1/src/macros/uvm_sequence_defines.svh line 446], `include file:
+ubus_slave_seq_lib.svline31,`includefile:ubus_pkg.svline12,file:ubus_tb_top.svline5)
+在package中将sequencer的顺序调整到seq_lib的前面即可。
+41. 另外seq中用到了sequencer中的addr_ph_port，所以需要将原来的屏蔽打开，并且需要
+连接addr_ph_port才可以；但是目前的monitor还没写好，所以先屏蔽掉所有用到这个
+port的地方吧，屏蔽后编译通过，但是出现如下错误：
+UVM_INFO @ 0:
+uvm_test_top.ubus_example_tb0.ubus0.masters[0].sequencer@@read_byte_seq
+[uvm_test_top.ubus_example_tb0.ubus0.masters[0].sequencer.read_byte_seq] sequence is okay
+17
+
+## 第 18 页
+
+now,pleaseFIXME.
+UVM_INFO @ 150: uvm_test_top.ubus_example_tb0.ubus0.masters[0].driver
+[uvm_test_top.ubus_example_tb0.ubus0.masters[0].driver]enterget_and_drive.
+Error! NULLpointerdereference
+File:./ubus_slave_seq_lib.sv,line=38,pos=30
+Scope:worklib.ubus_pkg::slave_memory_seq@8242_5.pre_do
+Time:160NS+2
+问题的原因就是在sequence中没有port来get到现有的sequence，所以需要重新例化一
+个，写一个util_transfer的new函数即可；
+42. 后面，testcase不能结束，问题的原因需要debug；问题的原因是在slave_sequence_lib.sv
+中的 task body 中在 forever begin 。。。end 中调用了 starting_phase.raise_objection 和
+starting_phase.drop_objection，将forever去掉后，能正确的结束，但是想想slave正常的
+工作吗？整个平台后来又是怎么停止的呢？拭目以待吧
+[[[[1111----6666]]]] 如何顺序的写 UUUUVVVVMMMM 平台（4444----3333）----SSSSllllaaaavvvveeee MMMMoooonnnniiiittttoooorrrr
+43. 个人觉得slavemonitor和mastermonitor一个就足够了，我不知道为什么这个地方需要
+用两个，因为看起来都是对coverage做统计而已；另外，monitor中有一个peek函数，
+这个函数是在seq_lib中，用来将monitor收到的trans送入到seq_lib中存储用的，采用
+的是addr_ph_port进行通信；
+18
+
+## 第 19 页
+
+44. 然后需要将ubus_slave_monitor.sv在package中include，并在agent中例化slave_monitor，
+需要打开sequencer 中屏蔽的addr_ph_port，并在 seq_lib.sv中采用 addr_ph_port来 get
+transaction，而不是自己采用一个new（）的构造函数；还要将sequencer的addr_ph_port
+和monitor的addr_ph_imp连接起来；将slave_seq_lib中的slave_mem_seq中的taskbody
+中的forever加上；
+这次加上 ffffoooorrrreeeevvvveeeerrrr后能停止，是因为在 ppppeeeeeeeekkkk函数中会等待一个 eeeevvvveeeennnntttt，如果没有等待
+eeeevvvveeeennnntttt，就不会rrrraaaaiiiisssseeee____oooobbbbjjjjeeeeccccttttiiiioooonnnn。
+19
+
+## 第 20 页
+
+到目前为止可以看到 mmmmaaaasssstttteeeerrrr____mmmmoooonnnniiiittttoooorrrr和ssssllllaaaavvvveeee____mmmmoooonnnniiiittttoooorrrr中都能出现 ccccoooovvvveeeerrrraaaaggggeeee的统计结
+果了。
+UVM_INFO ubus_master_monitor.sv(153) @ 300:
+uvm_test_top.ubus_example_tb0.ubus0.masters[0].monitor
+[uvm_test_top.ubus_example_tb0.ubus0.masters[0].monitor] Covergroup 'cov_trans' coverage:
+15.000000
+UVM_INFO ubus_slave_monitor.sv(196) @ 300:
+uvm_test_top.ubus_example_tb0.ubus0.slaves[0].monitor
+[uvm_test_top.ubus_example_tb0.ubus0.slaves[0].monitor] Covergroup 'cov_trans'
+coverage:15.000000
+[[[[1111----7777]]]] 如何顺序的写 UUUUVVVVMMMM 平台（5555----1111）----SSSSccccoooorrrreeeebbbbooooaaaarrrrdddd
+45. 到目前为止，环境中最基本的 component都有了，DUT可以正常工作了，但是还需要
+一个scoreboard来判断DUT工作是否正确；首先scoreboard应该声明一个TLPimp，
+用来接收master_monitor和slave_monitor传递过来的collected_trans；
+20
+
+## 第 21 页
+
+这个write函数是uvm_analysis_port调用的，默认就存在write函数，所以这个地方是
+在重载，即没有写这个函数的时候整个环境也是可以运行的；uvm_analysis_port的作用就是
+让slave_monitor中调用memory_verify函数，在读的时候将收到的transaction中的data（从
+DUT收到的 data）和存在于 mem 中的data（送入 DUT之前的 data）进行比较；（注意，
+master_monitor中的write函数不是来自scoreboard！！那么来自哪儿呢）
+注意：使用宏的时候中间不能换行；
+46. Scoreboard写完后，需要在 ubus_example_tb中进行例化并连接 TLM端口到slave，并
+在package中include；
+21
+
+## 第 22 页
+
+47. 到目前为止，master，slave，scoreboard就全了；
+对应文件：uuuuvvvvmmmm____uuuubbbbuuuussss____4444....ttttaaaarrrr....ggggzzzz
+[[[[1111----8888]]]] 如何顺序的写 UUUUVVVVMMMM 平台（5555----2222）----BBBBuuuussss MMMMoooonnnniiiittttoooorrrr
+48. BusMonitor主要来决定是哪个salve对master进行响应；需要和environment配合使用；
+相当于 bus_monitor 起到了一个地址译码的作用；而具体 slave 的地址设置则是在
+ubus_example_tb中完成。
+49. 首先在bus_monitor中提供地址设置的class；
+22
+
+## 第 23 页
+
+50. 在ubus_monitor中用设置地址的class例化对象；并调用slave_address_map_info中的成
+员函数set_address_map来进行具体的地址设置；
+51. 在ubus_slave_driver在进行响应返回的时候，ubus_monitor会根据当前slave的地址空
+间来决定是哪个slave在返回响应；
+23
+
+## 第 24 页
+
+52. Ubus_bus_monitor只是提供了地址空间的一些函数，具体的调用则是在 ubus_env中完
+成的，因为ubus_bus_monitor是在env中例化的；需要在env中例化ubus_monitor
+if(has_bus_monitor==1)begin
+bus_monitor=ubus_bus_monitor::type_id::create("bus_monitor",this);
+end
+53. ubus_example_tb来完成slave地址设置；
+54. 此时整个环境已经完成，只需要不断的扩展sequence和扩展test_case即可；
+24
+
+## 第 25 页
+
+[[[[1111----9999]]]] 如何顺序的写 UUUUVVVVMMMM 平台（6666）----SSSSeeeeqqqquuuueeeennnncccceeee
+55. Sequence是整个平台中的血液，有了 sequence 才能够组合出更多的 testcase；所以的
+sequence 的实例化和随机化都是在 task body中进行的，而平台的开始和停止则是在
+sequence的taskpre_body和taskpost_body中进行的。
+56. 派生出最基本的sequence，这种最基本的sequence不同的就是约束不一样，其他的几
+乎一致；我一致不太理解的就是这个地方的 get_response得到的是什么?从什么地方传
+递过来的呢？这个应该是在master_driver的函数中执行的。
+25
+
+## 第 26 页
+
+57. 在sequence中使用`uvm_do*的时候，默认的例化的sequence的name为req，这个req
+是可以再`uvm_do*之外访问的，但是想要知道这个req的详细信息，只能去driver那边
+打印，因为`uvm_do*中包含一系列操作，只有等到 driver 那边完成后才会接着执行
+`uvm_do*后面的程序；
+58. 如何用简单的 sequence组合出复杂的 sequence呢？uvm_do系统宏可以直接接受一个
+sequence的变量作为参数；下面就是将2个read_byte_seq和一个write_byte_seq进行合
+并成一个复杂的读-写-读的sequence；利用这种原理可以进行错误注入等其他操作。
+26
+
+## 第 27 页
+
+[[[[1111----11110000]]]] 如何顺序的写 UUUUVVVVMMMM 平台（7777）----uuuubbbbuuuussss____eeeexxxxaaaammmmpppplllleeee____ttttbbbb
+我认为这个example_tb并不是那么必要，毕竟我们在前面不用这个也是可以做一切事
+情的，那么这个存在的意义呢？没有这个的时候直接在test中例化ENV和scoreboard即可，
+有这个后，在test中直接例化example_tb即可，也许这个example_tb主要是用于向上integrate
+的作用吧。
+相当于场景 tb1 有4个master4个slave
+tb2 只有一个master2个slave
+这些都是你自己去呼叫的
+每个场景下 又分不同的pattern
+刚开始调试的时候，只有master，没有monitor和slave和scoreboard；
+27
+
+## 第 28 页
+
+由于在test和ENV中间加入了ubus_example_tb，所以需要修改test_lib.sv
+运行结果为：
+28
+
+## 第 29 页
+
+[[[[1111----11111111]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888）----平台总结
+[[[[1111----11112222]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----1111）----ttttoooopppp....ssssvvvv
+1. 只需要includeDUT,Interface，ubus_pkg；其他的都在package中include
+`include"dut_dummy.v"
+`include"ubus_if.sv"
+`include"ubus_pkg.sv"
+2. 需要importuvm_pkg，和自定义的pkg；
+importuvm_pkg::*;
+importubus_pkg::*;
+虽然在ubus_pkg中import了uvm_pkg，但是在这个地方还必须import一次，否则会出
+现如下错误：
+uvm_config_db#(virtualubus_if)::set(uvm_root::get(),"*","vif",vif);
+|
+ncvlog:*E,NOPBIND(ubus_tb_top.sv,31|20):Packageuvm_config_dbcouldnotbebound.
+3. 设置接口，run_test
+initialbegin
+uvm_config_db#(virtualubus_if)::set(uvm_root::get(),"*","vif",vif);
+run_test();
+end
+4. 设置波形
+initialbegin
+$fsdbDumpfile("test.fsdb");
+$fsdbDumpvars(0,ubus_tb_top);
+end
+29
+
+## 第 30 页
+
+[[[[1111----11113333]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----2222）----ppppkkkkgggg....ssssvvvv
+5. ，有两个typedef，本来是想在getvirtualinterface中用的，但是也没有用，所以就可以
+去掉了，注意的是，这个include是有顺序的，被调用的一定要放在前面。
+packageubus_pkg;
+importuvm_pkg::*;
+`include"uvm_macros.svh"
+//typedefuvm_config_db#(virtualubus_if)ubus_vif_config;
+//typedefvirtualubus_ifubus_vif;
+`include"ubus_transfer.sv"
+`include"ubus_master_seq_lib.sv"
+`include"ubus_master_sequencer.sv"
+`include"ubus_master_driver.sv"
+`include"ubus_master_monitor.sv"
+`include"ubus_master_agent.sv"
+`include"ubus_slave_sequencer.sv"
+`include"ubus_slave_seq_lib.sv"
+`include"ubus_slave_driver.sv"
+`include"ubus_slave_monitor.sv"
+`include"ubus_slave_agent.sv"
+`include"ubus_bus_monitor.sv"
+`include"ubus_env.sv"
+`include"ubus_example_scoreboard.sv"
+`include"ubus_example_tb.sv"
+`include"test_lib.sv"
+endpackage
+[[[[1111----11114444]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----3333）----tttteeeesssstttt____lllliiiibbbb....ssssvvvv
+6. 首先定义一个base_test，定义各种打印函数；
+Uvm_table_printerprinter；
+在build_phase中newprinter和设置printknobs
+Printer=new();
+Printer.knobs.depth=3;
+在end_of_elaboration_phase中设置打印级别，和打印test_topology
+//Setverbosityforthebusmonitorforthisdemo
+if(ubus_example_tb0.ubus0.bus_monitor!=null)
+30
+
+## 第 31 页
+
+ubus_example_tb0.ubus0.bus_monitor.set_report_verbosity_level(UVM_FULL);
+`uvm_info(get_type_name(),
+$sformatf("Printingthetesttopology:\n%s",this.sprint(printer)),UVM_LOW)
+用uvm_top.print_topology()函数打印效果更好；
+7. 在run_phase中设置drain_time;
+taskrun_phase(uvm_phasephase);
+//setadrain-timefortheenvironmentifdesired
+phase.phase_done.set_drain_time(this,50);
+endtask:run_phase
+8. 在extractphase中查看testrun 完后错误产生吗?
+functionvoidextract_phase(uvm_phasephase);
+if(ubus_example_tb0.scoreboard0.sbd_error)
+test_pass=1'b0;
+endfunction//void
+9. 在reportphase中打印PASSEDorFAILED的message;
+functionvoidreport_phase(uvm_phasephase);
+if(test_pass)begin
+`uvm_info(get_type_name(),"**UVMTESTPASSED**",UVM_NONE)
+end
+elsebegin
+`uvm_error(get_type_name(),"**UVMTESTFAIL**")
+end
+endfunction
+10. 派生具体的test，设置master 和slave的数量
+31
+
+## 第 32 页
+
+uvm_config_db#(int)::set(this,"ubus_example_tb0.ubus0",
+"num_masters",2);
+uvm_config_db#(int)::set(this,"ubus_example_tb0.ubus0",
+"num_slaves",4);
+11. 设置test的defaultsequence
+//ControlthenumberofRMWloops
+uvm_config_db#(int)::set(this,"ubus_example_tb0.ubus0.masters[0].sequencer.loop_read_mo
+dify_write_seq","itr",6);
+uvm_config_db#(int)::set(this,"ubus_example_tb0.ubus0.masters[1].sequencer.loop_read_mo
+dify_write_seq","itr",8);
+//Definethesequencestorunintherunphase
+uvm_config_db#(uvm_object_wrapper)::set(this,"*.ubus0.masters[0].sequencer.main_phase"
+,
+"default_sequence",
+loop_read_modify_write_seq::type_id::get());
+lrmw_seq=loop_read_modify_write_seq::type_id::create();
+uvm_config_db#(uvm_sequence_base)::set(this,
+"ubus_example_tb0.ubus0.masters[1].sequencer.main_phase",
+"default_sequence",
+lrmw_seq);
+for(inti=0;i<4;i++)begin
+stringslname;
+$swrite(slname,"ubus_example_tb0.ubus0.slaves[%0d].sequencer",i);
+uvm_config_db#(uvm_object_wrapper)::set(this,{slname,".run_phase"},
+"default_sequence",
+slave_memory_seq::type_id::get());
+end
+12. 使用 sequence 机制之后，在不同的 case 中，把不同的 sequence 设置成 sequencer 的
+main_phase（一定要是 main_phase 吗？为什么上面设置的是 run_phase 呢？）的
+default_sequence，当sequencer执行到main_phase时，发现有default_sequence，那么它
+就会把这个 sequence 启动起来。通过在 test_read_byte 中测试，在 main_phase 和在
+run_phase中设置default_sequence都是正确的；
+32
+
+## 第 33 页
+
+[[[[1111----11115555]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----4444）----ttttrrrraaaannnnssssffffeeeerrrr....ssssvvvv
+13. Transfer中主要定义一个driver中所需要的数据类型，都是从uvm_sequence_item中来，
+还需要提供一些基本的约束；自定义枚举类型等；需要注意的是一个transfer只能对应
+一种类型的driver，比如说有配置寄存器的 APB，还有驱动DUT的master，则需要两
+种transfer，两个driver；
+typedefenum{NOP,
+READ,
+WRITE
+}ubus_read_write_enum;
+14. 约束定义
+constraintc_read_write{
+read_writeinside{READ,WRITE};
+}
+constraintc_size{
+sizeinside{1,2,4,8};
+}
+constraintc_data_wait_size{
+data.size()==size;
+wait_state.size()==size;
+}
+constraintc_transmit_delay{
+transmit_delay<=10;
+}
+15. 工厂模式注册
+`uvm_object_utils_begin(ubus_transfer)
+`uvm_field_int (addr, UVM_DEFAULT)
+`uvm_field_enum (ubus_read_write_enum,read_write,UVM_DEFAULT)
+`uvm_field_int (size, UVM_DEFAULT)
+`uvm_field_array_int(data, UVM_DEFAULT)
+`uvm_field_array_int(wait_state, UVM_DEFAULT)
+`uvm_field_int (error_pos, UVM_DEFAULT)
+`uvm_field_int (transmit_delay,UVM_DEFAULT)
+`uvm_field_string (master, UVM_DEFAULT|UVM_NOCOMPARE)
+`uvm_field_string (slave, UVM_DEFAULT|UVM_NOCOMPARE)
+`uvm_object_utils_end
+33
+
+## 第 34 页
+
+[[[[1111----11116666]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----5555）----sssseeeeqqqquuuueeeennnncccceeee....ssssvvvv
+16. 定 义 base 的 sequence 都 是 从 uvm_sequence 派 生 而 来 ， 注 意 transfer 是 从
+uvm_sequence_item派生而来，这是由区别的，而sequence是依赖transfer类型的；另
+外我们会将base_sequence声明成虚基类，只有派生后才可以进行实例化；
+virtualclassubus_base_sequenceextendsuvm_sequence#(ubus_transfer);
+17. Sequence是控制平台的启动和关闭，主要是在taskpre_body和taskpost_body中控制；
+virtualtaskpre_body();
+if(starting_phase!=null)begin
+starting_phase.raise_objection(this);
+end
+endtask
+//Droptheobjectioninthepost_bodysotheobjectionisremovedwhen
+//therootsequenceiscomplete.
+virtualtaskpost_body();
+if(starting_phase!=null)begin
+starting_phase.drop_objection(this);
+end
+endtask
+18. 然后就是通过base_sequence来产生具体的基本的sequence；在使用`uvm_do*系列宏的
+时候，默认例化的sequence的名字为req；这个req是可以在`uvm_do*之外使用；
+`uvm_do_with(req,
+{req.addr==start_addr;
+req.read_write==READ;
+req.size==1;
+req.error_pos==1000;
+req.transmit_delay==transmit_del;})
+19. 接收返回类型，有两种方式，一种是直接采用UVM提供的put_response和get_respone，
+另外一种则是在sequencer中定义一个port并采用p_sequencer的方式，先说第一种方
+式；
+在`uvm_do之后sequencer中等待接收rsp，这个rsp是通过driver发送过来的；
+get_response(rsp);
+那么在driver中会出现如下代码:
+seq_item_port.get_next_item(req);
+$cast(rsp,req.clone());
+rsp.set_id_info(req);
+34
+
+## 第 35 页
+
+drive_transfer(rsp); //具体的DUT这个地方实现不同
+seq_item_port.item_done();
+seq_item_port.put_response(rsp);
+20. 另外一种方式同ubus_slave_seq_lib.sv中的那样；
+首先一定要在sequencer中定义一个TLMport；
+classubus_slave_sequencerextendsuvm_sequencer#(ubus_transfer);
+uvm_blocking_peek_port#(ubus_transfer)addr_ph_port;
+//Provideimplementationsofvirtualmethodssuchasget_type_nameandcreate
+`uvm_component_utils(ubus_slave_sequencer)
+functionnew(stringname,uvm_componentparent);
+super.new(name,parent);
+addr_ph_port=new("addr_ph_port",this);
+endfunction:new
+endclass:ubus_slave_sequencer
+注意，这个地方要用到p_sequencer和m_sequencer的知识，简单的将，m_sequencer指
+向的 uvm_sequencer_base 的指针，p_sequencer 指向的是 uvm_sequencer_base 派生对象
+ubus_slave_sequencer的指针；所以我们要使用ubus_slave_sequencer中的port，就一定要用
+p_sequencer才可以。
+`uvm_declare_p_sequencer(ubus_slave_sequencer)
+ubus_transferutil_transfer;
+virtualtaskbody();
+$cast(req,create_item(ubus_transfer::get_type(),p_sequencer,"req"));
+forever
+begin
+p_sequencer.addr_ph_port.peek(util_transfer);
+starting_phase.raise_objection(this);
+start_item(req);
+finish_item(req);
+starting_phase.drop_objection(this);
+end
+endtask:body
+peek 函数当然是在于 ubus_slave_sequencer 的 component 中实现，本例子中是和
+ubus_slave_monitor中通信的，所以peek函数定义如下：
+uvm_blocking_peek_imp#(ubus_transfer,ubus_slave_monitor)addr_ph_imp;
+taskpeek(outputubus_transfertrans);
+@address_phase_grabbed;
+trans=trans_collected;
+35
+
+## 第 36 页
+
+endtask:peek
+当然还需要在slave_agent中将port之间进行连接
+sequencer.addr_ph_port.connect(monitor.addr_ph_imp);
+[[[[1111----11117777]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----6666）----ddddrrrriiiivvvveeeerrrr....ssssvvvv
+21. Driver，Monitor，Environment 都需要 get interface；virtual interface 的设置则是在 top
+中完成的；
+functionvoidbuild_phase(uvm_phasephase);
+if(!uvm_config_db#(virtualubus_if)::get(this,"","vif",vif))
+`uvm_fatal("NOVIF",{"virtualinterfacemustbesetfor:",get_full_name(),".vif"});
+endfunction:build_phase
+22. 然后就是从sequencer中接收sequence，发送到interface上，还需要对sequence返回响
+应，前面说了，返回响应有两种方式，见sequence.sv
+//runphase
+virtualtaskrun_phase(uvm_phasephase);
+fork
+get_and_drive();
+reset_signals();
+join
+endtask:run_phase
+//get_and_drive
+virtualprotectedtaskget_and_drive();
+@(negedgevif.sig_reset);
+foreverbegin
+@(posedgevif.sig_clock);
+seq_item_port.get_next_item(req);
+$cast(rsp,req.clone());
+rsp.set_id_info(req);
+drive_transfer(rsp);
+seq_item_port.item_done();
+seq_item_port.put_response(rsp);
+end
+endtask:get_and_drive
+23. 注意，driver 一般也可以和 scoreboard 直接采用TLM 接口直接通信，将 trans发送到
+scoreboard中进行比较，但是在ubus中做的比较复杂，用了三个monitor；
+36
+
+## 第 37 页
+
+[[[[1111----11118888]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----7777）----MMMMoooonnnniiiittttoooorrrr....ssssvvvv
+24. 同driver一样，monitor的第一件事是getinterface；
+functionvoidbuild_phase(uvm_phasephase);
+super.build_phase(phase);
+if(!uvm_config_db#(virtualubus_if)::get(this,"","vif",vif))
+`uvm_fatal("NOVIF",{"virtualinterfacemustbesetfor:",get_full_name(),".vif"});
+endfunction:build_phase
+25. 然后定义一个TLP接口，用于和scoreboard进行通信；和进行数据比较
+uvm_analysis_port#(ubus_transfer)item_collected_port;
+item_collected_port.write(trans_collected);
+在ubus_example_tb.sv中：
+ubus0.slaves[0].monitor.item_collected_port.connect(scoreboard0.item_collected_export);
+在scoreboard中实现write函数；在scoreboard中也有一个memory模型，将slave_monitor
+收到的写操作转化成保存数据或者是数据更新；将 slave_monitor收到的读操作转化成数据
+比较操作或者数据更新；而数据的返回操作时有slave_seq_lib中的slave_memory_seq来完
+成的，注意着两个的区别；
+//write
+virtualfunctionvoidwrite(ubus_transfertrans);
+if(!disable_scoreboard)
+memory_verify(trans);
+endfunction:write
+26. Monitor的另外一个重要作用就是进行coverage的统计；首先要定义各个coverpoint；
+//Transfercollectedcovergroup
+covergroupcov_trans;
+option.per_instance=1;
+trans_start_addr:coverpointtrans_collected.addr{
+option.auto_bin_max=16;}
+trans_dir:coverpointtrans_collected.read_write;
+trans_size:coverpointtrans_collected.size{
+binssizes[]={1,2,4,8};
+illegal_binsinvalid_sizes=default;}
+trans_addrXdir:crosstrans_start_addr,trans_dir;
+trans_dirXsize:crosstrans_dir,trans_size;
+endgroup:cov_trans
+27. 然后就是进行coverage的计算和报告；
+//perform_transfer_coverage
+37
+
+## 第 38 页
+
+protectedfunctionvoidperform_transfer_coverage();
+cov_trans.sample();
+for(intunsignedi=0;i<trans_collected.size;i++)begin
+addr=trans_collected.addr+i;
+data=trans_collected.data[i];
+//Waitstateinforamtionisnotcurrentlymonitored.
+// wait_state=trans_collected.wait_state[i];
+cov_trans_beat.sample();
+end
+endfunction:perform_transfer_coverage
+taskpeek(outputubus_transfertrans);
+@address_phase_grabbed;
+trans=trans_collected;
+endtask:peek
+virtualfunctionvoidreport_phase(uvm_phasephase);
+`uvm_info(get_full_name(),$sformatf("Covergroup'cov_trans'coverage:%2f",
+cov_trans.get_inst_coverage()),UVM_LOW)
+endfunction
+28. Ubus_monitor中还有一个作用，就是进行slave的译码设置；具体见前面的ubus_monitor
+部分；
+[[[[1111----11119999]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----8888）----AAAAggggeeeennnntttt....ssssvvvv
+29. Agent做的事情是最简单的，主要是负责sequencer，driver，monitor的例化和连接，注
+意的是为了向上集成，我们需要判断UVM_ACTIVE是否有效，因为向上集成的过程中
+可能不在需要sequencer和driver，而只需要monitor；
+//build_phase
+virtualfunctionvoidbuild_phase(uvm_phasephase);
+super.build_phase(phase);
+monitor=ubus_slave_monitor::type_id::create("monitor",this);
+if(get_is_active()==UVM_ACTIVE)begin
+driver=ubus_slave_driver::type_id::create("driver",this);
+sequencer=ubus_slave_sequencer::type_id::create("sequencer",this);
+end
+endfunction:build_phase
+38
+
+## 第 39 页
+
+//connect_phase
+functionvoidconnect_phase(uvm_phasephase);
+if(get_is_active()==UVM_ACTIVE)begin
+driver.seq_item_port.connect(sequencer.seq_item_export);
+sequencer.addr_ph_port.connect(monitor.addr_ph_imp);
+end
+endfunction:connect_phase
+[[[[1111----22220000]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----9999）----SSSSccccoooorrrreeeebbbbooooaaaarrrrdddd....ssssvvvv
+30. Scoreboard主要接收来自monitor中的数据，并判断是否是正确的，如果是错误的则会
+输出一个 error 的指示，在 test_lib 的 base_test 中会用到这个指示，在 base_test 的
+report_phase中报告FAILED，否则报告PASSED，要接收数据，首先要声明TLMport；
+还要重载write函数；
+uvm_analysis_imp#(ubus_transfer,ubus_example_scoreboard)item_collected_export;
+//build_phase
+functionvoidbuild_phase(uvm_phasephase);
+item_collected_export=new("item_collected_export",this);
+endfunction
+//write
+virtualfunctionvoidwrite(ubus_transfertrans);
+if(!disable_scoreboard)
+memory_verify(trans);
+endfunction:write
+31. Write函数内部一般都是调用比较函数，这个比较函数的写法要具体问题具体分析了；
+大多数时候都会用到队列或者memory的方式来进行比较；
+[[[[1111----22221111]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----11110000）----EEEEnnnnvvvv....ssssvvvv
+32. Env主要负责例化masteragent，slaveagent，monitor；
+void'(uvm_config_db#(int)::get(this,"","num_masters",num_masters));
+masters=new[num_masters];
+for(inti=0;i<num_masters;i++)begin
+$sformat(inst_name,"masters[%0d]",i);
+39
+
+## 第 40 页
+
+masters[i]=ubus_master_agent::type_id::create(inst_name,this);
+void'(uvm_config_db#(int)::set(this,{inst_name,".monitor"},
+"master_id",i));
+void'(uvm_config_db#(int)::set(this,{inst_name,".driver"},
+"master_id",i));
+end
+33. 还有会做coverage和check的变量控制，当然在ubus中还有对slave地址空间的配置函
+数实现；至于slave地址空间的配置，后面专门给个总结吧；
+//set_slave_address_map
+functionvoidset_slave_address_map(stringslave_name,
+intmin_addr,intmax_addr);
+ubus_slave_monitortmp_slave_monitor;
+if(bus_monitor!=null)begin
+//Setslaveaddressmapforbusmonitor
+bus_monitor.set_slave_configs(slave_name,min_addr,max_addr);
+end
+//Setslaveaddressmapforslavemonitor
+$cast(tmp_slave_monitor,lookup({slave_name,".monitor"}));
+tmp_slave_monitor.set_addr_range(min_addr,max_addr);
+endfunction:set_slave_address_map
+[[[[1111----22222222]]]] 如何顺序的写 UUUUVVVVMMMM 平台（8888----11111111）----eeeexxxxaaaammmmpppplllleeee____ttttbbbb....ssssvvvv
+34. 我曾经一度怀疑这个文件存在的作用性，因为对我们来说直接在test中例化env，然后
+就可以了，后来得到一个解释是，有可能需要模拟多个场景，特别是对于总线这种东西
+可能需要同时模拟，我用AXI总线来说明这个问题，比如说我在一个chip中，用了三
+组AXI总线，分别是2x4,5x8,3x6，我希望的是在同一个平台中同时模拟着三组总线的
+行为，那么example_tb就很有用了，因为可以直接在test中例化三个example_tb即可。
+35. Example_tb主要用来设置master的数量，slave的数量，slave的地址分配，当然也包含
+scoreboard和monitor的连接。
+//build_phase
+virtualfunctionvoidbuild_phase(uvm_phasephase);
+super.build_phase(phase);
+uvm_config_db#(int)::set(this,"ubus0","num_masters",1);
+uvm_config_db#(int)::set(this,"ubus0","num_slaves",1);
+40
+
+## 第 41 页
+
+ubus0=ubus_env::type_id::create("ubus0",this);
+scoreboard0=ubus_example_scoreboard::type_id::create("scoreboard0",this);
+endfunction:build_phase
+functionvoidconnect_phase(uvm_phasephase);
+//Connectslave0monitortoscoreboard
+ubus0.slaves[0].monitor.item_collected_port.connect(scoreboard0.item_collected_export);
+endfunction:connect_phase
+functionvoidend_of_elaboration_phase(uvm_phasephase);
+//Setupslaveaddressmapforubus0(basicdefault)
+ubus0.set_slave_address_map("slaves[0]",0,16'hffff);
+endfunction:end_of_elaboration_phase
+[[[[1111----22223333]]]] 如何顺序的写 UUUUVVVVMMMM 平台（9999）----RRRRAAAALLLL
+1. 以一个APB访问寄存器的dut为例子，由于APB的Agent在UVM中已经提供，我们
+只是需要些regmodel和在env中例化regmodel的相关工作等，但是我们首先还是要理
+解APBagent的原理；
+2. Callbacks
+在APB 的driver中在gettrans后和执行读写操作后都存在一个callback的调用；
+typedefclassapb_master;
+classapb_master_cbsextendsuvm_callback;
+virtualtasktrans_received(apb_masterxactor,apb_rwcycle);endtask
+virtualtasktrans_executed(apb_masterxactor,apb_rwcycle);endtask
+endclass
+@(this.sigs.mck);
+this.trans_received(tr);
+`uvm_do_callbacks(apb_master,apb_master_cbs,trans_received(this,tr))
+case(tr.kind)
+apb_rw::READ: this.read(tr.addr,tr.data);
+apb_rw::WRITE:this.write(tr.addr,tr.data);
+endcase
+41
+
+## 第 42 页
+
+this.trans_executed(tr);
+`uvm_do_callbacks(apb_master,apb_master_cbs,trans_executed(this,tr))
+3. reg2apb_adapter
+一个转换器要定义好两个函数：
+一个是reg2bus，作用就是把registermodel通过sequence发出的uvm_reg_bus_op类型
+的变量转换成sequencer能够接受的形式；
+另一个是 bus2reg，作用是当监测到总线上有操作时，把收集来的 transaction 转换成
+registermodel能够接受的形式，一遍registermodel能够更新相应的寄存器的值。
+Registermodel发起的读操作的数值是如何返回给registermodel的？monitor监测到读操
+作后，把读操作的数据封装成 trans 的形式发送出去，uvm_reg_predictor 的类会接收这个
+transaction，并会调用adapterbus2reg，把trans转换成uvm_reg_bus_op，regsitermodel从后
+者获取读操作的数值。
+uvm_reg_predictor#(apb_rw)apb2reg_predictor;
+apb2reg_predictor=new("apb2reg_predictor",this);
+reg2apb_adapterreg2apb=new;
+regmodel.default_map.set_sequencer(apb.sqr,reg2apb);
+apb2reg_predictor.map=regmodel.default_map;
+apb2reg_predictor.adapter=reg2apb;
+regmodel.default_map.set_auto_predict(0);
+42
+
+## 第 43 页
+
+apb.mon.ap.connect(apb2reg_predictor.bus_in);
+4. Regmodel
+一般先一个寄存器（extendsuvm_reg）定义成一个class，每个寄存器中可能包含多个
+uvm_reg_filed，new函数中输入的是总线的宽度，build函数中包含 create和configure的调
+用；
+Configure参数列表为：parent,有效位宽，从第几bit开始有效，访问方式，volatile，复
+位值，是否复位，是否随即，是否可以单独存取；
+5. 对于UVM_MEM的extends，只有new函数，没有build函数，new函数中会定义长度
+与宽度；
+6. 将所有的寄存器都组合在一个uvm_reg_block中；在block中首先例化这些寄存器，然
+后调用configure()和build()函数
+43
+
+## 第 44 页
+
+7. 在env中例化uvm_reg_block，例化apb_agent，例化uvm_reg_sequence，在build_phase
+中createregmodel,apb_agent,apb2reg_predictor等；
+uvm_reg_sequenceseq; 目前还不知道为什么一定要定义这个sequence？
+uvm_reg_predictor#(apb_rw)apb2reg_predictor;
+下面是设置regmodel中所以寄存器的路径前缀；
+begin
+stringhdl_root="tb_top.dut";
+void'($value$plusargs("ROOT_HDL_PATH=%s",hdl_root));
+regmodel.set_hdl_path_root(hdl_root);
+end
+44
+
+## 第 45 页
+
+virtualfunctionvoidconnect_phase(uvm_phasephase);
+if(apb!=null)begin
+reg2apb_adapterreg2apb=new;
+regmodel.default_map.set_sequencer(apb.sqr,reg2apb);
+`ifdefEXPLICIT_MON
+apb2reg_predictor.map=regmodel.default_map;
+apb2reg_predictor.adapter=reg2apb;
+regmodel.default_map.set_auto_predict(0);
+apb.mon.ap.connect(apb2reg_predictor.bus_in);
+`else
+regmodel.default_map.set_auto_predict(1);
+`endif
+end
+regmodel.print();
+endfunction
+45
+
+## 第 46 页
+
+virtualtaskrun_phase(uvm_phasephase);
+phase.raise_objection(this);
+if(seq==null)begin
+uvm_report_fatal("NO_SEQUENCE","Env's sequenceisnotdefined.Nothingtodo.
+Exiting.");
+return;
+end
+#100;
+uvm_report_info("START_SEQ",{"Startingsequence'",seq.get_name(),"'"});
+seq.model=regmodel;
+seq.start(null);
+phase.drop_objection(this);
+endtask
+8. 在test中需要定义一个sequence赋值给env中的sequence；
+46
+
+## 第 47 页
+
+seq = uvm_utils #(uvm_reg_sequence)::create_type_by_name(seq_name,"tb");//不知道这是
+个什么意思呢？应该就是创建一个uvm_reg_sequence
+9. 如果regmodel中的寄存器create函数没有写全或者写对，会出现下面的错误；
+[[[[1111----22224444]]]] 如何顺序的写 UUUUVVVVMMMM 平台（11110000）----打印信息汇总
+1. 在ubus_base_test中：
+`uvm_info(get_type_name(),$sformatf("Printfing the test topology : \n
+%s",this.sprint(printer)),UVM_LOW)
+47
+
+## 第 48 页
+
+2. 在ubus_base_test中：
+uvm_report_info(get_full_name(),"startoftestrun_phase...",UVM_LOW);
+uvm_top.print_topology();
+3. 在master_monitor中：
+48
+
+## 第 49 页
+
+`uvm_info({get_full_name()," MASTER ID"},$sformatf(" =
+%0d",master_id),UVM_MEDIUM)
+UVM_INFO ubus_master_monitor.sv(65) @ 0:
+uvm_test_top.ubus_example_tb0.ubus0.masters[0].monitor
+[uvm_test_top.ubus_example_tb0.ubus0.masters[0].monitorMASTERID]=0
+4. 在master_sequence_lib中：
+if(starting_phase!=null)begin
+`uvm_info(get_type_name(),$sformatf("%spre_body()raising%sobjection",
+get_sequence_path(),starting_phase.get_name()),UVM_MEDIUM);
+UVM_INFO ubus_master_seq_lib.sv(12) @ 0:
+uvm_test_top.ubus_example_tb0.ubus0.masters[0].sequencer@@read_byte_seq [read_byte_seq]
+read_byte_seqpre_bodyraisingrunobjection
+5. 在slave_sequence_lib中：
+`uvm_info(get_type_name(),$sformatf("%sstarting...",
+get_sequence_path()),UVM_MEDIUM);
+UVM_INFO ubus_slave_seq_lib.sv(66) @ 0:
+uvm_test_top.ubus_example_tb0.ubus0.slaves[0].sequencer@@slave_memory_seq
+[slave_memory_seq]slave_memory_seqstarting...
+6. 在master_seq_lib中：
+`uvm_info(get_type_name(),$sformatf("%sread:addr=`x%0h,data[0]=`x%0h",
+get_sequence_path(),rsp.addr,rsp.data[0]),UVM_HIGH);
+UVM_INFO ubus_master_seq_lib.sv(48) @ 300:
+uvm_test_top.ubus_example_tb0.ubus0.masters[0].sequencer@@read_byte_seq [read_byte_seq]
+read_byte_seqread:addr=`x2c7,data[0]=`x39
+[[[[1111----22225555]]]] 如何顺序的写 UUUUVVVVMMMM 平台（11111111）----疑惑
+1. 使用宏的时候中间不要换行；换行的话加 “\”。
+2. 在ubus_slave_seq_lib.sv中；没明白下面的意思；
+ubus_slave_sequencerp_sequencer;
+$cast(p_sequencer,m_sequencer);
+p_sequencer.addr_ph_port.peek(util_transfer);
+一般来说我们在sequencer中都不增加任何变量，但是在ubus_slave_sequencer中增加了
+一个umv_blocking_peek_port，例化成了addr_ph_port，这addr_ph_port是sequencer用来和
+slave_monitor进行通信的。通信的主要原因是 slave_monitor收到transaction的写操作后需
+要发送给slave_memory_seq中进行保存；所以在slave_memory_seq中通过TLP 接口调用了
+slave_monitor中的peek函数；
+49
+
+## 第 50 页
+
+再 来 看 看 p_sequencer 和 m_sequencer 的 区 别 ： m_sequecer 是 指 向 基 类
+uvm_sequencer_base 的指针，而 p_sequencer 是指向从 uvm_sequencer_base 派生出来的
+ubus_slave_sequencer的指针；所以如果要用到子对象ubus_slave_sequencer中的成员变量，
+就必须声明一个p_sequencer指针才能调用；
+3. 在ubus_slave_seq_lib.sv中；没明白下面的意思；
+`uvm_declare_p_sequencer(ubus_slave_sequencer)
+$cast(req,create_item(ubus_transfer::get_type(),p_sequencer,"req"));
+p_sequencer.addr_ph_port.peek(util_transfer);
+4. 在ubus_slave_monitor.sv中；没明白下面的意思；
+void'(this.begin_tr(trans_collected));
+5. Get_full_name()和get_type_name()的区别
+Get_full_name()：
+uvm_test_top.ubus_example_tb0.ubus0.slaves[0].driver
+[uvm_test_top.ubus_example_tb0.ubus0.slaves[0].driver]
+Get_type_name()：
+uvm_test_top.ubus_example_tb0.scoreboard0[ubus_example_scoreboard]
+50

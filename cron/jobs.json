@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1774917715218,
+      "updatedAtMs": 1774998042126,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -30,11 +30,11 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1774998000000,
-        "lastRunAtMs": 1774911600022,
+        "nextRunAtMs": 1775084400000,
+        "lastRunAtMs": 1774998000017,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 221319,
+        "lastDurationMs": 42109,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true

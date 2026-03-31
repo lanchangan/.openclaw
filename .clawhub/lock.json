@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "skills": {
+    "firecrawl-cli": {
+      "version": "1.0.0",
+      "installedAt": 1774973462376
+    },
+    "firecrawl-search": {
+      "version": "1.0.0",
+      "installedAt": 1774973762586
+    }
+  }
+}

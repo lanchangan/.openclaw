@@ -1,0 +1,4845 @@
+# 101 条 Verilog 和 SystemVerilog 设计陷阱
+
+文件: D:\飞书\验证书籍\101 条 Verilog 和 SystemVerilog 设计陷阱.pdf
+总页数: 98
+
+---
+
+
+## 第 1 页
+
+101 条 Verilog 和 SystemVerilog 设计陷阱
+Verilog and SystemVerilog Gotchas:101 Common
+Coding Errors and How to Avoid Them(2007)
+洋文馆
+2014年3月10日
+
+## 第 2 页
+
+1
+感谢
+To my wonderful wife, LeeAnn, and my children, Ammon, Tamara, Hannah, Sethand Samuel-thank you for your
+patienceduringthemanylonghoursandlatenightsyoutoleratedwhilethisbookwasbeingwritten.
+StuSutherland
+Portland,Oregon
+TomywifeandsweetheartGeriJean,andmychildren,Sara,Kirsten,Adam,Alex,Dillan,Donnelle,GrantandGina-
+thankstoeachofyouforthepatienceyouhavehadwithmeasIhavedealtwithdebuggingmanyofthesegotchas
+ondesignsovertheyears.
+DonMills
+Chandler,Arizona
+著者介绍
+Mr. StuartSutherlandisamemberoftheIEEE1800workinggroupthatoverseesboththeVerilogandSystemVer-
+ilog standards. He has been involved with the definition of the Verilog standard since its inception in 1993, and
+theSystemVerilogstandardsinceworkbeganin200I.Inaddition, StuartisthetechnicaleditoroftheofficialIEEE
+Verilog and SystemVerilog Language Reference Manuals (LRMs). Stuart is an independent Verilog consultant,
+specializing in providing comprehensive expert training on the Verilog HDL, SystemVerilog and PLI. Stuart is a
+co-author of the books ”SystemVerilog for Design”, ”Verilog-2001: A Guide to the New Features in the Verilog
+HardwareDescriptionLanguage”andistheauthorof”TheVerilogPLlHandbook”,aswellasthepopular”Verilog
+HDLQuickReferenceGuide”and”VerilogPLlQuickReferenceGuide”.Hehasalsoauthoredanumberoftechni-
+calpapersonVerilogandSystemVerilog,whichareavailableatwww.sutherland-hdl.com/papers. Youcancontact
+Stuartatstuart@sutherland-hdl.com.
+visittheauthor’swebpageatwww.sutherland-hdl.com
+Mr.Don Mills has been involved in ASIC design since 1986. During that time, he has worked on more than 30
+ASIC projects. Don started using top-down design methodology in 1991 (Synopsys Design Compiler 1.2). Don
+has developed and implemented top-down ASIC design flows at several companies. His specialty is integrat-
+ing tools and automating the flow. Don works for Microchip Technology Inc. as an internal SystemVerilog and
+Verilog consultant. Don is a member of the IEEE Verilog and System Verilog committees that are working on
+languageissuesandenhancements. Donhasauthoredandco-authorednumerouspapers,suchas”SystemVer-
+ilog Assertions are for Design Engineers Too!” and ”RTL Coding Styles that Yield Simulation and Synthesis Mis-
+matches”. Copies of these papers can be found at www.lcdm-eng.com.Mr. Mills can be reached at mills@lcdm-
+eng.comordon.mills@microchip.com.
+visittheauthor’swebpageatwww.lcdm-eng.com
+致谢
+TheauthorsexpresstheirsincereappreciationtothecontributionsofseveralVerilogandSystemVerilogexperts.
+Chris Spear of Synopsys, Inc. suggested several of the verification related gotchas, provided the general de-
+scriptionsofthesegotchas,andrancountlesstestsforus.
+ShalomBrestickerofIntelalsosuggestedseveralgotchas.
+Jonathan Bromley of Doulos, Ltd., Clifford Cummings of Sunburst Design, Tom Fitzpatrick of Mentor Graphics,
+SteveGolsonofTrilobyteSystems,GreggLahtiofMicrochipTechnology,Inc. andChrisSpearofSynopsys,Inc.
+providedthoroughtechnicalreviewsofthisbook,andofferedinvaluablecommentsonhowtoimprovethegotcha
+descriptions.
+
+## 第 3 页
+
+2
+Steve Golson of Trilobyte Systems provided a wonderful foreword to this book Lastly, we acknowledge and ex-
+pressourgratitudetoourwives,LeeAnnSutherlandandGeriJeanMills,formeticulouslyreviewingthisbookfor
+grammar and punctuation. If any such errata remain in the book, it could only be due to changes we made after
+theirreviews.
+
+## 第 4 页
+
+目录
+1 介绍-什么是陷阱? 1 陷阱41:枚举类型的越界分配 . . . . . . . . . . . . 41
+介绍Verilog和SystemVerilog. . . . . . . . . . . . 1 陷阱42:模块中未确认的共享变量 . . . . . . . . . 42
+陷阱定义 . . . . . . . . . . . . . . . . . . . . . . . 1 陷阱43:接口和包中未确认的共享变量 . . . . . . . 43
+Verilog和SystemVerilog标准. . . . . . . . . . . . 1
+4 操作符陷阱 45
+2 声明和文本数值的陷阱 3 陷阱44:表达式分配 . . . . . . . . . . . . . . . . . 45
+陷阱1:大小写敏感. . . . . . . . . . . . . . . . . . 3 陷阱45:自主操作符与关联上下文的操作符 . . . . 45
+陷阱2:隐含net声明 . . . . . . . . . . . . . . . . 4 陷阱46:分配语句中的尺寸和符号扩展 . . . . . . . 47
+陷阱3:内部net的1bit默认. . . . . . . . . . . . . 5 陷阱47:符号运算的规则 . . . . . . . . . . . . . . 48
+陷阱4:单文件和多文件编译的$unit声明. . . . . . 6 陷阱48:位选中和片选中操作符. . . . . . . . . . . 49
+陷阱5:本地变量的声明 . . . . . . . . . . . . . . . 6 陷阱49:增量,减量和分配操作符 . . . . . . . . . . 49
+陷阱6:在层次路径中的转义名称 . . . . . . . . . . 7
+陷阱50:前增量和后增量操作符. . . . . . . . . . . 50
+陷阱7:自动变量的层次引用. . . . . . . . . . . . . 8
+陷阱51:一条语句对变量的多次修改 . . . . . . . . 50
+陷阱8:层次引用未命名块中的变量 . . . . . . . . . 10
+陷阱52:操作符评估的省略 . . . . . . . . . . . . . 51
+陷阱9:层次引用已导入的包元素 . . . . . . . . . . 11
+陷阱53:取反(!)和反转()操作符 . . . . . . . . . 52
+陷阱10:从包中导入枚举类型 . . . . . . . . . . . . 11
+陷阱54:数组的方法 . . . . . . . . . . . . . . . . . 52
+陷阱11:多个包的导入. . . . . . . . . . . . . . . . 12
+陷阱55:数组子集的方法 . . . . . . . . . . . . . . 53
+陷阱12:整型的默认基数类型 . . . . . . . . . . . . 13
+陷阱13:整型的符号 . . . . . . . . . . . . . . . . . 14
+5 常见的编程陷阱 54
+陷阱14:整型的符号扩展 . . . . . . . . . . . . . . 14
+陷阱56:零时刻下异步和同步复位的验证. . . . . . 54
+陷阱15:整型分配的尺寸不匹配. . . . . . . . . . . 15
+陷阱57:if...else的嵌套. . . . . . . . . . . . . . . . 56
+陷阱16:矢量充填 . . . . . . . . . . . . . . . . . . 16
+陷阱58:四态值的等值判断 . . . . . . . . . . . . . 57
+陷阱17:数组和串接 . . . . . . . . . . . . . . . . . 17
+陷阱59:事件触发的竞争条件 . . . . . . . . . . . . 57
+陷阱18:端口连接的规则 . . . . . . . . . . . . . . 17
+陷阱60:信号量同步 . . . . . . . . . . . . . . . . . 58
+陷阱19:端口的反向驱动 . . . . . . . . . . . . . . 19
+陷阱61:邮箱同步 . . . . . . . . . . . . . . . . . . 59
+陷阱20:通过端口传递real(浮点数)类型. . . . . . 20
+陷阱62:时钟块的触发. . . . . . . . . . . . . . . . 60
+陷阱63:判断语句的分号 . . . . . . . . . . . . . . 61
+3 RTL建模 22
+陷阱64:for循环的分号. . . . . . . . . . . . . . . . 62
+陷阱21:函数调用的组合逻辑敏感表 . . . . . . . . 22
+陷阱65:无限循环 . . . . . . . . . . . . . . . . . . 62
+陷阱22:数组的逻辑敏感表 . . . . . . . . . . . . . 23
+陷阱66:循环并发造成的仿真锁定 . . . . . . . . . 63
+陷阱23:时序逻辑敏感表的矢量. . . . . . . . . . . 24
+陷阱24:敏感表的操作. . . . . . . . . . . . . . . . 25 陷阱67:循环控制变量的引用 . . . . . . . . . . . . 63
+陷阱25:begin...end中的时序逻辑块 . . . . . . . . 26 陷阱68:函数默认的返回尺寸 . . . . . . . . . . . . 64
+陷阱26:时序逻辑块的复位 . . . . . . . . . . . . . 27 陷阱69:任务和函数的默认参数. . . . . . . . . . . 64
+陷阱27:用于仿真和综合的异步置位/复位触发器. . 27 陷阱70:连续赋值的延时 . . . . . . . . . . . . . . 65
+陷阱28:时序过程块的阻塞分配. . . . . . . . . . . 28
+陷阱29:时序逻辑的阻塞分配 . . . . . . . . . . . . 29 6 面对对象和多线程编程的陷阱 67
+陷阱30:组合逻辑的非阻塞分配. . . . . . . . . . . 30 陷阱71:类的编程 . . . . . . . . . . . . . . . . . . 67
+陷阱31:组合逻辑分配的错误次序 . . . . . . . . . 31 陷阱72:面对对象testbench的接口用法. . . . . . 68
+陷阱32:case语句的casez/casex标记. . . . . . . 32 陷阱73:邮箱的所有对象包含了相同的值. . . . . . 68
+陷阱33:不完整的判断语句 . . . . . . . . . . . . . 33 陷阱74:用input和ref参数传递方法句柄 . . . . . 69
+陷阱34:重叠的判断语句 . . . . . . . . . . . . . . 35 陷阱75:对象数组的构造 . . . . . . . . . . . . . . 69
+陷阱35:uniquecase语句的不当用法. . . . . . . . 35 陷阱76:静态任务和函数都不可重入 . . . . . . . . 70
+陷阱36:两态模型的复位 . . . . . . . . . . . . . . 36 陷阱77:静态和动态变量的初始化 . . . . . . . . . 71
+陷阱37:枚举类型对状态机的锁定 . . . . . . . . . 37 陷阱78:分支线程所需的自动变量 . . . . . . . . . 72
+陷阱38:四态logic类型中隐藏的设计问题 . . . . . 38 陷阱79:disablefork . . . . . . . . . . . . . . . . . 73
+陷阱39:两态类型隐藏的设计问题 . . . . . . . . . 39 陷阱80:语句块的失效. . . . . . . . . . . . . . . . 74
+陷阱40:数组越界访问的隐藏问题 . . . . . . . . . 40 陷阱81:仿真过早退出. . . . . . . . . . . . . . . . 76
+3
+
+## 第 5 页
+
+目录 4
+7 随机化,覆盖和断言的陷阱 77 陷阱93:assert...else语句的失配 . . . . . . . . . . 85
+陷阱82:rand变量无法实现随机化 . . . . . . . . . 77 陷阱94:断言无法失败. . . . . . . . . . . . . . . . 86
+陷阱83:无法检出的随机化错误. . . . . . . . . . . 78
+陷阱84:$assertoff失效随机化. . . . . . . . . . . . 78 8 工具兼容性的陷阱 87
+陷阱85:多个随机变量的布尔约束 . . . . . . . . . 79 陷阱95:默认的仿真时间单位和精度 . . . . . . . . 87
+陷阱86:随机变量的负值 . . . . . . . . . . . . . . 80 陷阱96:包链. . . . . . . . . . . . . . . . . . . . . 88
+陷阱87:覆盖报告只会默认给出组信息而非bin信 陷阱97:随机数生成器并不一致. . . . . . . . . . . 88
+息 . . . . . . . . . . . . . . . . . . . . . . . . . . . 81 陷阱98:always_latch/always_ff的内存模型 . . . . 89
+陷阱88:覆盖报告一直为0 . . . . . . . . . . . . . 81 陷阱99:非标准的语言扩展 . . . . . . . . . . . . . 90
+陷阱89:覆盖报告将包含所有实例 . . . . . . . . . 83 陷阱100:数组语法和串接. . . . . . . . . . . . . . 91
+陷阱90:覆盖方向参数的粘着性. . . . . . . . . . . 83 陷阱101:模块端口的浮点数(real)传递 . . . . . . 91
+陷阱91:断言的空匹配. . . . . . . . . . . . . . . . 84
+陷阱92:过程块的并发断言 . . . . . . . . . . . . . 85 9 索引表(略) 92
+
+## 第 6 页
+
+目录 5
+序
+有些人喜欢收集棒球卡片,老的车辆杂志,或是橡皮小鸭.但我喜欢收集Verilog书籍.
+从 1989 年那个三孔活页夹中保存的 Gateway VERILOG-XL Reference Manual Version I.5a 复印本开始, 那时
+的Verilog很简单,其中只包含了一种过程赋值(那时的语言并没有包含非阻塞赋值),它很难让我们相信有一天能够
+使用它来设计芯片,我们可以在VAX或是昂贵的Apollo工作站上进行仿真.
+从那开始我购买了相当多的 Verilog 书籍, 其中包含了少量的综合书籍, 还有一份介绍硬件描述语言历史的文
+本,其中的一小部分介绍了VHDL,这些书籍中大部分都是关于Verilog.
+但有趣的是, 我并没有花很多时间来阅读它们, 它们只是被搁置在书架上, 我承认书架上摆满了关于 Verilog 的
+书籍时,是一件令人骄傲的事情,但目光如炬的参观者能发现它们都是全新的从未被阅读过,拥有未使用过和未阅读
+过的书籍都是无意义的.
+另一方面让我沮丧, 从这些书籍中只能找到很少一部分, 对于工程师有价值的内容, 我能否找到一本需天天使
+用的书籍,有利于我入门以及在工作中及时参阅.
+Stu 和 Don 编写的就是这样一本书, 了解这些技巧我花费了很多年的时间, 其中内容甚至让我怀疑, 自己是否
+了解Verilog,在这本能提供帮助和有价值的书籍中,给出的一些知识点都是经过提炼的,相信你不会感到沮丧.
+如果你是一个老手,验证这些技巧也需通过相当困难的方式,但你可笑着对自己说:”好的,我找到它了.”.
+如果你是新手, 快点跟随两位专家开始学习吧, 不要犹豫快点来参加两位绅士提供的一次培训课程, 我保证你
+不会遗憾.
+我最喜欢的陷阱是第 65 条: 循环是无限的, 为什么? 可以构建一个调试它的环境, 相信我, 如果建模错误会引
+发芯片损坏时,你就不会忘记错误为什么会出现?可惜这本书我没有早点遇到,无疑你是幸运的,把这本书放在手边,
+经常参阅,它可帮助你解决所有的模型编译和项目设计的困难.
+SteveGolson
+TrilobyteSystems
+http://www.trilobyte.com
+
+## 第 7 页
+
+介绍 -什么是陷阱?
+本章将定义什么是陷阱,为什么编程语言会容忍陷阱,为了扩充你的知识面,本章还将提供Verilog和SystemVerilog
+标准的简明历史,如下:
+(cid:15) 介绍Verilog和SystemVerilog
+(cid:15) 陷阱的定义
+(cid:15) Verilog和SystemVerilog标准的简明描述
+介绍 Verilog 和 SystemVerilog
+术语 Verilog 和 SystemVerilog 有时让人困惑, 因为在工业界中它们的用法并不一致, 在本书中,Verilog 和 Sys-
+temVerilog的用途如下:
+(cid:15) Verilog是一种硬件描述语言(HDL),也就是一种数字硬件模型设计的特殊语言,并可在受限的情况下,编写测
+试程序对模型进行验证.
+(cid:15) SystemVerilog是VerilogHDL的一个扩展集合,主要用于更复杂的大型设计的建模和验证,但SystemVerilog
+并不是一个完整的语言,目前需要在Verilog的基础上使用.
+陷阱定义
+程序化的陷阱可视为一种语言特性,由于滥用引发的不可预期的操作,并使硬件设计中包含极度危险的故障,C语言
+中有一个类似的经典示例,条件表达式中的赋值,如下:
+1 if (day=15) // 陷阱!会将15赋给day
+2 do_mid_month_payroll;
+因此编程者都会使用if(a==b)来替代if(a=b),其结果当然不同,C语言陷阱并不包含一个语法错误,并且代码也是合
+法的,只是代码无法给出所需的结果,如果产品上市后依然包含了这些代码错误,那么这个简单错误将对产品造成严
+重的影响.
+同其他的编程语言一样,Verilog 和 SystemVerilog 中也会包含陷阱, 它们在语义上是正确的, 但并不能得到预期
+和需要的结果,Verilog和SystemVerilog中包含陷阱的主要原因如下:
+(cid:15) 继承了C和C++陷阱:
+Verilog 和 SystemVerilog 使用了 C 和 C++ 语言的通用语法和语义, 在继承这些语言的强大优势的同时也继
+承了它们的陷阱,比如上例.
+(cid:15) 弱类型操作:
+Verilog 和 SystemVerilog 是一种弱类型语言, 操作可在任意类型上执行, 基于语言规则需要小心处理执行操
+作,如果设计者或验证工程师无法理解这些语言规则,将出现非预期的结果.
+(cid:15) 无法对设计质量进行评判:
+在Verilog和SystemVerilog中,工程师需建模和验证设计工作的正确性,有时合法的模型硬件并不能工作,为
+了让模型设计能够正常工作,语言必须允许一些无意的建模错误.
+Verilog 和 SystemVerilog 标准
+Verilog 是一种硬件描述语言的国际标准, 官方标准为 IEEE Std 1364-2005 Verilog LanguageReferenceManual
+(LRM), 通常被称为 Verilog-2005,Verilog 标准中定义了描述数据逻辑行为的一组丰富的程序化建模结构, 最早的
+Verilog出现在1984年,它是为了满足80年代中期工程师们的需要,用于当时3微米下50,000门的IC设计,由于
+设计尺寸和技术的变化,Verilog需要加入新的需求,它的第一个IEEE标准为IEEEStd1364-1995,2001年IEEE给
+出了新标准IEEEStd1364-2001,并增强了部分功能,例如矢量类型的有符号运算的综合,以及可重入任务和函数,
+6
+
+## 第 8 页
+
+1. 介绍-什么是陷阱? 7
+在2005年IEEE又更新了Verilog标准,在这个版本中并未加入新的建模方式,所有的增强模式并入到了一个新的
+标准中,即SystemVerilog.
+SystemVerilog 标准即是 Verilog-2005 的扩展, 也就是 IEEE Std 1800-2005,SystemVerilog Language Reference
+Manual, 又被称为 SystemVerilog-2005, 它可用于编写尺寸和复杂度逐步增加的可综合模型, 同时也可用于验证
+数百万门的设计,SystemVerilog 在 Verilog 中加入了来自 SUPERLOG,VERA C,C++,VHDL 等语言的特性, 以及
+OVA 和 PSL 断言,SystemVerilog 首先是由 Accellera 开发的, 它是一个电子设计公司和 EDA 工具公司的联盟,
+在 2002 年,Accellera 发布了一个预备版本, 被称为 SystemVerilog 3.0, 分别在 2003 和 2004 年,Accellera 发布了
+SystemVerilog3.1和3.1a版本,最后的版本已捐献给IEEE.
+IEEE 的原始意图是想将 Accellera SystemVerilog 整合到 Verilog 标准中, 由于 EDA 公司的要求,IEEE 决定将
+SystemVerilog包含在不同的文档中,使得EDA公司能够更容易地在Verilog工具实现一个扩展集合.
+Verilog和SystemVerilog的官方标准如下:
+(cid:15) IEEE 1364-2005 standardfor the Verilog Hardware Description Language”, IEEE, Pascataway, NewJersey,
+2002. ISBN978-1-4020-7089-1.
+(cid:15) IEEE1800-2005standardfortheSystemVerilogHardwareDescriptionandVerificationLanguage”,IEEE,Pas-
+cataway,NewJersey,2001. ISBN0-7381-4811-3.
+包含Verilog和SystemVerilog更多细节的书籍如下:
+(cid:15) ”TheVerilogHardwareDescriptionLanguage,5thedition”,byDonaldThomasandPhilipMoorby. Published
+bySpringer,Boston,MA,2002,ISBN978-1-4020-7089-1.
+(cid:15) ”Verilog-2001: AGuidetotheNewFeaturesintheVerilogHardwareDescriptionLanguage”,byStuartSuther-
+land. PublishedbySpringer,Boston,MA,2002,ISBN978-0-7923-7568-5.
+(cid:15) ”SystemVerilog for Design: A Guide to Using SystemVerilog for Hardware Design and Modeling, Second
+Edition”,byStuartSutherland,SimonDavidmannandPeterFlake. PublishedbySpringer,Boston,MA,2006,
+ISBN978-0-387-33399-1.
+(cid:15) ”SystemVerilogforVerification: AGuidetoLearningtheTestbenchLanguageFeatures”,byChrisSpear. Pub-
+lishedbySpringer,Boston,MA,2006,ISBN978-0-387-27036-4.
+当然还有其他一些好书,无法一一给出.
+在本书编写时,IEEE 已开始将 Verilog 整合 SystemVerilog 中, 以创建一种单独的语言, 到时 Verilog 将被弃用,
+并会使用SystemVerilog作为统一的硬件设计和验证语言.
+
+## 第 9 页
+
+声明和文本数值的陷阱
+陷阱 1: 大小写敏感
+陷阱:看上去正确并在VHDL模型中能工作的代码命名,但在Verilog/SystemVerilog中将出现”未声明标识符”的错
+误.
+原因:Verilog和SystemVerilog都是大小写敏感的语言,而VHDL则是一种对大小写不敏感的语言.
+Verilog和SystemVerilog中的标识符即为用户定义的对象名称,例如模块,wire,变量或函数名,在标识符和关键字中
+同名的大小写标识意味着不同的名称,在用户定义的标识符中可混用大小写字母,数字和特殊字符(_,$,n(escape)).
+大小写敏感通常会使工程师在学习 Verilog/SystemVerilog 时出现困惑, 尤其是已有 VHDL 基础的工程师, 即使
+是有经验的工程师也会出现大小写的错误,有时同名标识符会因为拼写错误而造成类似的陷阱.
+以下示例中包含了三个大小写陷阱:
+1 module FSM (... );
+2 enum logic [1:0] {WAIT, LOAD, READY} State, nState;
+3 ...
+4 always_comb begin
+5 case (state) // 1
+6 WAIT: nState = L0AD; // 2
+7 LOAD: nState = READY;
+8 READY: nState = wait; // 3
+9 endcase
+10 end
+11 endmodule: FSM
+第一个陷阱来自于State枚举变量,它混用了大小写格式,在之后的代码(可能是声明后数百行代码之后)中,使用了
+一个state引用,这个标识符在Verilog和SystemVerilog中包含了不同的意义.
+第二个陷阱来自于枚举符号 LOAD, 但在代码中引用的 L0AD, 它们的意义也不相同, 因为在名称中包含了一个
+数字0,而不是字母O.
+第三个陷阱来自于 WAIT, 这在语法中是正确的, 因为在 Verilog 和 SystemVerilog 中包含了一个关键字 wait,
+但在模型中,nState变量将被wait赋值,这时Verilog/S原生态工具并不会报告一个未声明标识符的错误,而是会发
+布一个表达式中出现wait语句的错误,标识名使用与关键字相同的大写名称,将使代码难以阅读以及代码错误难以
+查看,并会造成难以理解的错误消息.
+在上例的编译过程中, 所有的拼写错误将被找出, 但是陷阱并不是一种拼写错误, 因而大小写错误陷阱在编译
+期内并不会出现,并会引发设计的功能问题.
+避免陷阱
+避免大小写错误的方式就是采用一个定义良好的命名规则,并严格执行,本书将使用以下的命名规则:
+(cid:15) 变量和net名都是小写.
+▶ 用户定义类型名,将使用_t结尾.
+▶ 枚举变量名,将使用_e结尾.
+▶ 低电平有效的信号名,将使用_n结尾.
+(cid:15) 常量名和枚举符号将使用大写(如LOAD).
+0注意:本章的示例只是为了说明陷阱的存在,而在实际的设计和验证代码中,这些陷阱并不能轻易地被观察或是进行调试.
+8
+
+## 第 10 页
+
+2. 声明和文本数值的陷阱 9
+(cid:15) 类名的首个字符将使用大写,之后使用小写(如classPacket;).
+(cid:15) 如果语言对大小写不敏感,应避免使用与关键字冲突的名称(如使用HOLD代替WAIT).
+以下是上例的正确版本:
+1 module fsm (... );
+2 enum logic [1:0] {HOLD, LOAD, READY} state_e, nstate_e;
+3 always_comb begin
+4 case (state_e)
+5 HOLD: nstate e = LOAD;
+6 LOAD: nstate e = READY;
+7 READY: nstate e = HOLD;
+8 endcase
+9 end
+10 endmodule: fsm
+陷阱 2: 隐含 net 声明
+陷阱:设计连接中的输入错误无法被编译器捕获,只能在功能仿真中出现.
+原因:输入出错的标识符将会推测出一个隐含net,而不是一个语法错误.
+当 Verilog/SystemVerilog 工具遇到一个未声明的标识符时, 它会如何处理? 这个问题的答案与使用未声明标识
+符的上下文有关.
+(cid:15) 如果未声明标识符被用于右侧或左侧的过程赋值语句,将出现一个编译期错误,如下:
+1 logic [7: 0] faa;
+2 initial faa = bar; //错误:bar未声明
+(cid:15) 如果未声明标识符被用于右侧的连续赋值语句,将出现一个编译期错误,如下:
+1 logic [7: 0] faa;
+2 assign faa = bar; //错误:bar未声明
+(cid:15) 如果未声明标识符被用于左侧的连续赋值语句,将推测出一个隐含的net声明,不会出现错误或是警告,如下:
+1 logic [7: 0] faa;
+2 assign bar = faa; //陷阱:bar未声明,并不会出错
+(cid:15) 如果未声明标识符用于连接模块, 接口,program 或原型的实例时, 将推测出一个隐含 net, 不会出现错误或是
+警告.
+最后的规则将导致设计的功能错误难以查找,如下两个1bit加法器的连接网表:
+1 module adder (input logic a, b, ci ,
+2 output logic sum, co);
+3 ...
+4 endmodule
+5
+6 module top;
+7 wire a, b, ci , s1, s2, c1;
+8 adder i1 (.a(a), .b(b), .ci(cl), .sum(s1), .co(c1)); // 陷阱!
+9 adder i2 (.a(a), .b(b), .ci(c), .sum(s2), .co(co)); // 陷阱!
+10 endmodule
+第一个陷阱即在i1加法器的输入和输出中同时引用了c1,另一个陷阱即是在i2加法器中使用了未声明标识符c,这
+些输入错误都不是语法错误,相反它们都会推测出一个隐含net,并会引发需调试的功能错误.
+为什么 Verilog 和 SystemVerilog 会允许这类陷阱? 因为在正常使用时, 它可对隐含的数据类型进行自动推测,
+尤其在大型的数百万门的设计中隐含的数据类型可包含数千个内部wire,无需对每个wire都显式声明.
+如何避免Verilog的这类陷阱
+有些语言编辑器例如 Emacs, 可在 Verilog 网表中实现连接的自动补全, 这是一个简单而特别的方式, 用于避免
+输入错误.
+大多数工程师包含笔者都花费过很大力气, 来查找 Verilog 的隐含 net, 这是因为网表中的输入错误通常会引发
+一个功能错误,而不是编译期错误,当然Verilog语言中也提供了一个机制,用于失效隐含的数据类型,但这种方式存
+
+## 第 11 页
+
+2. 声明和文本数值的陷阱 10
+在争议,一些工程师认为它引入的陷阱可以避免,基于Verilog的控制并不是本书的讨论范围.
+如何避免SystemVerilog的这类陷阱
+SystemVerilog 中提供两种简便的快捷方式 dot-name 和 dot-star, 用于 net 与模块,program, 接口的实例的连
+接,这些快捷方式可替代命名端口的连接方式.
+(cid:15) dot-name将显式命名连接端口,并使用同名net与该端口相连.
+(cid:15) dot-star将建立同名端口和信号的自动连接.
+以下示例将说明三种连接风格,显式连接,dot-name(局部推测)和dot-star(完全推测).
+1 module adder (input logic a, b, ci ,
+2 output logic sum, co);
+3 ...
+4 endmodule
+5
+6 module top;
+7 wire a, b, ci , s1, s2, c1;
+8
+9 adder i1 (.a, .b, .ci , .sum(s1), .co(c1)); //.name连接(dot-name)
+10 adder i2 (.sum(s2), .co(c1), .* ); //.*连接(dot-star)
+11 endmodule
+它们可减少信号名的输入次数,最大限度减少出现输入错误的机会,dot-name和dot-star需要所有net的显式声明,
+在使用这些快捷方式时,将无法推测出网表中的输入错误,如果出现输入错误将得到一个编译期错误,而不是仿真中
+的功能问题.
+编程者可使用Emacs编辑器,使用它的自动补全功能,以自动实现端口和net的连接.
+陷阱 3: 内部 net 的 1bit 默认
+陷阱:在网表中与矢量端口相连的只有1bit.
+原因:即使与net相连的是一个矢量,如果该net是一个未声明内部连接,将被推测为1bitwire.
+Verilog 和 SystemVerilog 在建模时都包含了一种快捷方式, 无需声明所有的内部 net, 未声明的连接都默认为
+wire类型,在网表中将会包含数百甚至上千个隐含wire,这可大大简化Verilog/SystemVerilog源码.
+隐含 net 的矢量尺寸将在局部上下文中确认, 如果未声明信号是一个模块端口, 隐含 net 应与模块端口的尺寸
+一致,如果未声明信号只在模块内部使用,将被推测成1bitwire,Verilog和SystemVerilog并不认为连接信号的尺寸,
+可确定隐含net的尺寸.
+以下的顶层网表中将包含与一个 4 转 1 多路器的连接信号, 多路器的输入和输出都是 8bit,select 是 2bit, 在顶
+层网表中并未声明数据类型,因此所有连接将推测为隐含wire.
+1 module top_level(
+2 output [7:0] out, //8bit端口,未声明类型
+3 input [7:0] a, b, c, d //8bit端口,未声明类型
+4 );
+5
+6 mux4 ml (.y(out), //out被推测为8bitwire类型
+7 .a(a), //a,b,c,d被推测为8bitwire类型
+8 .b(b),
+9 .c(c),
+10 .d(d),
+11 .sel(select)); //陷阱!select被推测为1bitwire
+12 ...
+13 endmodule
+14
+15 module mux4(
+16 input logic [1:0] sel,
+17 input logic [7:0] a, b, c, d,
+18 output logic [7:0] y
+19 );
+20 ...
+21 endmodule
+
+## 第 12 页
+
+2. 声明和文本数值的陷阱 11
+上例的顶层网表中将一个信号select连接到mux4的sel端口,在mux4中sel有2bit,当在top_level模块中对未
+声明net进行推测时,Verilog和SystemVerilog只能在top_level本地上下文中查找,当没有找到时,select将默认为
+1bit!
+大多数 Verilog/SystemVerilog 工具会对此陷阱发布编译期警告信息, 报告端口连接尺寸的不匹配, 工程师不应
+该忽略这些警告,几乎所有端口连接的尺寸不匹配警告,都指明了网表中存在错误.
+如何避免
+为了避免这类陷阱, 所有大于 1bit 宽度的 net 和变量都必须显式声明, 内部信号只能在模块,program, 接口中使
+用,不能在它们的端口中使用.
+SystemVerilog 的 dot-name 和 dot-star 连接方法也可避免这些陷阱, 它们将使未声明 net 无法被推测, 且不会
+对尺寸匹配的连接进行推测.
+下例将使用dot-star隐含端口连接,它将引发一次编译期错误,而不是功能错误.
+1 module top_level(
+2 output logic [7:0] out,
+3 input logic [7:0] a, b, c, d
+4 );
+5
+6 mux4 ml (.y(out), .*); //错误:sel并无对应的net声明
+7
+8 endmodule
+9
+10 module mux4(
+11 input logic [1: 0] sel,
+12 input logic [7: 0] a, b, c, d,
+13 output logic [7: 0] y
+14 );
+陷阱 4: 单文件和多文件编译的 $unit 声明
+陷阱:模型可通过编译,另一个模型也能通过编译,但将它们组合编译时,得到了重复声明的错误.
+原因:单独文件编译时都有独立的$unit名字空间,而多文件编译只会有一个$unit名字空间.
+$unit 将声明一个编译期内所有设计单元可见的名字空间, 它可使设计和验证工程师放置共享的定义和声明, 无
+法放入模块,接口,测试程序和包中的用户定义类型,任务定义,函数定义,参数和变量声明都可自动放入$unit中,而
+$unit可视为一个预定义包,并能自动导入所有的模型块,无论是否引用了$unit,它包含的所有声明都是可见的,$unit
+中的声明也可显式使用包解析操作符进行引用,如果标识符已在多个包中出现时则是必须的,如下:
+1 // followingdeclarationisin$unit
+2 typedef enum logic [1:0] {RESET, HOLD, LOAD, READY} states_t;
+3 module chip (... );
+4 ...
+5 $unit::states_t state_e, nstate_e; // $unit定义
+$unit的陷阱在于共享的定义和声明包含在多个源码文件中,如果采用了一种松散和混乱的建模风格,将使设计代码
+和验证代码难以调试,难以维护,并且几乎不能实现重用,以及$unit定义和声明还将造成多个文件中同名解析的冲
+突.
+如何避免
+可使用包完成声明的共享, 而不是 $unit, 包中可放入共享的定义和声明, 并能防止粗心大意生成的代码, 包有自
+己的名字空间, 且不会与其他包定义冲突, 如果将两个包完整导入同一个名字空间时, 还是会出现同名冲突的问题,
+为了防止这一点,可使用显式导入或是显式引用,而不是完整导入包.
+陷阱 5: 本地变量的声明
+陷阱:在编译期内出现本地变量声明的错误,但是该声明的语法是正确的.
+
+## 第 13 页
+
+2. 声明和文本数值的陷阱 12
+原因:Verilog和SystemVerilog允许在过程块中包含本地声明的变量,但需要将所有声明放置在过程代码之前.
+Verilog 和 SystemVerilog 运行在 begin...end 和 fork...join 中声明本地变量, 且与 C 语法相同, 变量声明将在语
+句之前.由于模块,接口或程序块上下文的不同,当使用变量只需在引用之前进行声明的语法将出现细微的差异,这
+类差异将引发陷阱.
+1 package Transaction;
+2 ...
+3 endpackage
+4
+5 package Extented_trans extends Transaction;
+6 ...
+7 endpackage
+8
+9 initial begin
+10 Transaction tr = new; //结构体声明
+11 bit status; //声明
+12 status = tr.randomize; //过程语句
+13 Extended_trans etr = new; //陷阱!声明在语句之后.
+14 ...
+15 end
+如何避免
+两种建模风格可修正本地变量的陷阱,一种是在块的顶层声明所有变量,也就是在过程语句之前,如下:
+1 initial begin II move all declarations to top of the block
+2 Transaction tr = new;
+3 Extended_trans etr = new;
+4 bit status;
+5
+6 status = tr.randomize; //首条过程语句
+7 ...
+8 end
+第二种风格则是创建一个新的begin...end块,在其中处理本地变量的声明,如下:
+1 initial begin
+2 Transaction tr = new;
+3 bit status;
+4 status = tr.randomize; //过程语句
+5
+6 begin
+7 Extended_trans etr = new; //本地声明
+8 ...
+9 end
+10
+11 ...
+12 end
+陷阱 6: 在层次路径中的转义名称
+陷阱:使用testbench包含的转义名称引用一个设计信号时将出现编译错误.
+原因:层次路径中的转义标识符需要在路径中嵌入一个空白.
+Verilog 和 SystemVerilog 的标识符是一些对象的名称, 例如模块名,wire 名, 变量名, 函数名等, 标识符中合法字
+符有字母,数字,下划线,美元符号,其他的字符例如+,-,(,),[,]在标识符名称中都是非法的.
+但 Verilog 和 SystemVerilog 允许在标识符转义中使用这些非法字符, 转义名称将使用一个反斜杠, 并使用一个
+空白字符结束名称, 空白字符可以是空格,tab, 回车, 换行符,formfeed(换页???) 或是文件结束符, 如以下的转义标
+识符例子:
+1 module \d-flop (output logic q, \q- ,
+2 input logic \d[0] ,ck, \rst - );
+3 ...
+4 endmodule
+上例 nq-与 nd[0] 和逗号之间必须加入一个空白, 它用于结束转义名, 因此逗号是用于端口名之间的分割, 如果在逗
+号之前未加入空白,那么逗号将被视为转义名的一部分,并且最后的转义名nrst-也需要与括号之间加入一个空白.
+
+## 第 14 页
+
+2. 声明和文本数值的陷阱 13
+潜在陷阱: 转义名可包含方括号, 例如 nd[0], 这会造成混乱, 因为它是指 1bit wire, 而不是 nd 矢量的位选中, 以
+下声明将给出这些差异:
+1 logic [7:0] \a ; //na是8bit矢量
+2 logic \b[0] ; //nb[0]是1bit信号
+3
+4 buf bl (\b[0] , \a[0] ); //陷阱!将推测出一个名为na[0]的net
+5 buf b2 (\b[0] , \a [0] ); //正确,na矢量的位选中
+na 和 [0] 之间的空白表示矢量的位选中有一个转义名,b1 中使用的 na[0] 并不会出现语法错误, 它会隐含声明一个
+na[0]net,这也是一个陷阱!
+另一类陷阱出现在层次路径中使用转义标识符的情况下:
+1 module test (output [7:0] q, input [7:0] d, input ck, rst_n);
+2 \d-flop \d-0 (.q(q[0]) , .nq-(),.nd[0](d[0]), //陷阱
+3 .ck(ck), .nrst-(rst_n)); //陷阱
+4 initial begin
+5 $display(”d = %b”, test.nd-0.nd[0] ); //陷阱
+6 end
+7 endmodule
+上例将出现编译期错误,但这类错误并未指出真实的问题,转义名称必须使用空白结束,在之前的例子中nd-flop和
+nd-O都正确使用了空白,但本例的nq-并未包含空白,这使得随后的文本都将成为转义名,当Verilog和SystemVer-
+ilog工具看到nq-(),时,无法理解它的意图,由于括号和逗号都成为转义名,因而编译期错误将报告丢失标记.
+下一行还有一个陷阱, 转义名 nrst-未使用空白结束, 因而分号将变为转义名, 工具看到 nrst-(rst_n)); 时无法理
+解,由于找不到终止分号,将报告这个错误.
+$display 语句给出的编译期错误则不是非常明显, 显示语句将使用层次路径打印触发器模型中的 nd[0] 数值, 实
+例名是一个转义名,必须使用空白结束,但工具所见的名称为nd-0.nd[0].
+如何避免
+转义名必须使用空白结束,即使在显式端口名或是层次路径中,上例的正确代码如下:
+1 module test (output [7:0] q, input [7:0] d, input ck, rst_n);
+2 \d-flop \d-0 (.q(q[0]) , .nq-(),.nd[0](d[0]), //正确
+3 .ck(ck), .nrst-(rst_n)); //正确
+4 initial begin
+5 $display(”d = %b”, test.nd-0.nd[0] ); //正确
+6 end
+7 endmodule
+层次路径中的空白,比如$display语句,看上去将层次路径分割成两个部分,但空白将被忽略,因而事实上两个名称
+将被组合成一个名称.
+著者推荐在设计中避免无意义的转义名使用, 尤其是包含方框号的名称转义, 这很不自然, 但所有标识符并不
+都是用户定义的,有些软件工具尤其是综合工具,经常需要在Verilog或SystemVerilog代码中生成工具的特定标识
+符,所以这些工具生成的标识符在用户看来很丑陋,并且经常会在转义标识符中加入方框号.
+陷阱 7: 自动变量的层次引用
+陷阱:testbench尝试打印一些设计信号时,得到编译期错误,但其他信号都能打印.
+原因:自动变量无法使用层次路径进行引用,它们无法转存到VCD文件中.
+Verilog 中包含了自动任务和函数, 它们可在调用时动态分配, 并在退出时自动释放,SystemVerilog 中增加了许
+多可自动分配的类型,其中包括类,动态数组,队列和字串,这些动态分配类型对于模型验证程序的创建非常重要.
+以下两个示例几乎一样, 都使用了一个任务来计算结果, 在任务中包含了一个中间变量 s1, 如果任务被调用两
+次,变量s1将给出不同的数值.
+两个模块只有一点不同,math_static 将使用本地变量的静态存储, 而 math_auto 将使用自动 (动态) 存储. 自动
+存储可避免两个任务调用的冲突,因为每次任务调用时,都会为任务分配一个s1的唯一副本.
+
+## 第 15 页
+
+2. 声明和文本数值的陷阱 14
+1 module math_static ( ... );
+2
+3 task math ( ... );
+4 logic [15:0] s1;
+5 ...
+6 endtask
+7
+8 always_comb begin
+9 math(a1, b1, c1, o1);
+10 math(a2, b2, c2, o2);
+11 end
+12 endrnodule
+1 module automatic math_auto ( ... );
+2
+3 task math ( ... );
+4 logic [15:0] s1;
+5 ...
+6 endtask
+7
+8 always_comb begin
+9 math(a1, b1, c1, d1, o1a, o1b);
+10 math(a2, b2, c2, d2, o2a, o2b);
+11 end
+12 endmodule
+以下的testbench将使用这两个模块,用于验证,覆盖和设计调试,该testbench将使用层次路径查看每个模块math
+任务中的s1变量.
+1 module top;
+2 ...
+3 test t1 (.*);
+4 math_static m1 (.*);
+5 math_auto m2 (.*);
+6 endmodule
+7
+8 program automatic test;
+9 ...
+10 initial begin
+11 ... //应用激励
+12 $display (”math_static sl = %h”, top.m1.math.s1) //正确
+13 $display (”math_auto sl = %h”, top.m2.math.s1) //陷阱
+14 end
+15 endprogram
+testbench看上去是正确的,为了验证和调试,需对设计的内部数据进行访问,验证代码将在评估,仿真和查看设计逻
+辑时,可使用层次引用,也就是说通过若干层级,testbench可对内部信号进行访问.
+但以上的testbench无法被编译,因为它使用了层次引用对模块实例m2的s1变量进行了访问.
+使用了层次引用访问自动变量是非法的, 因为层次路径是静态的, 而自动变量只有在仿真中存在, 验证工程师
+需接受这个限制,在使用层次路径引用一个变量时,验证工程师必须检查源码,以确认变量的类型.
+另一个相关的陷阱是 Verilog 和 SystemVerilog 中自动变量的变更并不会转存到 VCD(Value Change Dump, 数
+值变更转存)文件中,VCD文件可作为波形显示和设计分析工具的输入数据,只有静态net和变量才会转存到 VCD
+文件中,在分析仿真结果时,这可能会丢失重要的信息.
+如何避免
+这类陷阱无法完全避免, 只能将其最小化. 编码指南推荐只在 testbench,$unit 中声明的任务和函数, 包和接口
+中使用自动类型,这使得测试程序可使用层次路径访问更多的设计数据,也可使用命名约定使得自动变量在源码中
+可见.
+对于VCD的限制并无变通的方案,只有当所有波形工具都不使用VCD文件时,这个限制才会消失.
+编程指南有助于必须静态和动态类型中出现的陷阱.
+程序可声明为 program automatic, 它的默认类型即为自动, 这很像 C/C++ 语言, 并且会改变其中的任务, 函数
+和过程块的默认类型,但程序块中声明的变量将一直是静态的,以下例子说明了automatic的影响:
+
+## 第 16 页
+
+2. 声明和文本数值的陷阱 15
+1 program test; 1 program automatic test;
+2 int a; // 静态 2 int a; // 静态
+3 3
+4 task t (int b); // 静态 4 task t (int b); // 动态
+5 int c; // 静态 5 int c; // 动态
+6 ... 6 ...
+7 endtask 7 endtask
+8 8
+9 initial begin 9 initial begin
+10 logic d; // 静态 10 logic d; // 动态
+11 ... 11 ...
+12 end 12 end
+13 endprogram 13 endprogram
+包也可声明为 package automatic, 包中的任务和函数定义可在不同程序, 模块, 接口之间共享, 由于它们是动态的,
+因而可避免多个调用者之间的共享存储,陷阱43将给出多个调用者之间的共享包中的静态存储.
+模块不能声明为自动, 模块中的任务, 函数和本地变量可以是自动类型, 但不允许层次化的访问, 这将限制调试
+设计的能力,如果模块中需要自动类型,例如用于函数的递归调用,那么本地变量,任务,函数都应显式声明为自动类
+型,这类操作的不同之处在于,可使模块的剩余部分能接受调试访问.
+陷阱 8: 层次引用未命名块中的变量
+陷阱:在Verilog中,testbench可打印begin...end块中的本地变量,并在SystemVerilog中出现编译期错误.
+原因:在未命名空间中声明的变量,不会包含层次化路径.
+Verilog 允许在命名的 begin...end 和 fork...join 块中声明本地变量, 这些变量可被层次化引用, 并能将块名作为
+层次化路径的一部分.
+以下示例中定义了一个名为 loop 的 begin...end 块, 以及一个本地变量 temp,testbench 模块可引用 temp, 并打
+印它的数值.
+1 module chip_vlog_style (...) ;
+2 ...
+3 always @(posedge clk)
+4 for(i=0; i<=15; i=i+1) begin:loop // 命名块
+5 integertemp; // 本地变量
+6 end
+7 endmodule
+8
+9 module test;
+10 ...
+11 chip_vlog_style dut (... );
+12 initial $display (”temp = %0d”, test.dut.loop.temp); // OK
+13 endmodule
+本地变量的第二个优势在于,可避免多个initial或always过程块对同一个变量进行写入.
+SystemVerilog 对 Verilog 进行了简化, 允许了未命名 begin...end 和 fork...join 中本地变量的声明, 但这个简化
+包含了潜在的陷阱.
+1 module chip_sv_style (...) ;
+2 ...
+3
+4 always_ff @(posedge clk)
+5 for (int i=0; i<=15; i++) begin //未命名块
+6 integer temp; //本地变量
+7 ...
+8 end
+9 endmodule
+10
+11 program automatic test;
+12 ...
+13 chip_sv_style dut (...) ;
+
+## 第 17 页
+
+2. 声明和文本数值的陷阱 16
+14 initial $display (”temp = %0d”, test.dut.temp); //陷阱!
+15 endmodule
+未命名块的本地变量无法被 testbench 访问, 也不允许验证功能或覆盖的设计断言中包含本地变量, 本地变量也不
+会保存在VCD文件中.
+未命名块声明的本地变量无法实现层次化引用的原因是, 在层次路径中并未提供一个可引用的名字空间, 这与
+自动变量的限制相同.
+for循环中的控制变量i也存在类似的陷阱.
+如何避免
+如果本地变量需要层次化引用, 或是转存到波形文件中, 则需在命名块中声明本地变量, 使用未命名块, 是为了
+保护本地变量.
+陷阱 9: 层次引用已导入的包元素
+陷阱:设计可使用导入的包元素,但在testbench的验证中无法使用包元素.
+原因:导入标识符必须使用空间解析操作符进行引用,而不是层次化引用.
+SystemVerilog 包可在一个共享空间中声明类型定义和其他信息, 包定义可导入到其他的设计块, 并使其能访问
+这些共享定义, 验证中导入元素的处理与设计块声明的本地验证数据不同, 下例将给出 testbench 程序中的一个陷
+阱:
+1 package chip_types;
+2 typedef enum logic [1:0] {RESET, HOLD, LOAD, READY} states_t;
+3 endpackage: chip_types
+4
+5 module chip (...) ;
+6 import chip_types::*; //包定义的通配导入
+7 endmodule: chip
+8
+9 module top;
+10 chip chip (...) ; //使用包的设计实例
+11 test test (...) ; //测试程序的实例
+12 endmodule: top
+13
+14 program automatic test (...) ;
+15 ...
+16 initial begin
+17 $display (”RESET is %b”, top.chip.RESET); //陷阱
+18 endprogram: test
+上例中test程序使用了层次路径访问导入的RESET,结果将是错误的,层次路径只能用于访问声明的信号,枚举标
+记RESET并未在chip模块中声明,只能导入到chip中,当包元素导入到模块,接口或测试程序中,在这些空间中不
+能出现同名的本地定义,而这些导入元素无法实现层次化引用.
+如何避免
+包元素的外部引用还可使用空间解析操作符::,而不是层次路径:
+$display(”RESETis%b”,chip_types::RESET);//OK
+陷阱 10: 从包中导入枚举类型
+陷阱:从包中导入一个枚举类型后,无法访问枚举类型定义的标记.
+原因:在导入枚举类型时,并不会导入它的枚举标记.
+包中定义的枚举类型可显式导入设计或是验证块中:
+1 package chip_types;
+
+## 第 18 页
+
+2. 声明和文本数值的陷阱 17
+2 typedef enum logic [1:0] {RESET, HOLD, LOAD, READY} states_t;
+3 endpackage
+4
+5 module chip (...) ;
+6 import chip_types::states_t; //显式导入states_t类型
+7 states_t state_e, nstate_e;
+8
+9 always_ff @(posedge clock, negedge reset_n)
+10 if (!reset_n) state_e <= RESET; //陷阱:RESET并未导入
+11 else state_e <= nstate_e;
+12 endmodule
+包中给出了一个用户定义的枚举类型states_t,chip模块中导入了该类型,当软件工具读入上例后,将出现一个编译
+错误,因为RESET并未定义.原因是states_t导入只导入了它的名称,它的标记并未导入.
+如何避免
+一种避免该陷阱的方式是显式导入枚举类型的所有枚举标记.
+1 import chip_types::states_t;
+2 import chip_types::RESET;
+3 import chip_types::HOLD;
+4 import chip_types::LOAD;
+5 import chip_types::READY;
+另一种方式是采用包的通配导入,它可使枚举类型和标记都可见.
+importchip_types::*;
+一个设计块中通配导入多个包也存在一个陷阱.
+陷阱 11: 多个包的导入
+陷阱:当通配导入多个包时出错,但单独导入每个包时并无错误.
+原因:多个包的通配导入时会存在名字冲突.
+大型设计和使用 IP 模型的设计中, 会包含多个包, 为了简化操作, 可将包通配导入到设计中, 以避免显式导入
+包中的每个元素,但多个包的通配导入将引入一个陷阱,如下:
+1 package chip_types;
+2 typedef enum logic [1:0] {HOLD, LOAD, READY} states_t;
+3 endpackage
+4
+5 package bus_types;
+6 localparam HOLD = 32;
+7 endpackage
+8
+9 module chip (...) ;
+10 import chip_types::*;
+11 import bus_types::*;
+12
+13 states_t state_e, nstate_e;
+14
+15 always_ff @(posedge clock, negedge reset_n)
+16 if (!reset_n) state_e <= HOLD; //陷阱,存在多个定义
+17 else state_e <= nstate_e;
+上例的两个包中包含了同名标识符HOLD,当实现两个包的通配导入后,会因为名字冲突给出一个编译期错误.
+如何避免
+当多个包中出现同名标识符时将出现这个陷阱, 为了避免它, 可从对应包中显式导入所需的标识符, 而其他包
+的通配导入中将不会再导入同名的标识符.
+1 import chip_types::*;
+2 import bus_types::*;
+3 import chip_types::HOLD;
+
+## 第 19 页
+
+2. 声明和文本数值的陷阱 18
+陷阱 12: 整型的默认基数类型
+陷阱:有些case语句中的分支无法被选中,但定义的数值是正确的.
+原因:整型数值中包含的默认基数类型(base)并不是所需的.
+Verilog和SystemVerilog可定义十进制整型(如5),或是定义一个基数整型(如’h5),整型的基数定义如下:
+<size>’s<base><value>
+(cid:15) <size>可选,如果给出,将表示整型的bit个数,如果未给定,将使用Verilog/SystemVerilog的默认尺寸,至少
+为32个bit.
+(cid:15) s可选,如果给定,将表示整型值包含符号位,如果未给定则默认为无符号数(在Verilog2001中加入了符号定
+义).
+(cid:15) <base>必须给出,可指定为二进制(b),八进制(o),十进制(d)和十六进制(h).
+(cid:15) <value>必须给出,用于指定整型值.
+简单的整型值(如5)默认为十进制基数,在使用二进制,八进制和十六进制时,必须指定基数(如’h5或2’b10).使用
+基数b,o,d,h将对应二进制,八进制,十进制和十六进制,基数标识符可使用大写或小写(如’h5和’H5是相同的).
+下例4转1多路器将说明工程师忘记整型值默认为十进制时所存在的陷阱:
+1 logic [1:0] select;
+2
+3 always_comb begin
+4 case (select)
+5 00: y = a;
+6 01: y = b;
+7 10: y = c; //陷阱,无法被选中
+8 11: y = d; //陷阱,无法被选中
+9 endcase
+10 end
+以上的示例在语法上是正确的,由于整型值的默认基数为十进制,case条件10和11表示十和十一,select信号中只
+能包含0,1,2,3,而2和3值无法实现匹配,因此10和11的语句将不会执行,这不是一个语法错误,对应错误只会出
+现在仿真功能上,这使得它的确认和调试变得相当困难.
+Verilog如何避免
+在Verilog中,为发现这类设计问题,可加入一个默认分支,用于确认无法匹配的条件是否出现,
+1 case (select)
+2 00: y = a;
+3 01: y = b;
+4 10: y = c; //陷阱
+5 11: y = d; //陷阱
+6 default: $display(ltselect value of %b not decoded”, select);
+7 endcase
+SystemVerilog如何避免
+SystemVerilog可在case中加入一个unique模式符,这是一种更简单的方式:
+1 unique case (select)
+2 00: y = a;
+3 01: y = b;
+4 10: y = c; //陷阱
+5 11: y = d; //陷阱
+6 endcase
+如果在同一个时刻下,有两个或多个case条件被选中,或是没有条件被选中时,unique模式符都将报告一个错误,上
+例将变成一个错误,而不会造成一个功能错误.
+下例代码将是正确的:
+1 unique case (select)
+2 2’b00: y = a;
+3 2’b01: y = b;
+4 2’b10: y = c;
+5 2’b11: y = d;
+6 endcase
+注意:unique模式符并不适合每种case语句,后续将对uniquecase进行讨论.
+
+## 第 20 页
+
+2. 声明和文本数值的陷阱 19
+陷阱 13: 整型的符号
+陷阱:在使用1’b1进行增量计算时,增量语句有时并不能得到正确的数值.
+原因:不带基数的整型默认为有符号数,包含基数的整型默认为无符号数.
+Verilog 和 SystemVerilog 中可指定简单的十进制整型 (如 5) 或是基数整型 (如’h5), 简单整型默认为有符号数,
+且不能指定为无符号,基数整型默认为无符号数,但可指定为有符号数(如’sh5).基数整型的定义风格如下:
+<size>’s<base><value>
+(cid:15) <size>可选,如果给出,将表示整型的bit个数,如果未给定,将使用Verilog/SystemVerilog的默认尺寸,至少
+为32个bit.
+(cid:15) s可选,如果给定,将表示整型值包含符号位,如果未给定则默认为无符号数(在Verilog2001中加入了符号定
+义).
+(cid:15) <base>必须给出,可指定为二进制(b),八进制(o),十进制(d)和十六进制(h).
+(cid:15) <value>必须给出,用于指定整型值.
+数值符号将影响一些操作类型,如果工程师忘记或是不了解其中的差异,将造成非预期的操作错误.
+以下两个带符号数值的计算是否一样?
+1 byte in; //有符号的8bit变量
+2 int out1, out2; // 有符号的32bit变量
+3
+4 initial begin
+5 in = -5;
+6 out1 = in + 1; //OK:-5+1=-4,1可视为有符号数
+7 out2 = in + l ’b1; //陷阱:-5+l’b1=252,1’b1是一个无符号数
+8 end
+如何避免
+为了避免这类陷阱, 工程师需要了解 Verilog 中有符号和无符号数的优势和用法, 有符号运算的细节将在后续
+讨论.
+陷阱 14: 整型的符号扩展
+陷阱:当指定一个有符号的负值时,将无法对其进行符号扩展.
+原因: 为获得数值的更小尺寸, 可对最高有效位进行截断 (truncate), 为获得更大的尺寸, 可在数值左侧使用 0,x
+或z进行填充,但无法实现符号扩展.
+整型可指定为尺寸待定类型(如’h5)或显式指定尺寸(如16’h5).对应的风格如下:
+<size>’s<base><value>
+(cid:15) <size>可选,如果给出,将表示整型的bit个数,如果未给定,将使用Verilog/SystemVerilog的默认尺寸,至少
+为32个bit.
+(cid:15) s可选,如果给定,将表示整型值包含符号位,如果未给定则默认为无符号数(在Verilog2001中加入了符号定
+义).
+(cid:15) <base>必须给出,可指定为二进制(b),八进制(o),十进制(d)和十六进制(h).
+(cid:15) <value>必须给出,用于指定整型值.
+即使数值的 bit 数与尺寸之间不匹配, 也是合法的,Verilog/SystemVerilog 给出了这类不匹配的内部规则, 如果不了
+解这些规则,工程师将会引入陷阱,下例将说明负值的处理,如果是无符号数则可使用零填充:
+1 logic signed [11:0] a;
+2 a = 12’shFF; //陷阱,有符号数FF并不表示-1,8bitFF将扩展成12bit的0000_1111_1111.
+以下将说明尺寸和数值不匹配的规则.
+尺寸小于数值
+如果指定的 bit 尺寸小于数值, 左侧的最高有效位将被截断, 如果数值包含符号位, 将引入陷阱, 因为符号位将
+被截断,如下例的负值14(F1(8bit))将截断成4bit,将变为+1.
+
+## 第 21 页
+
+2. 声明和文本数值的陷阱 20
+1 logic signed [7:0] b;
+2 b = -4’sd14; //陷阱,1111_0001(-14)截断后为0001(+1)
+尺寸大于数值
+当bit尺寸大于数值时,将对数值进行左侧填充,充填数据将基于数值的最高有效位,如:
+(cid:15) 如果数值的最高有效位为0或1,将使用0进行左侧填充.
+(cid:15) 如果数值的最高有效位为X,将使用X进行左侧填充.
+(cid:15) 如果数值的最高有效位为Z,将使用Z进行左侧填充.
+左侧扩展的作用是在复位时矢量被设为0或是将矢量设为高阻时,无需对矢量的每个bit进行指定:
+1 64’h0; //将0充填到所有的64bit
+2 64’bZ; //将Z充填到所有的64bit
+当bit尺寸大于数值且数值包含符号时,这类扩展规则将无法对有符号数进行符号扩展,负值的最高有效位为1,而
+充填时会使用0进行:
+1 logic signed [11:0] a, b;
+2
+3 initial begin
+4 a = 12’sh3c; //OK,0011_1100扩展为0000_0011_1100
+5 b = 12’so74; //陷阱,11_1100扩展为0000_0011_1100
+6 end
+3c并没有设定最高有效位,当扩展成12bit时,使用了0填充,它并不理会数值是正值还是负值.
+74的模式与3c相同,但设定了最高有效位,当12bit的扩展填充时,并没有实现符号扩展.
+前例数值的最高有效位并不是符号位, 只是特殊尺寸中的最高有效位, 因此在指定负值的扩展时, 必须显式设
+定最高位,对正值进行取反时,将会设定它的符号位.
+1 12’shFFB //1111_1111_1011,值为-5
+2 -12’sh5 //1111_1111_1011,值为-5
+如何避免
+避免这些陷阱, 可确认 bit 尺寸定义是否与数值的尺寸一致, 尤其是带符号数, 有些工具例如 lint(代码风格检查
+器)可检查尺寸和数值的不匹配.
+陷阱 15: 整型分配的尺寸不匹配
+陷阱:将一个4bit负值分配给一个8bit有符号变量时,无法实现符号扩展.
+原因:分配的尺寸不匹配时,使用0充填或是符号扩展,将依赖于分配右侧的表达式类型.
+将数值分配给变量是,将使用两种扩展/截断规则:
+(cid:15) 可将整型扩展或截断成指定的尺寸.
+(cid:15) 将使用分配操作符的规则.
+注意:此处将讨论整型分配,后续将讨论分配中右侧操作符的陷阱和规则.
+整型分配的操作规则如下:
+(cid:15) 当分配语句中左侧表达式的bit数小于右侧整型时,右侧数值将被截断.
+(cid:15) 当分配语句中左侧表达式的bit数大于右侧整型时
+▶ 如果右侧整型为无符号数,将使用0填充.
+▶ 如果右侧整型为有符号数,将使用符号扩展.
+▶ 异常情况:如果右侧是一个无尺寸的高阻整型(如’bz),或是无尺寸的未知类型(如’bx),数值将使用Z或X
+进行填充,而不理会数值的符号类型.
+与陷阱14的不同之处在于,分配语句可实现符号扩展.
+如果分配语句的右侧表达式包含符号, 才会出现符号扩展, 左侧标识符的符号类型并不会影响符号扩展的出现,
+如下:
+
+## 第 22 页
+
+2. 声明和文本数值的陷阱 21
+1 logic [3:0] a; //无符号4bit变量
+2 logic signed [3:0] b; //有符号4bit变量
+3 logic [7:0] u; //无符号8bit变量
+4 logic signed [7:0] s; //有符号8bit变量
+5
+6 u = 4’hC; //OK,1100(hexC)将使用0充填为0000_1100.
+7 s = 4’hC; //陷阱,1100(hexC)将使用0充填为0000_1100,但s是一个有符号变量.
+8
+9 u = 4’shC; //陷阱,1100将使用符号扩展为1111_1100,而u是一个无符号变量.
+10 s = 4’shC; //OK,1100将使用符号扩展为1111_1100.
+11
+12 a = 4’hC; //将4bit数值分配给4bit无符号变量
+13 u = a; //OK,1100(hexC)将使用0充填为0000_1100.
+14 s = a; //陷阱,1100(hexC)将使用0充填为0000_1100,但s是一个有符号变量.
+15
+16 b = 4’hC; //将4bit数值分配给4bit有符号变量
+17 u = b; //陷阱,1100将使用符号扩展为1111_1100,而u是一个无符号变量.
+18 s = b; //OK,1100将使用符号扩展为1111_1100.
+以上示例给出两种类型的陷阱:
+(cid:15) 有符号变量的分配并不会引发符号扩展,只有当右侧表达式包含符号时才会引发符号扩展.
+(cid:15) 无符号变量的分配可包含符号扩展,当右侧表达式包含符号时将会引发符号扩展.
+分配右侧可出现符号扩展,而左侧的符号与符号扩展无关.
+分配右侧执行的操作将使用相同的扩展规则, 是使用 0 填充还是符号扩展, 将与操作类型有关, 这些操作规则
+将在后续中使用.
+陷阱 16: 矢量充填
+陷阱:可使用为Z的任意尺寸矢量,将整型的所有bit设为Z,那么也可以使用1将所有bit都设为1.
+原因:Verilog中并不能使用矢量对整型的所有bit进行填充,而SystemVerilog可以做到.
+在 Verilog 中, 可在分配’bx,’bz 或 0 时, 将任意尺寸矢量的所有 bit 设为 X,Z 或 0, 而使用’bl 则无法实现, 也就
+是无法使所有bit都为1.
+1 parameter WIDTH = 64;
+2 reg [WIDTH-l:0] data;
+3 data = ’b0; // 64’h0000000000000000
+4 data = ’bz; // 64’hzzzzzzzzzzzzzzzz
+5 data = ’bx; // 64’hxxxxxxxxxxxxxxxx
+6 data = ’b1; // 64’h0000000000000001,陷阱
+注意:在Verilog-2001之前,’bz或’bx只能充填32个bit,32bit之前的位将使用0填充.
+Verilog如何避免
+为了将任意尺寸矢量的所有bit设为1,设计者需要学习更多的编码技巧,
+1 data = {64{1’bl}}; //重复操作符(必须使用硬编码)
+2 data = -1; //负值操作符(必须使用符号)
+3 data = ~0; //取反操作符
+这些代码技巧并不直观,而SystemVerilog中有一种更好的方式可避免这类陷阱.
+SystemVerilog如何避免
+SystemVerilog中提供了一种简单和相同的风格,将所有bit充填成1,0,X或Z,也就是使用’<value>:
+1 parameter WIDTH = 64;
+2 logic [WIDTH-l:0] data;
+3
+4 data = ’1; //64’hffffffffffffffff
+5 data = ’0; //64’h0000000000000000
+6 data = ’z; //64’hzzzzzzzzzzzzzzzz
+7 data = ’x; //64’hxxxxxxxxxxxxxxxx
+
+## 第 23 页
+
+2. 声明和文本数值的陷阱 22
+陷阱 17: 数组和串接
+陷阱:为数组或结构分配一个数值列表时,保存的数值出错了.
+原因:数组和结构的分配可使用串接或是数值列表.
+Verilog 串接操作符可将一个或多个数值和信号, 放入一个信号矢量中, 数组和结构可接受一个或多个数值的列
+表,为使工程师和软件工具理解两者之间的不同点,数组或结构将使用’{}表示数值列表,而串接会使用{}.
+1 logic [1:0] [31:0] A; //二维数组
+2 A = {1’bl, 1’b1}; //陷阱?A的串接分配
+3 A = ’{1’b1, 1’b1}; //陷阱?A的数值列表分配
+上例陷阱在于两种分配不够清晰,由于A是一个数组,因而两种分配都是合法的,如果上例是一个数值列表分配,并
+忘记输入’,也不是一个语法错误,但分配的数值并不相同,在数值列表分配时等同于:
+1 A[1] = 1’b1; //十进制数1
+2 A[0] = 1’b1; //十进制数1
+而串接分配时等同于:
+1 A[1] = 1’b0; //十进制数0
+2 A[0] = 2’b11; //十进制数3
+3 II decimal 3
+如何避免
+一种可行的方案是在数值列表中只使用无尺寸数值, 由于串接操作符中需使用尺寸数值, 这会在丢失’ 符号时,
+出现一个语法错误.
+1 logic [1:0] [31:0] A;
+2 A = {1, 1}; //错误,非法串接
+3 A = ’{ 1, 1}; //OK,A的数值列表分配
+另一种方式则是使用工具检查分配的尺寸匹配,例如lint.
+陷阱 18: 端口连接的规则
+陷阱:当建立所有模块的连接后,设计无法工作,可所有模块都能单独工作.
+原因:端口尺寸与连接的net和变量的尺寸不同.
+Verilog 标准将模块端口连接视为连续分配语句, 以使模块的输入和输出能连续操作, 这不是一个陷阱, 但所需
+的规则可说明端口连接的一些陷阱.
+在 Verilog 中,input 和 output 端口的接收方只能是 net 类型, 例如 wire, 而 output 端口的发送方可以是 net 或
+变量,由于端口被视为连续分配,也就是可以理解,为什么端口接收方需要net类型,而发送方可以是net或变量,接
+收方将作为连续分配的左侧,而发送方(驱动)则可作为连续分配的右侧,也就是连续分配的规则能用于端口.
+在这种情况下,端口连接将出现四种类型:
+(cid:15) 端口尺寸与驱动信号的尺寸相同.
+(cid:15) 驱动信号的尺寸大于端口(陷阱).
+(cid:15) 驱动信号的尺寸小于端口(陷阱).
+(cid:15) 输入端口未连接,也就是不会出现驱动信号(陷阱).
+Verilog/SystemVerilog将给出对应的四种规则:
+(cid:15) 如果尺寸匹配,通过端口传递的数值将不会变化.
+(cid:15) 如果驱动信号的尺寸大于端口,驱动信号的高位将被截断,其中包含了符号位.
+(cid:15) 如果驱动信号的尺寸小于端口,驱动信号的高位将被填充,参见如下的Verilog分配规则:
+▶ 如果驱动信号无符号,将使用0填充高位.
+▶ 如果驱动信号有符号,将使用符号扩展.
+(cid:15) 如果输入端口未连接,端口的接收信号值将是给定数据类型的默认未初始化值,对于wire类型,未初始化值为
+Z,对于tri0和tri1类型,未初始化值为0和1,都包含了上拉.
+
+## 第 24 页
+
+2. 声明和文本数值的陷阱 23
+在 Verilog/SystemVerilog 中, 不正确的尺寸声明很容易造成设计错误, 尤其是多个工程师编写同一个设计时 (也可
+能是来自外部的资源), 网表中一个简单的输入错误或是不正确的参数重定义, 都会造成端口尺寸的不匹配, 网表中
+的输入错误还会造成一些模块实例的端口无法连接.
+在大多数情况下, 端口连接的不匹配都是一个设计错误, 但不是一个语法错误, 了解 Verilog/SystemVerilog 对于
+连接尺寸不匹配的处理规则,有助于避免非预期的仿真或综合结果.尝试跟踪矢量中消失的bit或是突然出现的bit,
+是相当困难的,假定验证中可确认该错误,这本身就存在问题!下例将说明通过端口传递不同尺寸的数值所产生的截
+断和填充.
+1 module top;
+2 wire [3:0] data = 4’b1111; //十进制数15
+3 wire [7:0] addr = 8’b1111111; //十进制数255
+4 block1 b1 (.data(data), //4bitnet连接了8bit端口
+5 .addr(addr)); //8bitnet连接了4bit端口
+6 //第三个端口未连接
+7 endmodule: top
+8
+9 module block1 (input [7:0] data,
+10 input [3:0] addr,
+11 input [3:0] byte_en);
+12 initial
+13 #1 $display(”data = %b \n address = %b \n byte_en = %b\n”,
+14 data, address, byte_en);
+15 endmodule: block1
+上例的仿真输出为:
+1 data = 00001111 陷阱
+2 address = 1111
+3 byte_en = zzzz
+上例给出了混乱的未连接和部分连接的端口,data值多出了四位,address数值从255变为15,byte_en使用高阻态
+代替了有效的逻辑值.
+Verilog如何避免
+多数仿真和综合工具以及其他软件工具都会对不匹配的端口连接发出警告,这些警告并不是Verilog/SystemVerilog
+标准所要求的,若工程师忽略这些警告将付出代价,在Verilog中避免这些陷阱的方式,就是小心处理这些警告信息.
+SystemVerilog如何避免
+SystemVerilog 中提供了一种更好的方案, 即使用 dot-name 或 dot-star 的隐含端口连接, 在使用这类风格时, 端
+口的驱动方和接收方的尺寸必须一致,如果两方的尺寸不一致,端口必须显式连接,这使得代码中的不匹配更容易参
+看.
+1 module top;
+2 wire [7:0] data;
+3 wire [7:0] addr;
+4
+5 block1 b1 (.data, .addr); //隐含端口连接
+6 endmodule: top
+7
+8 module block1 (input [7:0] data,
+9 input [3:0] addr,
+10 input [3:0] byte_en);
+11 ...
+12 endmodule: block1
+上例的data和block1的data端口都是8bit,并使用dot-name连接,如果addr声明中出现拼写错误,与block1端
+口的尺寸不匹配时,将出现一个编译期错误,dot-name不会对不匹配连接进行推测.
+dot-name 中允许未连接端口, 例如 byte_en, 如果需要保留未连接端口或是存在其他的拼写错误时, 最好使用
+dot-star,它可捕获所有的不匹配尺寸和未连接端口,dot-star中需显式列出所有的未连接端口和不同尺寸的信号.
+1 module top;
+2 wire [7:0] data;
+3 wire [7:0] addr;
+4
+5 block1 b1 (.*, //隐含端口连接
+6 .addr(addr[7:4]) , //显式给出不匹配尺寸
+7 .byte_en()); //显式给出未连接端口
+
+## 第 25 页
+
+2. 声明和文本数值的陷阱 24
+8 endmodule: top
+9
+10 module block1 (input [7:0] data,
+11 input [3:0] addr,
+12 input [3:0] byte_en);
+13 ...
+14 endmodule: block1
+陷阱 19: 端口的反向驱动
+陷阱:端口声明为输入,无意中将其作为输出端口使用,却未出现任何错误或警告.
+原因:软件工具将会忽略模块端口的方向声明,而只关注端口的用法.
+这是一个 Verilog 和 SystemVerilog 中让人惊讶的陷阱, 可将模块的输入端口作为输出使用, 如果设计者为输入
+端口分配一个信号值,也不会产生警告或错误,因为Verilog/SystemVerilog可将该端口视为一个inout端口,同样上
+层模块如果驱动了模块的输出端口,该端口也将被视为inout端口,且不会产生警告或错误.
+Verilog/SystemVerilog 标准中将声明端口的反向驱动, 视为端口的强制转换 (port coercion), 这类情况只出现在
+端口使用了net类型(例如wire),因为net类型允许多个驱动源,由于端口的反向驱动导致了inout端口的出现,它
+将变成一个多驱动源的端口,同时应为net类型.
+端口强制转换是有意义的, 端口事实上是外部信号和内部信号的显式连接, 这使得软件工具可连接模块, 同时
+在真实的物理硬件中, 并不存在所谓的端口, 内部和外部信号是同一条信号线, 并不存在从一个 net 连接到另一个
+net的结构,当然端口强制也允许了非预期的设计行为,如下:
+1 module top (output wire [7:0] out, //net数据类型
+2 input wire [7:0] in ); //net数据类型
+3 buffer8 b1 (.y(out), .a (in));
+4 endmodule
+5
+6 module buffer8 (output wire [7:0] y, //net数据类型
+7 input wire [7:0] a ); //net数据类型
+8 assign a = y; //陷阱,这也意味着y=a;
+9 endmodule
+上例的模块buffer8包含了一个代码错误,不管是y=a;还是a=y;都不是一个语法错误,但软件工具会将模块端口
+强制为inout.
+Verilog如何避免
+如果端口使用了变量类型 (如 reg 或 logic), 将无法出现端口强制,Verilog 中允许将输出端口设为变量类型, 但
+输入端口必须是net类型,在Verilog-2005标准之前,上例的陷阱无法完全避免,设计者不得不小心地处理输入端口
+的分配,有些工具如lint可对这类错误发出警告,以帮助查找类似的问题.
+在 Verilog-2005 标准中加入了一个 uwire(无法解析的 wire,unresolved wire) 类型, 这类 wire 只允许 net 上只有
+一个驱动源,当buffer8连接到顶层模块后,如果buffer8输入端口上出现了多个驱动源,将出现一条编译期错误.
+1 module buffer8 (output uwire [7:0] y, //可视为变量类型
+2 input uwire [7:0] a ); //可视为变量类型
+3 assign a = y; //错误,a有多个驱动源.
+4 endmodule
+由于输入端口对uwirea的连续分配,将使这个功能陷阱变为一个编译期错误.
+SystemVerilog如何避免
+SystemVerilog 中允许变量被用于输入和输出端口 (在 Verilog 中 inout 端口只能是 net 类型), 同时也允许了对
+变量的连续分配, 另外 SystemVerilog 还将变量的驱动源约束为一个, 也就是说它只能被一个端口和一个连续分配
+所使用,但可包含多个过程语句(这些语句只能来自一个驱动源).
+在SystemVerilog中模块buffer8的代码如下:
+1 module buffer8 (output logic [7:0] y, //变量类型
+2 input logic [7:0] a ); //变量类型
+
+## 第 26 页
+
+2. 声明和文本数值的陷阱 25
+3 assign a = y; //错误,a有多个驱动源.
+4 endmodule
+由于输入端口对变量a的连续分配,将使这个功能陷阱变为一个编译期错误.
+编码指南
+在使用 SystemVerilog 时, 笔者推荐所有的模块输入和输出都声明为 logic 变量类型, 除非端口中需要多个驱动
+源(比如双向数据总线),在使用变量时,将不会出现端口强制转换,并且编码错误也将在编译期内被检出.
+陷阱 20: 通过端口传递 real(浮点数) 类型
+陷阱:在Verilog或SystemVerilog中,无法找到在模块间传递real数值的方式.
+原因:Verilog不允许通过端口直接传递real数值,但在SystemVerilog可行,但需要声明一个特殊的端口.
+Verilog 有一个 real 变量类型, 用于保存双精度的浮点数, 下例将尝试在模块之间通过顶层网表和端口传递 real
+数值.
+1 module real_out (output real ro, ... ); //错误:输出为real类型
+2 ...
+3 endmodule
+4
+5 module real_in (input real ri , ... ); //错误:输入为real类型
+6 ...
+7 endmodule
+8
+9 module top;
+10 real real_connect;
+11 real_out r1 (.ro(real_connect)); //错误:real无法送入端口
+12 real_in r2 (. ri(real_connect)); //错误:real无法送入端口
+13 endmodule
+在Verilog中使用端口传递real类型是非法的.
+Verilog如何避免
+在 Verilog 中只能使用内建的系统函数对 real 数值进行转换后, 通过端口进行传递, 在接收模块中可转换成
+real类型,可使用函数$realtobits和$bitstoreal实现:
+1 module real_out (output wire [63:0] net_real_out); //矢量输出
+2 real r;
+3 assign net_real_out = $realtobits(r); //将real转换成矢量
+4 ...
+5 endmodule
+6
+7 module real_in (input wire [63:0] net_real_in); //矢量输入
+8 real r;
+9 always @(net_real_in)
+10 r = $bitstoreal(net_real_in); //将矢量转换成real
+11 ...
+12 endmodule
+13
+14 module top;
+15 wire [63:0] net_real;
+16 real_out ro (.net_real_out(net_real));
+17 real_in ri (.net_real_in(net_real));
+18 endmodule
+SystemVerilog如何避免
+SystemVerilog 允许通过端口直接传递浮点数, 而无需包含矢量和 real 之间的转换, 当然 SystemVerilog 语法并
+不直观, 模块的输出端口可声明为 real(双精度) 或 shortreal(单精度), 同时输入端口也可声明成对应的 var real 或
+varshortreal.
+1 module real_out (output real r); //输出为real类型
+2 ...
+3 endmodule
+4
+
+## 第 27 页
+
+2. 声明和文本数值的陷阱 26
+5 module real_in (input var real r); //输入为varreal类型
+6 ...
+7 endmodule
+8
+9 module top;
+10 real r;
+11 real_out ro (.r);
+12 real_in ri (.r);
+13 endmodule
+工具在实现real端口时还会出现其他的陷阱,这将在后续中讨论.
+
+## 第 28 页
+
+RTL 建模
+陷阱 21: 函数调用的组合逻辑敏感表
+陷阱:组合逻辑看上去仿真正确,但之后的综合时,门级仿真无法与RTL仿真匹配.
+原因:如果组合逻辑中调用了函数,敏感表中必须包含函数所读取的信号,@*无法推测函数所读取的信号值.
+可综合的RTL模型需要在Verilogalways过程块中包含边沿敏感的时序控制,也就是块的敏感表.
+1 always @(a, b) begin //敏感表完整
+2 sum = a + b;
+3 end
+4
+5 always @(a, b) begin //敏感表完整
+6 prod = mult(a, b}; //调用函数中读取了a,b
+7 end
+8
+9 always @(a, b) begin //敏感表并不完整
+10 out = sel ? sum: prod //丢失了sel
+11 end
+12
+13 function [15:0] mult (input [7:0] m, n);
+14 mult = m * n;
+15 endfunction
+在使用组合逻辑时, 如果敏感表不完整, 块的输出可能在输入信号变化时无法更新, 这类行为在仿真中被称为锁存
+(latch),综合会假定组合逻辑将包含完整的敏感表,其中没有锁存,这使得RTL模型仿真和综合的门级模型之间存在
+差异.
+上例中可以很容易地给出一个完整的敏感表并进行检查, 但在真实设计中这并不简单, 一个复杂的解码器将会
+读取十几个信号,而这些信号必须都放入敏感表中,如果在设计实现中,设计者给出了一个常见的编写错误,例如加
+入了读取其他变量的语句,或是在敏感表中加入了其他信号,由此产生的功能问题将难以检出和调试.
+Verilog如何避免
+Verilog 中可使用 @* 通配敏感表, 用于推测仿真和综合所需的完整敏感表, 通配敏感表可对 always 过程块中
+读取的变量或net进行自动推测,其中包括传递给函数的变量和net,使用@*可修正上例代码中的陷阱(可使用@*
+或@(*),它们是等价的).
+1 always @* begin //ok,推测为@(a,b)
+2 sum = a + b;
+3 end
+4
+5 always @* begin //ok,推测为@(a,b)
+6 prod = mult(a, b);
+7 end
+8
+9 always @* begin
+10 out = sel ? sum : prod //ok,推测为@(sel,sum,prod)
+11 end
+12
+13 function [15:0] mult (input [7:0] m, n);
+14 mult = m * n;
+15 endfunction
+0注意:本章给出的示例都是为了说明每个陷阱,在实际的设计和验证代码中,这些陷阱并不明显且难以调试.
+27
+
+## 第 29 页
+
+3. RTL建模 28
+但@*还是包含了一个鲜为人知的陷阱,它只能推测always块直接引用的敏感信号,而无法推测出块调用函数所引
+用的外部敏感信号,也就是@*中只包含模块内传入函数或任务的敏感信号,如下:
+1 always @* begin //陷阱,只能推测出@(a,b)
+2 prod = mult(a, b); //调用函数需读取a,b,max_rtn
+3 end
+4
+5 function [15:0] mult (input [7:0] m, n);
+6 mult = m * n;
+7 if (mult > max_rtn) //引用了外部变量
+8 mult = max_rtn;
+9 endfunction
+上例中 @* 推测的敏感表并不完整, 因此 RTL 仿真的组合逻辑并不争取, 而综合将假定有一个完整的敏感表, 这将
+使RTL仿真和门级仿真不匹配.
+SystemVerilog如何避免
+SystemVerilog 包含了两个特殊的过程块 always_comb 和 always_latch(时序逻辑中包含了 always_ff 过程块),
+用于推测一个完整的敏感表,always_comb和always_latch可推测出函数调用中所需的敏感信号.
+1 always_comb begin //ok,推测为@(a,b)
+2 sum = a + b;
+3 end
+4
+5 always_comb begin //ok,推测为@(a,b,max_rtn)
+6 prod = mult(a, b);
+7 end
+8
+9 always_comb begin
+10 out = sel ? sum : prod //ok,推测为@(sel,sum,prod)
+11 end
+12
+13 function [15:0] mult (input [7:0] m, n);
+14 mult = m * n;
+15 if (mult > max_rtn)
+16 mult = max_rtn;
+17 endfunction
+注意always_comb和always_latch无法对任务调用的信号进行推测,如果综合使用了类似任务的调用,SystemVer-
+ilog可使用void函数替代.
+陷阱 22: 数组的逻辑敏感表
+陷阱:组合逻辑需对RAM数组的变化敏感,但敏感表无法被触发.
+原因:在组合逻辑读取数组值时,并没有显式指定一个组合逻辑的敏感表.
+当组合块从数组中读取数值时,无法了解组合逻辑的敏感值,如下:
+1 logic [31:0] mem_array [0:1023]; //矢量数组
+2 always @( /* 应放入什么? */ )
+3 data = mem_array[addr];
+为了精准建模硬件组合逻辑的行为,应加入那些敏感值?逻辑只对addr的变化敏感,还是对addr选中的mem_array
+内容敏感?如果是对mem_array内容敏感,那么数组的地址又是什么?
+在实际硬件中,data 将会连续反映当前选中数组的数值, 如果地址变化,data 将反映这些变化, 如果数组的当前
+索引发生变化,data也将反映这些变化.
+由于存在的问题和陷阱, 在 RTL 层级不太容易使用显式敏感表对这类行为建模, 实际上敏感表只需包含两种数
+据的变化:addr和addr选中的mem_array内容,如果在仿真之前实现一个显式敏感表,将是一个硬编码,同时也不
+清楚将出现的addr,而显式敏感表也需要加入mem_array的所有单元,而不是选中的单元.
+为了对整个数组敏感,可编写以下代码:
+1 always @( addr or mem_array ) //错误,对数组的非法引用
+2 data = mem_array[addr];
+
+## 第 30 页
+
+3. RTL建模 29
+以上的风格是错误的,无论是Verilog还是SystemVerilog都不允许在敏感表中显式命名一个完整数组,只能显式列
+出数组被选中的部分:
+1 always @( addr, mem_array[0], mem_array[1], mem_array[2], ... )
+2 data = mem_array[addr];
+上例可以工作,但并无太大的实用性,如果是小型的一维数值可采用这种方式,如果数组包含1024个单元?
+如果在敏感表中一次加入被addr选中的mem_array,如下:
+1 always @( mem_array[addr] ) //陷阱,并未将addr加入敏感表
+2 data = mem_array[addr);
+上例可以工作,但只能对当前索引add的mem_array内容敏感,并且对addr的变化不敏感,如果addr变更时,data
+无法反映出这个变化.
+如何避免
+在对数组进行读取时, 有三种方式可给出组合逻辑的敏感表, 最好的方式就是采用 Verilog 的 always @* 或是
+SystemVerilog 的 always_comb 推测敏感表, 这两种结构都可推测出正确的敏感表, 使用 always_comb 的优势在
+于,在仿真零时刻下就能被触发,即使敏感表并无变化,这可保证在仿真起始处,组合逻辑的输出能与输入相匹配.
+1 always @* //ok,可推测出@(addr,mem_array[addr])
+2 data = mem_array[addr);
+3
+4 always_comb //ok,可推测出@(addr,mem_array[addr])
+5 data = mem_array[addr);
+在Verilog-1995标准中只能显式指定选中地址和对应的数组单元,来避免这个陷阱,如下:
+1 always @(addr, mem_array[addr]) //ok,可以工作
+2 data = mem_array[addr];
+另一种方式就是使用连续分配来替代组合逻辑的过程块,这也能正确工作,但连续分配的限制在于无法直接使用编
+程语句.
+assigndata=mem_array[addr);
+陷阱 23: 时序逻辑敏感表的矢量
+陷阱:always块可假定在一个矢量的正边沿被触发,但会丢失一些边沿.
+原因:时序逻辑敏感表的触发只针对矢量最低有效位的电平变化.
+敏感表可被矢量值的变化触发,在适合的上下文中,这是非常重要和有意义的.
+1 logic [15:0] address, data;
+2 always @(address, data) //ok,矢量值的变化将导致敏感表的触发
+3 ...
+如果敏感表的矢量包含了posedge或negedge边沿标识符,边沿事件只会出现在矢量最低有效位变化时.
+1 always @(posedqe address) //陷阱,将在矢量的边沿上触发
+2 ...
+如何避免
+posedge或negedge事件标识符可视为一个过滤器,如下:
+always@(posedqeclockorneqedqereset_n)
+敏感表将在clock上升沿和reset_n下降沿被触发,并会过滤掉clock下降沿和reset_n上升沿.
+在使用 1bit 信号时, 例如时钟和复位信号,posedge 或 negedge 事件标识符可使用硬件精确描述, 矢量的正向
+和反向边沿,在硬件中不太好测试,如下:
+1 logic [3:0] data; // 4bit矢量
+2
+3 initial begin
+4 #1 data = 5; //data从4’bxxxx变为4’b0101
+5 #1 data = 3; //data从4’b0101变为4’b0011
+6 end
+
+## 第 31 页
+
+3. RTL建模 30
+在 1bit 信号中,x 到 1 的变化是一个正边沿, 从 x 到 0 的变化是一个负边沿, 上例中当 data 从 4’bxxxx 变为
+4’b0101,always@(posedgedata) 会因为上升沿被触发而不是下降沿,posedge将会过滤掉所有的负边沿,当data
+从4’b0101变为4’b0011时,将在同一信号上同时出现上升沿和下降沿.
+Verilog 在这种情况下定义了良好的规则, 只会检查矢量的最低位, 并不理会同一时间下有多个位发生了变化,
+这个规则并不是可见的,如果需要一种不同的行为,将出现陷阱.
+为了避免这类陷阱, 需在 posedge 或 negedge 事件标识符中只使用 1bit 表达式, 如果需要对矢量的变化进行
+检查,应了解一些编码技巧,以避免简单使用整个矢量,如下.
+如果需在矢量中多个bit的上升沿产生触发:
+1 always @(posedge data[0], //检查每个bit的上升沿
+2 posedge data[1],
+3 posedge data[2],
+4 posedge data[3])
+如果需触发矢量中特定bit的上升沿,可忽略其他的bit:
+always@(posedgedata[3])
+如果需在矢量从0变为非零值时触发:
+always@(posedgedata)//等同于所有bit的位或|
+如果需在矢量从非零值变为0时触发:
+always@(negedgedata)|
+可见这些例子中都使用了 1bit 表达式或是 1bit 表达式的列表来触发, 这个概念可扩展到其他操作类型中, 最终
+的表达式应给出一个1bit表达式,在敏感表的操作中还有一个相关的陷阱,将在后续介绍.
+陷阱 24: 敏感表的操作
+陷阱:敏感表包含了a与b的或操作,但会丢失一些边沿变化.
+原因:敏感表只在操作结果变化时才会触发.
+有时工程师会在敏感表中使用 | 操作符来替代 or 关键字, 这类代码在编译期并无错误, 但无法实现相应的功
+能.
+@ 符号通常用于监视过程块敏感表中, 作为触发事件的标识符列表,Verilog 标准中允许 @ 监视一个事件表达
+式.
+1 always @(a or b) // or是一个分隔符而不是操作符.
+2 sum = a + b;
+3
+4 always @(a | b) //陷阱,|是一个操作符
+5 sum = a + b;
+6
+7 always @(a && b) //陷阱
+8 sum = a + b;
+9
+10 always @(a == b) //陷阱
+11 sum = a + b;
+当敏感表中使用了操作符,@将在操作结果变化时触发,但不会在操作数变化时触发,在上例always@(a|b)中,如
+果a为1,当b发生变化,或操作的结果也不会变化,过程块也无法被触发.
+为什么 Verilog 能允许这类陷阱? 在敏感表中使用表达式, 对验证 monitor 或上层总线功能建模都非常有帮助,
+例如可在测试结果变化时实现触发,always @(address1 != address2), 如果表达式的结果发生改变, 过程块的敏感
+表将被触发.
+如何避免
+当建模组合逻辑时, 避免这类陷阱的最好方式就是采用 SystemVerilog 的 always_comb 过程块, 它可自动推测
+
+## 第 32 页
+
+3. RTL建模 31
+出正确的敏感表,因而可消除敏感表中的拼写错误或是误用,同时在Verilog中也可使用@*,但这类标识也有自己的
+陷阱,当时序逻辑建模时,工程师必须小心处理敏感表中的操作.
+陷阱 25:begin...end 中的时序逻辑块
+陷阱:在无时钟输入的情况下,时序块中的时钟逻辑依旧会更新.
+原因:可重入时序块(begin...end)可包含与时钟异步的执行语句.
+常用的建模风格是将 begin...end 封装的代码, 放入到 initial 和 always 过程块中, 即使过程块中只包含一条语
+句,有些公司还会指定这个建模风格:
+1 always @(state_e) begin
+2 nstate_e = HOLD;
+3
+4 case (state_e)
+5 HOLD: if (ready) nstate_e = LOAD;
+6 LOAD: if (done) nstate_e = HOLD;
+7 endcase
+8 end
+这类风格在建模可重入时序逻辑(例如触发器) 时将出现陷阱, 可重入时序过程块的综合要求只包含单个 if...else 语
+句,但通过if...else的分支可包含多个语句,如下:
+1 always @(posedge clock or negedge reset_n)
+2 if (!reset_n) state_e <= RESET;
+3 else state_e <= nstate_e;
+begin...end的目的在于将多个语句编组,并在语法上作为单条语句被执行,如果过程块中只有一条语句,就无需使用
+begin...end,在组合逻辑块中,即使指定的begin...end块中未包含内容,也不会引入任何的陷阱.
+在可重入时序逻辑的建模中, 加入 begin...end 会在模型中引入功能陷阱, 时序块中只能包含单条 if...else 语句,
+若在begin...end中允许其他语句,将导致不正确的功能.
+1 always @(posedge clock or negedge reset_n) begin
+2 if (!reset_n) state_e <= RESET;
+3 else state_e <= nstate_e;
+4
+5 fsm_out <= decode_func(nstate_e); //陷阱
+6 end
+Verilog/SystemVerilog 中的这个陷阱, 已被工程师证明在硬件中无法工作, 如果仿真结果没有被仔细分析, 在 clock
+正边沿上fsm_out行为将视为一个触发器.
+上例的fsm_out并不是复位逻辑中if...else的一部分,这意味着:
+1. fsm_out输出无法被复位逻辑复位.
+2. 在复位激活时,fsm_out分配可在无时钟的情况下异步执行.
+1 和 2 项将给出一个不需要的触发器行为, 所以在可重入时序块中, 综合工具并不允许在 if...else 之外包含其他语
+句,因此可证明上例无法工作,且无法被综合.
+如何避免
+有些工程师喜欢在每个过程块中自动添加 begin...end, 即使块中只包含一条语句, 这类风格并不适用, 在可重
+入时序块中并不适用begin...end,并会引入上述的陷阱.
+一种更好的建模方式, 就是要求包含复位逻辑的时序块中不使用 begin...end, 下例将报告一个编译期错误, 而
+不是一个仿真错误.
+1 always @(posedge clock or negedge reset_n) //未使用begin
+2 if (!reset_n) state_e <= RESET;
+3 else state_e <= nstate_e;
+4 fsm_out <= decode_func(nstate_e); //编译错误!
+可在if...else语句中使用begin...end,如下:
+
+## 第 33 页
+
+3. RTL建模 32
+1 always @(posedge clock or negedge reset_n) //未使用begin
+2 if (!reset_n) begin
+3 q1 <= l ’b0;
+4 q2 <= l ’b0;
+5 end
+6 else begin
+7 q1 <= d1;
+8 q2 <= d2;
+9 end
+当然在if...else语句中使用begin...end也会存在其他的陷阱,这将在后续中介绍.
+陷阱 26: 时序逻辑块的复位
+陷阱:一些时序逻辑的输出无法被复位.
+原因:可重入时序块可在一些输出中产生不正确的复位.
+它们在语义上是合法的,但功能并不正确,如下的触发器模型:
+1 always @(posedge clock or negedge reset_n)
+2 if (!reset_n) begin
+3 q1 <= 0;
+4 q2 <= 0;
+5 q3 <= 0; //陷阱,丢失了q4的设定
+6 end
+7 else begin
+8 q1 <= ~q4;
+9 q2 <= q1;
+10 q3 <= q2;
+11 q4 <= q3;
+12 end
+上例的q4并未包含在复位逻辑中,却是时序逻辑的一部分,由于q4未被复位,因而它与q1,q2,q3是不同的触发类
+型.
+在 RTL 模型的仿真复位时,q4 将发生什么? 实际上 q4 将一直保持原有值, 如果复位激活时出现时钟,q4 既不
+会复位也不会执行时序逻辑,在复位期内q4的行为将给出一个门控或失效时钟,大多数综合将会创建一个失效时钟
+的门控,这并不是设计者的意图.
+如果在复位期内包含了一些变量的分配, 而在时序逻辑中并没有对这些变量进行分配时, 将存在一种陷阱, 虽
+然它们都是正确的时序逻辑,但可能并不是设计者所需的.
+如何避免
+为了避免这类陷阱必须小心处理,设计者必须确认相同的变量在if...else所有的分支中都进行了处理,SystemVerilog
+的交叉覆盖可在复位出现和时钟出现时,验证所有变量的分配值.软件工具(lint)和综合工具可对同一变量未在两个
+分支中进行分配而发出警告.
+陷阱 27: 用于仿真和综合的异步置位/复位触发器
+陷阱:基于综合规则编写的异步置位/复位的D触发器,仿真结果有时会出错.
+原因: 综合所需的代码风格将使异步置位/复位的 D 触发器包含一个仿真竞争条件, 如果竞争条件会固定出现,
+代码将无法综合.
+综合工具对时序逻辑设备 (例如触发器) 的建模有些特定的编码规则, 当这些代码被读入工具时, 将选择正确的
+触发类型,对always块敏感表的规则:当列表中有一项包含了边沿标识符(posedge或negedge),那列表的所有项
+都必须包含一个边沿标识符,在异步置位/复位的D触发器中,可包含以下综合所需的敏感表:
+1 always_ff @(posedge clk , negedge rst_n , negedge set_n)
+always 块中所需的建模代码风格可确定工程师的意图, 对于一个置位/复位 D 触发器来说, 置位/复位功能可使用
+if...else...if...else的优先级编码风格,以区分置位和复位,如下是一个可综合的模型:
+
+## 第 34 页
+
+3. RTL建模 33
+1 always_ff @(posedge clk , negedge rst_n , negedge set_n)
+2 if (!rst_n) //复位包含了优先级
+3 q_out <= 1’b0; //复位分配
+4 else if (!set_n)
+5 q_out <= 1’b1; //置位分配
+6 else
+7 q_out <= data_in; //输入分配
+但在所有的仿真条件下,该模型并不能正确工作,当在同一时刻下rst_n和set_n同为低,触发器可保持复位,因为在
+模型中包含了优先级,之后rst_n变为高而set_n为低,由于敏感表只对边沿敏感,所以rst_n的释放(上升沿)并不
+会触发敏感表,这意味着触发器将保持复位,直到set_n信号被激活,陷阱出现!
+该陷阱只存在于可综合的异步置位/复位 D 触发器, 问题涉及到下一个时钟时能否使得 if...else 重新检查, 并过
+渡到触发器的置位状态.
+实际的异步置位/复位输入都对电平的跳变敏感, 当移除复位信号, 置位可驱动触发器过渡到置位状态, 因而可
+在模型的敏感表中加入置位/复位输入的边沿,以防止这类仿真陷阱.
+如何避免
+这个陷阱是由于在置位/复位 D 触发器中强加的综合编码规则, 为了精确建模仿真行为, 必须加入一个对电平
+敏感的组合逻辑块,以覆盖仿真中可综合的置位/复位逻辑,这类覆盖所使用的force和release语句通常会保留给验
+证测试使用,使用条件编译可从综合中隐藏特定的仿真代码.
+1 ‘ifndef SYNTHESIS //启动不可综合的仿真代码
+2 always @*
+3 if (rst_n && !set_n) force q_out = 1’b1;
+4 else release q_out;
+5 ‘endif
+6
+7 //启动综合和仿真代码
+8 always_ff @(posedge clk , negedge rst_n , negedge set_n)
+9 if (!rst_n)
+10 q_out <= 1’b0;
+11 else if (!set_n)
+12 q_out <= 1’b1;
+13 else
+14 q_out <= data_in;
+陷阱 28: 时序过程块的阻塞分配
+陷阱:移位寄存器有时可在一个时钟周期内实现两次移位.
+原因:时序逻辑中的阻塞分配在语义上是合法的,但通常会给出错误的功能.
+Verilog 包含了两种分配: 阻塞分配 (如 a=b) 包含了硬件组合逻辑的仿真行为, 非阻塞分配 (如 q<=d) 包含了硬
+件时序逻辑的行为,其中包含了时钟延时(当前时钟周期中设定的操作结果,将在下一个时钟周期可见).
+下例给出了常见的 Verilog 编码陷阱, 例子在适用非阻塞分配时使用了阻塞分配, 在时序块中使用阻塞分配并
+不是语法错误,如果触发器中并未包含时钟延时,示例中的移除寄存器将无法工作.
+1 always @(posedge clock) begin //并不是一个移位寄存器
+2 q1 = d; //将d载入q1未包含时钟延时.
+3 q2 = q1; //将q1载入q2.
+4 end
+如果存在仿真的竞争条件,Verilog 为什么在时序块中允许阻塞分配? 有两个理由: 第一如果在时序块中使用了一个
+需分配和读取的临时变量,可使用阻塞分配,其二Verilog作为一种硬件描述和验证语言需要有能力说明在硬件中那
+些可以工作那些不可工作.
+上例中, 如果在上升沿 q1 和 q2 都被触发, 可表示一个移位寄存器, 能在 clock 上升沿将 d 载入 q1, 并在下一
+个clock上升沿将q1载入q2,但在仿真中可见该示例并不是一个移位寄存器,Verilog将对q1实现阻塞分配,也就
+是阻塞等待语句的执行,直到q1的数值被更新,这意味着d值将直接传递给q2,而不会通过一个包含时钟延时的触
+发器,同时也就证明了一个不包含时钟延时的触发器并不会包含硬件的属性功能.
+
+## 第 35 页
+
+3. RTL建模 34
+因而综合工具会将 q1 的行为视为一个缓冲, 而不是触发器, 如果 q1 值并未使用在过程块之外, 综合将从设计
+中将q1移除,并将d值直接载入q2.
+如何避免
+在一般规则中,工程师都会在时序块中采用非阻塞分配,lint工具有助于分析这类代码风格.
+1 always @(posedge clock) begin
+2 q1 <= d; //将d载入q1并包含时钟延时.
+3 q2 <= q1; //将之前的q1载入q2.
+4 end
+注意:这个规则中也有例外情况,在时序块中也需要使用阻塞分配,只有理解阻塞和非阻塞分配,工程师才知道如何
+正确使用此类例外.
+陷阱 29: 时序逻辑的阻塞分配
+陷阱:在时序逻辑中使用了推荐的非阻塞分配,但在仿真中还是存在竞争条件.
+原因:在时钟分频器中,不会使用RTL综合的设计规则.
+RTL 建模规则推荐在时序逻辑中使用非阻塞分配, 在零延时的 RTL 模型中, 这些规则可阻止仿真中的竞争条
+件,在数值读取时数值发生变化,将产生一个竞争条件.
+这些 RTL 编码规则是为了数据流建模和数据维护, 非阻塞分配不能用于非 RTL 模型, 当这些规则用于时钟生
+成器,例如时钟分配器和PLL时,将在生成时钟内引入竞争条件,如下:
+1 always @(posedge clk)
+2 if (!rstn) clk_divided2 <= 0;
+3 else clk_divided2 <= ~clk_divided2; //陷阱,包含时钟延时
+4
+5 always @(posedge clk)
+6 if (!rstn) out1 <= 0;
+7 else out1 <= in1; //包含时钟延时
+8
+9 always @(posedge clk_divided2)
+10 if (!rstn) out2 <= 0;
+11 else out2 <= out1; //out1中存在竞争条件
+非阻塞分配中包含了从零时刻开始的时钟延时,这使得该分配包含两步:第一步是评估右侧的表达式,第二步则是在
+时钟延时后,更新左侧数值,而在延时期内,其他语句可在当前仿真时间下调度执行,那么在无延时RTL模型中,使
+用这两步执行来防止读写竞争条件是危险的.
+上述时钟分频器中,非阻塞分配将引入竞争条件,而不是防止它的出现,以下是将发生的顺序事件:
+1. 仿真时钟出现,在时钟上升沿下:
+(cid:15) 评估~clk_divided2,准备更新clk_divided2的变化.
+(cid:15) 评估in1,并准备更新out1.
+2. 在时钟延时后(以下的更新次序是任意的):
+(cid:15) 更新clk_divided2,如果出现clk_divided2上升沿:
+▶ 评估out1,并准备更新out2.
+(cid:15) 更新out1.
+3. 如果出现clk_divided2上升沿:
+(cid:15) 评估out1,并准备更新out2.
+4. 第二个时钟延时后:
+(cid:15) 更新out2.
+5. 仿真时钟出现
+顺序事件中的竞争条件是很微妙的,但却是真实的,在第二步中,当更新clk_divided2后,如果出现一个上升沿,将触
+发第三步,即对out1采样,但out1是否已被更新?
+答案是有可能, 这就是一个竞争条件,out1 可在同一时刻下, 或在时钟延时后, 又或是在其更新后进行采样, 仿真
+器允许执行读后写或是写后读的事件次序,这就是一个陷阱!
+如何避免
+
+## 第 36 页
+
+3. RTL建模 35
+为避免这个陷阱, 需在时钟分频器的编码中,out1 必须在其变更之前被采样, 实现这个操作有一些方法, 但最简
+单的方式就是使用阻塞分配.
+1 always @(posedge clk)
+2 if (!rstn) clk_divided2 = 0;
+3 else clk_divided2 = ~clk_divided2; //ok,立即更新
+阻塞分配将会立即更新左侧值, 且不会包含时钟延时, 阻塞分配可立即引发 clk_divided2 事件, 并在出现上升沿时,
+立即触发always@(elk_divided2)块的敏感表,这可保证在out1变更之前完成out1采样.
+由于时钟分频器并不会接收输入或是操作其他always块的数据,因而这类建模风格能被综合.
+陷阱 30: 组合逻辑的非阻塞分配
+陷阱:RTL仿真被锁定,且仿真时间已停止.
+原因:组合逻辑块中的非阻塞分配将引入一个锁定仿真的无限循环.
+Verilog 的非阻塞分配用于描述顺序逻辑的行为, 右侧表达式能被立即评估, 并在时钟延时后更新到左侧. 所有
+使用非阻塞分配的语句都是”不会阻塞”,并会在当前时刻的延时之后被执行,这个延时即时钟延时(此处可视为敏感
+信号的再次触发延时),即使在无延时的RTL模型中也是存在的.
+下例对于非阻塞分配的使用并不正确, 它被放入到一个组合逻辑块中, 当 m 或 n 变更时, 它有可能被锁定在仿
+真的时间单位中.
+1 always @(m, n) //组合逻辑的敏感表(未出现时钟边沿)
+2 m <= m + n; //陷阱,将在时钟延时后执行变更.
+该always 块将在m 或n变更时被触发,m+n 的结果将被计算,并使用非阻塞分配更新到左侧的m中, 更新将在时
+钟延时之后进行,在延时期内,非阻塞分配并不会阻塞过程块的执行流,当过程块返回后,敏感表将等待m或n的下
+一次变化,在时钟延时后,m将被更新,这个更新将在敏感表的再次触发时完成,用于表征非阻塞分配的时钟延时,这
+时m+n结果分配给m的操作,将卡在当前时刻下,直到下一次敏感信号发生变化时(如果m未得到m+n的结果,外
+部代码有可能无法对m,n进行操作,那么就进入了一个死循环).陷阱!
+上例中包含了两个陷阱, 一个是在 m 或 n 变更时 (假定 n 不为 0), 仿真将被锁定. 其二是给出了一个不良设计,
+因为在门级实现中引入了不稳定的状态,同时这是Verilog的一种模式,它允许工程师设计一个无法工作的模型,以
+此来分析不正常硬件的行为,在这种情况下,可描述组合逻辑的零延时反馈路径.
+上例并不实用, 因为组合反馈的输出 m, 同时又放入了敏感表中, 这个示例只是为了给出组合逻辑中非阻塞分
+配的陷阱.
+以下是真实设计的代码,它也会锁定仿真,因为在组合逻辑块中使用了非阻塞分配.
+1 module chip (...)
+2 ...
+3 always @(a or ...) begin
+4 ...
+5 b <= 1’b0;
+6 ...
+7 case (state1)
+8 STATE_G: begin
+9 b <= c;
+10 ...
+11 end
+12 ...
+13 endcase
+14 end
+15
+16 always @( b or ... ) begin
+17 ...
+18 a <= l ’b0;
+19 ...
+20 case (state2)
+21 STATE_H: begin
+22 ...
+23 a <= d;
+
+## 第 37 页
+
+3. RTL建模 36
+24 end
+25 ...
+26 endcase
+27 end
+28 endmodule: chip
+上例中给出了三种重要的Verilog/SystemVerilog事件调度规则,本书总结了这些规则,以使读者能独立思考仿真如
+何被锁定:
+(cid:15) 并行的过程块的事件调度可使用任意次序,这意味着并行事件之间可以交叉.
+(cid:15) begin...end块中的事件调度将以源码中列出的次序执行,其中包括非阻塞分配.
+(cid:15) 在一个零延时的always过程块中,非阻塞分配并不会更新左侧变量,直到敏感表再次被触发.
+Verilog如何避免
+将非阻塞分配改为阻塞分配可修正仿真的锁定问题, 下例的阻塞分配可保证 m 获取到一个新的稳定值, 并在过
+程块返回到敏感表之前,且无需重新激活过程块.
+1 always @(m, n)
+2 m = m + n; //立即变更.
+仿真锁定已被修正, 但并没有修正 RTL模型的第二个陷阱, 所以它无法表征一个设计良好的组合逻辑, 此处有两种
+方式可修正这个设计问题,首先需要了解这个简单的组合逻辑是一个加法器还是一个累加器(加法器只需保存它的
+输出,而无法将输出反馈给自己的输入).
+SystemVerilog如何避免
+SystemVerilog 给出了特定的 always 块 always_comb 和 always_ff, 用以避免这类编码错误, 这些结构给出了
+对应的逻辑类型,always_comb可推测出一个正确的组合逻辑敏感表,同时设定了一个强制的编码规则,用于保证组
+合逻辑的建模,例如规则中有一条,变量的写入只能包含一个发送方,在m<=m+n;中,m即是输入又是输出,如果
+在设计的其他地方对m写入时,将是一个语法错误,在整个设计的上下文中,以上代码将导致一个语法错误,而不是
+仿真锁定.
+1 always_comb
+2 m <= m + n; //潜在的语法错误:不能有其他进程对m写入
+当always_comb使用时,有些发送方为上例输入提供数值时,将给出以下的错误信息:
+1 Variable ”m” driven by invalid combination of procedural drivers.
+2 Variables written on left -hand of ”always_comb” cannot be
+3 written to by any other processes.
+如果需构建一个加法器,可使用阻塞分配,加法器的输出可分配给一个不同变量,以防止组合逻辑的反馈环:
+1 always_comb
+2 y = m + n;
+如果需构建一个包含寄存器输出的累加器,则应在敏感表中指定一个时钟,时钟边沿可控制反馈路径,always_ff块有
+助于构建时序逻辑.
+1 always_ff @(posedge clk)
+2 m <= m + n;
+陷阱 31: 组合逻辑分配的错误次序
+陷阱:门级组合逻辑并不与RTL仿真匹配.
+原因:综合可优化掉组合逻辑的推测.
+Verilog 和 SystemVerilog 分配所需的左侧类型为变量, 在仿真分配中变量需要保存, 而在硬件中组合逻辑并不
+会保存, 如果设计者需建模组合逻辑,RTL模型将不会依赖于仿真变量的存储, 在进入组合块时, 组合逻辑的所有输
+出必须分配一个数值,如果数值未分配,输出将依赖于之前分配的变量存储.
+一般的综合工具可检测到组合逻辑块是否依赖于仿真存储, 如果使用了变量存储, 综合工具将在门级实现中加
+入锁存器,以保护这类变量存储,下例中综合工具无法检测到RTL模型是否使用了变量存储:
+
+## 第 38 页
+
+3. RTL建模 37
+1 module bad_comb_logic (input wire in1,
+2 output reg out1, out2 );
+3 always @(in1) begin
+4 out2 = out1; //陷阱,out2将保存out1的原有值
+5 out1 = in1; //陷阱,out1将使用in1的新值进行更新
+6 end
+7 endmodule
+在仿真中, 变量 out2 将使用 out1 当前值进行分配, 而 out1 保存了 in1 的原有值, 当 out2 保存了 out1 的当前值
+后,out1将更新为in1的新值,如下:
+上例综合后,将创建以下的门级功能:
+综合后的功能无法与 RTL 仿真功能匹配, 有些综合工具无法检出 out2 将包含 out1 的存储值 (也就是 in1 的原
+有值),这将无法实现RTL功能,陷阱!
+如何避免
+上述示例是一个不良的模型,RTL 功能无法与组合逻辑, 锁存逻辑或时序逻辑相匹配, 这个问题是由两个组合逻
+辑输出分配的错误次序造成的,因而可创建一个变量存储的关联来修正这个问题:
+1 always @(in1) begin
+2 out1 = in1; //out1首先更新了int1的新值.
+3 out2 = out1; //之后out2获取了out1中的新值.
+4 end
+陷阱 32:case 语句的 casez/casex 标记
+陷阱:当case表达式中包含错误时,将进入错误的casex分支.
+原因:在casez或casex比较时,需指定所需的掩码.
+Verilog 的 casez 和 casex 语句中允许在比较时加入掩码, 在 casez 中可将一些位设为 Z 或?(Z 和? 是等价的),
+而casex中可将一些设为X,Z或?,这些结构可简明描述大多数硬件类型,同时在验证代码也可使用,如下的casex
+通配比较:
+1 always_comb begin
+2 casex (instruction) //包含潜在的陷阱
+3 4’b0???: opcode = instruction[2:0]; //只测试最高位
+4 4’b1000: opcode = 3’b001;
+5 ... // 解码其他的有效指令
+6 default: begin
+7 $display (”ERROR: invalid instruction!”);
+8 opcode = 3’bxxx;
+9 end
+10 endcase
+11 end
+上例的第一个case项中设定了掩码,这是为了检测最高位是否为0,而其他位无需评估,在所有可能的有效指令之
+后,包含了一个默认分支,用于捕获设计问题,也就是无效指令的出现.
+
+## 第 39 页
+
+3. RTL建模 38
+如果存在一个设计问题,且instruction为4’bxxxx,将导致默认分支被执行,并报告一个无效指令.
+casex 和 casez 中可包含比较位的掩码, 上例中如果 instruction 包含了数值 4’bxxxx 或 4’bzzzz, 需在比较中将
+所有位设为掩码,这也意味着第一条case项将被执行.
+Verilog如何避免
+一个简单的方式是采用 casez 替换 casex, 如果上例使用 casez, 而设计问题造成了 instruction 为 4’bxxxx, 这
+个问题将不会被屏蔽,将导致默认分支报告一个无效指令,而设计问题造成了instruction为4’bzzzz,该无效指令将
+不会被捕获.
+SystemVerilog如何避免
+对于这类陷阱 SystemVerilog 提供两种解决方案, 第一种是采用特殊的通配比较符 ==?, 它可在两操作数的数
+值匹配时返回真,而在不匹配时返回假,还可使用!=?,它的作用与==?相反,这类操作符的机制与casex相似,可在
+比较时使用X,Z或?进行位掩码,位掩码只能出现在比较表达式的左侧,因而下例的instruction中的X或Z位并没
+有被屏蔽,所以将捕获到一个无效指令:
+1 if (instruction ==? 4’b0???) opcode = instruction[2:0);
+2 else if ... //解码其他的有效指令
+3 else begin
+4 $display (”ERROR: invalid instruction!”);
+5 opcode = 3’bxxx;
+6 end
+第二种解决方案则是使用case()inside语句,这类语句允许在case项中使用X,Z或?实现位掩码,与casex类似,
+但case()inside会使用一种更直观的方式建立比较掩码,case表达式中的X或Z并不会被屏蔽,在下例instruction
+中的X或Z位不会被屏蔽,从而导致无效指令的捕获.
+1 always_comb begin
+2 case (instruction) inside
+3 4’b0???: opcode = instruction[2:0];
+4 4’b1000: opcode = 3’b001;
+5 default: begin
+6 $display (”ERROR: invalid instruction!”);
+7 opcode = 3’bxxx;
+8 end
+9 endcase
+10 end
+陷阱 33: 不完整的判断语句
+陷阱:仿真中为所需的判断语句设定了full_case和parallel_case,但它还是无法工作.
+原因:不完整的case或if...else判断语句将导致难以检查的设计错误.
+Verilog的if...else和case语句(包含了casex和casez)包含了一些潜在的设计问题:
+(cid:15) 不完整的判断语句是合法的,并不是所有的可能值都有对应的分支.
+(cid:15) 包含多余的选中值也是合法的,这意味着同一时刻下会两个或多个分支被选中.
+(cid:15) 仿真对源码中的多分支判断的评估是有序的(包含优先级解码),但综合后的实现是采用并行解码.
+Verilog/SystemVerilog综合工具将会使用 pragmas, 它是隐藏在注释中的命令, 用于指示综合工具如何处理不完整
+或多余的case项,full_case将指示综合忽略所有未指定的选中值,parallel_case将指示综合忽略所有的多余选中值.
+下例说明了 RTL 逻辑如何解码状态机的下一个状态, 状态变量有 3bit, 那么最大会有 8 个状态, 但状态机解码
+时只包含了3个状态,使用full_case和parallel_case可使其他5个状态不会出现在设计中.
+1 logic [2:0] state , nstate;
+2
+3 always @(state) begin
+4 case (state) //使用full_case的综合,将存在陷阱
+5 3’b001: nstate = 3’b010;
+6 3’b010: nstate = 3’b100;
+7 3’b100: nstate = 3’b001;
+
+## 第 40 页
+
+3. RTL建模 39
+8 endcase
+9 end
+注意上例中状态值的硬编码也是一个可见的潜在陷阱, 更好的编码风格是在 Verilog 中指定一个本地参数, 或是在
+SystemVerilog中设定一个枚举类型,其他的陷阱依然还是存在,只是它们并不直观.
+上例给出一个不完整的 case 语句,state 中只包含了 8 个可能状态的 3 种, 设计者可假定状态采用了独热码
+(one-hot)的方式,其他5种状态将不会出现,而设计将在综合编译器中使用//synthesisfull_casepragma
+如果 state 中出现 3’b000 数值将发生什么?pragma 将指示综合未定义的数值不会出现, 因而门级实现中不会
+解码这些未定义数值, 所以逻辑门将代替设计者来指定会发生什么, 在 RTL仿真中, 如果出现了无法选中分支的数
+值, 之后并不会执行任何语句, 而示例的 nstate 变量也不会更新, 且会保留原有值, 但 RTL 仿真中给出的 state 为
+3’b000的行为,与门级实现并不一致,陷阱!
+RTL 仿真的第二个问题是, 由于 nstate 在未定义数值出现时并不会改变, 这使得未定义 state 数值不可见, 这
+使得设计在RTL仿真中能工作正常,但实际上包含了一个设计问题,陷阱.
+Verilog如何避免
+在 Verilog 中避免这类陷阱只有一种方法, 就是不要使用 full_case pragma, 以便显式指定未定义数值出现时的
+操作,也就是在case中给出一个默认分支(default),上例中如果为nstate已知值分配了一个默认分支,门级行为将
+为未定义state值给出更好的定义.
+1 case (state)
+2 3’b001: nstate = 3’b010;
+3 3’b010: nstate = 3’b100;
+4 3’b100: nstate = 3’b001;
+5 default: nstate = 3’b001; //在发生错误时,可返回第一个状态.
+6 endcase
+大多数Verilog工程师更喜欢在默认分支中分配一个X值:
+default:nstate=3’bxxx;//在发生错误时,将nstate设为未知状态
+如果在默认分支中将 nstate 设定了未知态, 综合的门级实现将发生什么? 综合对这类分配的处理类似与 full_case
+pragma,这意味着门级实现对未定义值的处理,是设计者无法控制的,在RTL和门级之间将产生差异,所以在RTL
+仿真中应避免出现不可知的未定义值.
+SystemVerilog如何避免
+SystemVerilog 中提供了优化的 full_case 和 parallel_case pragmas, 可在同一时刻下, 避免 RTL 仿真中出现未
+定义的功能,同时还能使用两个策略标识符unique和priority,它们可分别指定给case或if...else...if语句.
+对于综合来说,unique case 等同于指定 full_case 和 parallel_case pragmas,priority case 等同于指定 full_case,
+而pragmas只能影响综合,它们在仿真中将被忽略,而unique和priority在综合和仿真中都有效,并能在综合编译
+器中指定有效的验证.
+在仿真中,uniquecase的行为如下:
+(cid:15) 在进入case语句后,无法选中分支将发出一个警告.
+(cid:15) 在进入case语句后,有多个case选择表达式为真也就是有多个分支被选中,将发出一个警告.
+在仿真中,prioritycase的行为如下:
+(cid:15) 在进入case语句后,无法选中分支将发出一个警告.
+1 always @(state) begin
+2 unique case (state)
+3 3’b001: nstate = 3’b010;
+4 3’b010: nstate = 3’b100;
+5 3’b100: nstate = 3’b001;
+6 endcase
+7 end
+使用uniquecase可允许设计者对case语句的综合进行验证,SystemVerilog的约束随机测试生成和功能覆盖中将
+合并实时检查,以防止未预期的数值出现或是在其出现时给予警告,形式验证也可使用unique标识符验证或反证设
+计者假定的判断语句.
+
+## 第 41 页
+
+3. RTL建模 40
+警告: 所有 full_case 和 parallel_case 使用的设计规则, 都可用于 unique case 和 priority case, 但这些标识符
+也会被滥用,如同pragmas被滥用一样.
+陷阱 34: 重叠的判断语句
+陷阱:有些判断分支从未被执行过.
+原因:多余的选中值在仿真中将给出不可预期的结果.
+Verilog 对 if...else...if...else 的评估是有序的, 如果编码出现错误, 例如有两条判断同时为真, 这时也只会执行第
+一个分支.
+1 always @* begin
+2 if (sel == 2’b00) Y = a;
+3 else if (sel==2’b01) y = b;
+4 else if (sel==2’b01) Y = c; //出现相同的sel值
+5 else if (sel == 2’b11) Y = d;
+6 end
+这个代码错误可能是复制粘贴时产生的问题,它并不是一个语法问题,在编译和仿真时,第三个分支不会被执行,由
+于它不是一个语法错误,所以会在仿真中给出不可预期的结果.
+这类错误也会在case中,case判定的重叠并不是一个错误,以下示例中将运行第二个分支:
+1 always @* begin
+2 case (sel)
+3 2’b00: y = a;
+4 2’b01: y = b;
+5 2’b01: y = c; //出现了相同值
+6 2’b11: y = d;
+7 endcase
+8 end
+Verilog如何避免
+以上的简单错误, 在 Verilog 仿真中很难被检出, 一些软件工具 (lint) 或是综合工具可对这类重叠发出警告, 由
+于它只是警告,有可能被忽略.
+SystemVerilog如何避免
+SystemVerilog可在if...else...if和case中加入unique标识符.
+1 always_comb begin
+2 unique if {sel == 2’b00} Y = a;
+3 else if (sel == 2’b01) y = b; //可发出仿真警告
+4 else if (sel == 2’b01) Y = c; //可发出仿真警告
+5 else if {sel == 2’b11) y = d;
+6 end
+7
+8 always_comb begin
+9 unique case (sel)
+10 2’b00: y = a;
+11 2’b01: y = b; //可发出仿真警告
+12 2’b01: y = C; //可发出仿真警告
+13 2’b11: y = d;
+14 endcase
+15 end
+如果在同一时刻下有多个判断选择表达式为真,unique 标识符将使仿真器报告一个警告, 同时也会在无法选中分支
+时发出警告,不要忽视unique给出的仿真警告,它有可能指示了一个编码错误.
+陷阱 35:unique case 语句的不当用法
+陷阱:一直使用uniquecase用于捕获设计错误,但综合的结果并不是所需的.
+
+## 第 42 页
+
+3. RTL建模 41
+原因:SystemVerilog的uniquecase综合等同于标记了full_case和priority_case.
+SystemVerilog 中扩展了 unique 标识符, 可指定给 case 或 if...else...if, 判断语句中指定了 unique 之后, 可视为
+完整且不会包含选中值的重叠.
+今天的大多数编码方法学都推荐在所有 case 语句中都是使用 unique, 因为它等同于 RTL 仿真可见的内建断
+言,用于指定case语句的执行,这使得潜在的设计问题能在更早的设计周期内被发现.
+编码指南推荐在所有的case语句中使用uniquecase,这是一个陷阱.
+以下是一个简单解码器,当address为0时,将设定rdata标志.
+1 module address decocde (input logic [1:0] address,
+2 output logic rdata);
+3 always_comb begin
+4 rdata = l ’b0; //rdata默认值
+5 unique case (address) //解码地址,陷阱!
+6 2’b00 : rdata = 1’b1;
+7 endcase
+8 end
+9 endmodule
+上例很简单,并且来自于实际设计,确实包含了一个陷阱,它的仿真结果可以预期,当address为0,radata将为1,当
+address为其他值时,rdate将为0.
+由于指定了 unique case, 设计者可知综合对于所有未定义的选中值都不理会, 并且能够忽略, 由于设计者只列
+出了一个选中值,并认为不会出现其他数值,那么默认分配也没有意义了,因而综合也将忽略一个默认分配,这是一
+个陷阱!
+如何避免
+避免这类陷阱就是不要忽视仿真警告,unique case 将无法选中分支时发出一个警告, 虽然上例看上去很容易,
+因而认为它给出警告可以忽略,即使在无分支可选的情况下,还可选中默认分支,事实上case语句的仿真警告是指
+综合无法进行解析,因而来自uniquecase的警告不能被忽略.
+以上的问题是由于不了解 unique 标识符的意义所造成的,unique 的目的在于告知工具, 并不是所有的选中值都
+在使用,但上例中,解码器将会使用所有的address值,为0时将设定rdata,其他地址时清除rdata,这是unique的
+不当用法,可在综合结果得到证明.
+上例的修正很简单,即不使用unique标识符.
+1 module address decocde (input logic [1:0] address,
+2 output logic rdata);
+3 always_comb begin
+4 rdata = l ’b0; //rdata默认值
+5 case (address)
+6 2’b00 : rdata = 1’b1;
+7 endcase
+8 end
+9 endmodule
+这并不是说uniquecase不能使用,而是应正确使用它.
+陷阱 36: 两态模型的复位
+陷阱:在RTL仿真的第一次复位时,设计出现了错误.
+原因:两态数据类型将从一个已知数值开始,但没有出现第一次数值分配所需的仿真事件.
+SystemVerilog 中的两态值有利于仿真验证, 但是也包含一些仿真陷阱, 其中之一就是在仿真起始处 (零时刻
+下),每个变量都包含了一个默认的未初始化值,四态变量是X,两态变量是0,那么两态的未初始化零值将引入一个
+复位陷阱,如下:
+1 module chip_tb;
+2 logic clk; //四态类型
+
+## 第 43 页
+
+3. RTL建模 42
+3 bit rst_n; //陷阱,用于复位的两态类型
+4
+5 initial begin //时钟发生器
+6 clk <= 0;
+7 forever #5ns clk = ~clk;
+8 end
+9
+10 initial begin //复位激励(低有效)
+11 rst_n <= 0; //在零时刻下有效复位
+12 #3ns rst_n = 1; //在3ns后失效复位
+13 end
+14
+15 chip u1(.rst_n , .clk , ... ); //dut实例
+16
+17 endmodule: chip_tb
+18
+19 module chip (input bit rst_n , clk , ... ); // 陷阱,两态类型
+20 enum {HOLD, LOAD, STORE} state_e, nstate_e; //陷阱,两态类型
+21
+22 always_ff @(posedge clk , negedge rst_n) //异步复位
+23 if (!rst_n) state_e <= HOLD;
+24 else state e <= nstate_e;
+25
+26 ...
+27 endmodule: chip
+上例的 chip 模块中 always_ff 将在 rst_n 的下降沿实现复位,testbench 会在仿真起始处, 将 rst_n 设为 0, 并保持
+3ns, 由于在 testbench 中,rst_n 是一个两态值, 也就是说它在仿真起始处就是一个 0 值, 所以设定并没有改变它的
+数值,因此并不会出现rst_n的下降沿,从而导致always_ff敏感表并未被触发,如果rst_n至少能保持一个时钟周期
+以上,当时钟出现时,always_ff可实现异步复位,在该例中测试激励无法保持一个完整的时钟周期,因此将丢失复位,
+陷阱!
+如何避免
+这类陷阱可使用一些方法进行修正,一种方式就是在一个阻塞分配中将两态复位信号初始化,以便触发always_ff的
+复位下降沿,另外的非阻塞分配可保证所有的always_ff块都能在复位归零之前被激活.
+1 initial begin
+2 rst_n = 1; //初始化一个静态值
+3 rst_n <= 0; //使用非阻塞分配设定激活值
+4 #3ns rst_n = 1;
+但这种方式将引入新的潜在陷阱,在零时刻使用阻塞分配变更信号值,会与该信号触发的过程块产生一个竞争条件,
+这是由于在零时刻下过程块变为激活的次序并没有定义,所以在过程块激活之前,信号值的变化应出现,由于rst_n
+是低有效,因而在设定逻辑1的不稳定状态时,所以极少或不会出现一个竞争条件.
+另一种方式就是采用内联的变量初始化, 可在声明 rst_n 的同一时刻下, 为 rst_n 分配一个不稳定值, 之后当测
+试程序将rst_n设为0时,可触发always_ff的敏感表.
+1 bit rst_n = 1; //初始化到一个不稳定的状态
+2
+3 initial begin
+4 rst_n <= 0; //使用非阻塞分配设定激活值
+5 #3ns rst_n = 1;
+6 ...
+第三种方式则是使用四态类型替换两态类型,变量的四态类型在仿真起始处将包含一个X,能在零时刻下为其分配0
+值,这将导致X到0的过渡,这可视为一个下降沿.
+陷阱 37: 枚举类型对状态机的锁定
+陷阱:状态机模式被锁定在启动状态.
+原因:两态数据类型将从一个已知数值开始,但没有出现第一次数值分配所需的仿真事件.
+默认情况下, 枚举类型是一个两态值, 枚举列表中第一个标识的数值为 0, 但基于两态枚举类型的功能逻辑将包
+含陷阱,如下:
+
+## 第 44 页
+
+3. RTL建模 43
+1 module controller (output logic read, write ,
+2 input instr_t instruction ,
+3 input logic clock, reset_n);
+4 enum {HOLD, LOAD, STORE} state_e, nstate_e;
+5
+6 always @(posedge clock, negedge reset_n)
+7 if (!reset_n) state_e <= HOLD;
+8 else state_e <= nstate_e;
+9
+10 always @(state_e) begin
+11 unique case (state_e)
+12 HOLD: nstate_e = LOAD;
+13 LOAD: nstate_e = STORE;
+14 STORE: nstate_e = HOLD;
+15 endcase
+16 end
+17 endmodule
+在仿真中, 示例将被锁定在 HOLD 状态, 在复位过程中, 会因两态或四态数值, 以确定状态机是否能离开锁定, 因为
+state_e 和 nstate_e 都是两态枚举变量, 两态类型在仿真起始处的数值为 0, 这也是枚举列表中 HOLD 的数值, 当
+always_ff 复位时, 可将 HOLD 分配给 state_e, 但这与 state_e 的当前值相同, 因而并不会引发 state_e 的跳变, 由
+于 state_e 无跳变,always @(state_e) 组合逻辑将不会激活, 由于组合块无法执行,nstate_e 也无法更新到新值, 并
+将一直保持为初始值 HOLD, 在时钟上升沿,nstate_e 值将分配给 state_e, 这使得两个变量都将包含了相同的数值
+HOLD,之后always@(state_e)组合块依然无法触发,因此nstate_e也无法更新,仿真将卡在初始状态.
+如何避免
+避免这类陷阱的最好方式就是采用 SystemVerilog 的 always_comb 描述组合块, 与 Verilog always 块不同,al-
+ways_comb块可在零时刻自动执行,并不会查看敏感表是否被触发,当always_comb块执行后,nstate_e可分配一
+个正确值LOAD,在复位释放后,状态机的功能则是正确的,并不会锁定在HOLD状态.
+第二种方式是将nstate_e和state_e枚举变量声明为四态类型:
+1 // 四态类型
+2 enum logic [1:0] {HOLD, LOAD, STORE} state_e, nstate_e;
+在上述声明后,nstate_e 和 state_e 在仿真起始处的值为 X, 在复位期内 state_e 可分配为 HOLD, 将使 always
+@(state_e)被触发,并设定nstate_e为LOAD.
+第三种方式可显式为HOLD,LOAD和READY标识指定一个不同于默认值的特定值,如:
+1 enum bit [2:0] {HOLD = 3’b001,
+2 LOAD = 3’b010,
+3 STORE = 3’b100} state_e, nstate_e;
+在上例中,nstate_e 和 state_e 都是两态值, 并会从 0 值开始, 但枚举列表中的数值并没有 0 值, 这使得复位期
+内,state_e可分配HOLD,并触发always@(state_e),随后可更新nstate_e为LOAD,因此可防止锁定陷阱.
+陷阱 38: 四态 logic 类型中隐藏的设计问题
+陷阱:这是一个设计逻辑的深层问题,它无法在模块中传递.
+原因:有些编程语句无法传递逻辑值X.
+在四态仿真中, 将出现逻辑 X, 逻辑 X 并不是一个真实的硬件逻辑值, 它只是表示未知, 仿真器通过该逻辑值可
+告知仿真算法,在给定的情况下无法预知硬件的状态,不会有工程师希望在仿真日志文件或波形显示中看到X值,但
+对其有了解的工程师会将X视为自己的朋友,当X出现时,已相当明确地表示存在一个设计问题.
+在一些 Verilog 编程语句中取消了 X 值, 并替代了一个可行的数值, 这些语句中将隐藏灾难性的设计问题, 两种
+常见的隐藏了X的结构为判断语句和开放式操作符,以下的判断语句中隐藏了设计错误:
+1 always_comb begin
+2 if (sel) y = a; //2-to-lMUX
+3 else y = b;
+4 end
+
+## 第 45 页
+
+3. RTL建模 44
+上例中因设计错误使得sel包含了逻辑X,else分支将被执行,并为y分配了一个有效值,那么验证代码在验证设计
+功能的结果时,只能看到多路器的输出,而在sel信号上的设计错误将被隐藏.
+Verilog如何避免
+在每个模型中都包含捕获错误的内部代码, 这是一种理想情况. 设计的功能验证只关注于整体的功能实现, 以
+及检出每个设计块中出现非预期数值.
+在 Verilog 模块中加入自检逻辑, 是相当繁琐并且会大大增加代码量, 而这些增加代码必须被综合工具所隐藏,
+因为它们并不是硬件的一部分,而这些代码的无意修改将导致设计行为的变化,由于扩展代码所关联的风险,设计工
+程师一直在犹豫是否在RTL模型中加入错误监控的代码,如下:
+1 always_comb begin
+2 if (sel) y = a;
+3 else
+4 //synthesistranslate_off
+5 if (!sel)
+6 //synthesistranslate_on
+7 y = b;
+8 //synthesistranslate_off
+9 else begin
+10 y = ’bx;
+11 $display(”if condition tested either an X or Z”);
+12 end
+13 //synthesistranslate_on
+14 end
+附加代码可说明在RTL模型中嵌入错误处理的笨拙,只有少数工程师乐意完成这类编写.
+SystemVerilog如何避免
+最好的方式就是采用 SystemVerilog 断言 (SVA), 断言更加简单, 且无需被综合工具隐藏, 同时断言也可打开或
+关闭,如下:
+1 always_comb begin
+2 assert ($isunknown(sel)) else $error(”sel = X”);
+3 if (sel) y = a; //2-to-lMUX
+4 else y = b;
+5 end
+上例使用立即断言,在每次进入always块时都会执行,如果sel出现干扰,将报告断言失败,但在MUX输出被用之
+前,sel应保持稳定,为避免在干扰中执行断言,可使用同步的并发断言.
+隐藏X的陷阱和断言用法的更多细节,可参考著者的另两篇论文,”BeingAssertiveWithYourX”1和”SystemVerilog
+AssertionsareforDesignEngineers,too”2.
+陷阱 39: 两态类型隐藏的设计问题
+陷阱:在运行门级仿真时,设计中的功能错误并没有出现,直到综合之后才出现.
+原因:设计错误并不能通过两态逻辑进行传递.
+无论在 RTL 层还是验证层, 使用两态数据类型建模将包含一个重要的陷阱, 两态类型在仿真起始处将为 0 而
+不是X,而0值通常可用于设计中寄存器的复位值,如下:
+1 bit [31:0] data_reg; //两态变量
+2
+3 always_ff @(posedge clock, negedge reset_n) //数据寄存器
+4 if (!reset_n) data_reg <= 0; //复位到0
+5 else data_reg <= data_in;
+data_reg 的初始值为 0, 同时也是复位值, 这意味着如果设计错误而生成了一个复位信号后, 将无法查看 data_reg
+在错误时所包含的数值.
+1BeingAssertiveWithYourX,byDonMills. PublishedintheproceedingsofSNUGSanJose,2004. Alsoavailablefromtheauthor’sweb
+site,http://www.lcdm-eng.comlassertiveX.pdf.
+2SystemVerilogAssertionsareforDesignEngineers,Too,byDonMillsandStuartSutherland.PublishedintheproceedingsofSNUGSan
+Jose,2006.Alsoavailablefromtheauthor’swebsite,http://www.sutherland.com/papers.html.
+
+## 第 46 页
+
+3. RTL建模 45
+在两态逻辑中隐藏设计错误的另一个方式是在操作返回X值时,
+1 module comparator (output bit eq,
+2 input bit a, b);
+3 assign eq = (a == b);
+4 endmodule
+上例的陷阱出现在两态输入中, 如果出现设计错误或是 a 和 b 失去连接时, 会发生什么? 在四态值中, 未连接的输
+入将被置为浮动高阻态,(a==b)将返回一个X,这是一个可见的设计错误,在两态输入中,无法使用高阻来描述未连
+接输入,输入为0的设计错误将导致输出可为1或0,此时设计错误被隐藏,无法被传递,也不能查看到不正确的结果.
+如果上例的输入和输出都是四态类型, 输出可连接到其他的设计块, 或是一个 IP 模型, 如果这些连接方使用了
+两态类型,在这种情况下,比较操作还会输出一个逻辑X,由于存在未连接的设计错误,X将转换成一个0,传递给两
+态模型,将会再次隐藏设计问题.
+如何避免
+避免这类陷阱的最好方式是在所有设计块中都是四态类型, 它可在仿真起始处包含一个 X, 并在复位未出现时
+X 可见, 由于操作或编程语句可生成一个 X, 使用四态类型可传递设计错误而不是隐藏它, 除了使用四态类型之外,
+还可使用 SystemVerilog 断言, 验证每个设计块的输入是否有效, 在仿真期内 SystemVerilog 功能覆盖还可用于验
+证复位.
+注意:四态类型同样会隐藏设计问题,只有使用不同方式.
+陷阱 40: 数组越界访问的隐藏问题
+陷阱:由于引用了不存在的内存地址造成的设计错误,在RTL仿真中并未提示有此问题存在.
+原因:越界错误无法通过两态逻辑传递.
+在对数组进行越界读取时,两态类型将会隐藏错误,如下:
+1 module RAM # (parameter SIZE =1024, A_WIDTH = 16, D_WIDTH = 31)
+2 (output logic [D_WIDTH-1:0] data_out,
+3 input logic [D_WIDTH-1:0] data_in,
+4 input logic [A_WIDTH-1:0] addr, // 16bitbus
+5 input logic read, write);
+6
+7 bit [D_WIDTH-1:0] mem_array [0:SIZE-1]; //两态数组,陷阱!这里只需要10bit的索引
+8
+9 assign data out = read? mem_array[addr] : ’z; //数组读取
+10 ...
+11 endmodule
+本例中地址总线的宽度大于mem_array的地址范围,在四态数组访问中,如果使用了不存在的地址,将返回一个X,
+但在两态数组访问中,将返回一个0,由于0值也是有效值,越界读取的错误就被隐藏了.
+上例是一个可见的设计错误, 同时也可能因为无意的拼写错误而出现, 当默认的内存尺寸和地址总线参数都是
+正确地,但在RAM实例的创建中重新定义了参数而造成的相同错误,则不是十分明显.
+如何避免
+避免这类陷阱可使用一些方法, 其中一种就是使用四态数组, 对于四态数组的越界访问可返回一个 X, 它可表示
+一个设计问题,但四态数组所需的仿真容量是两态数组的两倍,所以使用两态数组可构建更大的内存.
+另一种方法就是使用 SystemVerilog 断言, 验证重定义的参数值是否会造成越界访问, 该断言只需在零时刻下
+执行.
+第三种方式可采用一种首选的建模风格, 需将之前示例中的常量 SIZE,D_WIDTH 和 A_WIDTH 相互关联, 在这
+种情况下,可基于参数计算出其他的参数:
+1 module RAM # (parameter A_WIDTH = 16,
+2 SIZE = 1<<A_WIDTH,
+3 D_WIDTH = $clog2(SIZE)}
+
+## 第 47 页
+
+3. RTL建模 46
+4 (output logic [D_WIDTH-1:0] data_out,
+5 input logic [D_WIDTH-1:0] data_in,
+6 input logic [A_WIDTH-1:0] addr, // 16bitbus
+7 input logic read, write);
+8
+9 endmodule
+在这种方式下并不能完全避免参数的不正确尺寸,计算后的常量是正确的,但常量依然是parameter类型,还是可以
+被参数的重定义所覆盖,而获取到错误的数值.
+完全避免尺寸不正确的参数, 可将常量声明为 localparam, 它无法被重定义, 可保证计算值不会被覆盖, 但在模
+块的参数声明列表中使用localparam声明并不合法,它只能用于端口声明,这时必须使用Verilog-1995标准(它允
+许localparam的模块声明).
+1 module RAM # (parameter A_WIDTH = 16,
+2 localparam SIZE = 1<<A_WIDTH,
+3 D_WIDTH = $clog2(SIZE)}
+4 (output logic [D_WIDTH-1:0] data_out,
+5 input logic [D_WIDTH-1:0] data_in,
+6 input logic [A_WIDTH-1:0] addr, // 16bitbus
+7 input logic read, write);
+8
+9 endmodule
+注意:$clog2 函数已被加入到 Verilog-2005 标准中, 在 2005 之前该函数必须由设计者编写, 使用一个递归 Verilog
+函数或是使用VerilogPLI.
+陷阱 41: 枚举类型的越界分配
+陷阱:状态机中给出的枚举变量在定义中并不存在.
+原因:枚举类型是强类型,但可包含枚举列表之外的数值.
+Verilog 是一种弱类型的语言, 不同类型的变量分配并不会出现错误或是警告, 与 Verilog 不同,SystemVerilog 的
+枚举类型是一个强类型变量,只有给出的定义才是变量的合法集合:
+1 typedef enum bit [2:0] {HOLD = 3’b001, //两态类型
+2 LOAD = 3’b010,
+3 STORE = 3’b100} states_t;
+4 states_t state_e, nstate_e; //两个枚举变量
+令人惊讶的是枚举类型变量可包含枚举定义之外的数值.
+以下有两种枚举值越界的情况:
+第一种情况:未初始化的枚举变量
+所有静态的 Verilog 和 SystemVerilog 变量, 枚举变量在仿真起始处都有一个默认值, 而对于枚举变量来说, 默
+认值即为数据类型的未初始化值,上例state_e的数据类型为两态的bit类型,它在仿真起始处的未初始化值为0,这
+个值并未出现在变量的枚举列表中,所以它是越界的.
+如何避免
+事实上这个陷阱是语言所需的一种特性, 如果未初始化的枚举值越界, 可清晰地指明设计无法完成正确复位,
+如果是一个四态类型,它的未初始化值为X.
+第二种情况:枚举变量的强制转换
+SystemVerilog需对枚举变量进行过程分配,下例将说明state_e的合法和非法分配.
+1 nstate_e = LOAD; //合法
+2 nstate_e = state_e; //合法
+3 nstate_e = 5; //非法(未包含枚举标识)
+4 nstate_e = 3’b001; //非法(未包含枚举标识)
+5 nstate_e = state_e + 1; //非法(未包含枚举标识)
+SystemVerilog允许在强制转换下实现正常非法分配,如下:
+
+## 第 48 页
+
+3. RTL建模 47
+1 nstate_e = states_t ’(state_e + 1); //合法,但存在陷阱.
+当数值被强制转换成枚举类型,该数值不会进行类型检查,上例中如果state_e为HOLD(3’b001),之后state_e+1
+可得3’b001,并使用强制转换放入到nstate_e中,那么该值将为LOAD,如果state_e为LOAD,可得3’b011,该值
+也将放入到nstate_e,但无法与枚举标识匹配,这时nstate_e中出现了一个越界值,陷阱.
+如何避免
+此处有两种方法可避免该陷阱, 首先是使用静态的转换操作符,SystemVerilog 可使用动态 $cast 函数, 动态转
+换可执行实时错误检查,且不会分配一个越界值给枚举变量,以下是$cast函数的原型:
+1 success_flag = $cast(target_variable , expression)
+$cast 函数可将表达式转换成目标变量的类型, 如果表达式包含了一个目标变量可用的合法值,$cast 函数将返回 1
+并完成分配,如果不合法,$cast函数将返回0且目标变量不会改变,$cast函数的返回值可用于断言检查.
+1 assert(nstate_e, state_e+l);
+2 else nstate_e = LOAD;
+SystemVerilog枚举类型中还包含其他一些内建方法,用于维护枚举变量的数值,在同一个时刻下可保证变量不会越
+界,例如.next()方法可使枚举变量移动到枚举列表的下一个标识,而不是加1,如果当前已是枚举列表的最后一个标
+识,那么将移动到枚举列表的第一个标识,如下:
+1 nstate_e = state_e.next(l);
+陷阱 42: 模块中未确认的共享变量
+陷阱:RTL模型的输出在不需要的情况下发生了变化,且得到了一个非预期的数值.
+原因:多个进程对同一变量的写入,将造成共享资源的冲突.
+从语义上说,Verilog 和 SystemVerilog 变量都可在模块层声明, 并被模块中的多个 initial 或 always 过程块所读
+写,多个过程块对同一变量的读取可以实现,并提供了一种并行进程之间的数值传递,但在多个进程块对同一变量进
+行写入时将产生陷阱,这将影响到所有过程块共享的一个存储,由于过程块之间是并发的,将造成块之间的冲突并影
+响相互之间的功能接口.
+下例给出了一个常见陷阱,这在大型设计中并不直观.变量result共享给了两个并行always块:
+1 module chip (output logic [31:0] result , //本地变量
+2 input logic [31:0] a, b, c, d);
+3 always @(a or b)
+4 result = a & b; //写入result
+5
+6 always @(c or d)
+7 result = c | d; //陷阱,也对result进行了写入
+8 endmodule
+Verilog如何避免
+Verilog 并没有对变量的用法进行约束, 这使得在编写测试程序和抽象总线功能模型时, 能得到最大的自由度,
+而RTL模型的目的在于综合,比如上例的自由度将变成一个陷阱,在Verilog中避免这类陷阱的唯一方式,就是使用
+软件工具(lint),检查多个进程对同一变量的写入操作.
+在SystemVerilog中避免这类陷阱的最好方式,就是约束RTL的编码规则.
+SystemVerilog如何避免
+在 RTL 模型中, 使用 SystemVerilog 的 always_comb,always_ff,always_latch 或是连续分配 assign, 即可简单
+避免这类陷阱,但这些方法用于多个进程共享的变量中是非法的,在验证或BFM(busfunctionalmodel,总线功能模
+型)中的代码,可使用SystemVerilog的内部处理同步(事件触发器,信号量或邮箱)来防止同一个时刻下,对同一变
+量的并发处理.
+
+## 第 49 页
+
+3. RTL建模 48
+陷阱 43: 接口和包中未确认的共享变量
+陷阱:包中的变量在非预期的时间下发生了变化,并给出了一个非预期的数值.
+原因:多个设计或是验证块对接口,包和全局变量进行写入时,都会造成共享资源的冲突.
+之前给出模块内 Verilog 和 SystemVerilog 共享变量的处理, 在 SystemVerilog 中, 变量声明还可在模块的外部
+空间进行, 这些外部的声明空间可以是用户定义包,$unit(内建包的一个类型,???, 对应设计块的编译空间) 和接口,
+而外部声明的变量能被多个模块引用,因而被称为共享变量.
+所以不同设计和验证中的过程块都能对这些共享变量进行访问, 同时这也使查找和调用共享变量的冲突变得更
+加困难.
+1 package sig_defs;
+2 logic [31:0] result , pipe;
+3 endpackage
+4
+5 module blk1 (output logic [31:0] d_out,
+6 input logic [31:0] a, b,
+7 input logic clk , rstn);
+8
+9 import sig_defs::*;
+10
+11 always @*
+12 result = a & b; //陷阱,使用了共享变量
+13
+14 always @(posedge clk or negedge rstn)
+15 if (!rstn) begin
+16 pipe <=0;
+17 d_out <=0;
+18 end
+19 else begin
+20 pipe <= result; //陷阱,使用了共享变量
+21 d_out <= pipe;
+22 end
+23 endmodule
+24
+25 module blk2 (output logic [31:0] d_out,
+26 input logic [31:0] c, d,
+27 input logic clk , rstn);
+28
+29 import sig_defs::*;
+30
+31 always @*
+32 result = a | b; //陷阱,使用了共享变量
+33
+34 always @(posedge clk or negedge rstn)
+35 if (!rstn) begin
+36 pipe <=0;
+37 d_out <=0;
+38 end
+39 else begin
+40 pipe <= result; //陷阱,使用了共享变量
+41 d_out <= pipe;
+42 end
+43 endmodule
+如何避免
+共享变量通常是不可综合的,也不能用于RTL模型,可简单使用SystemVerilog的always_comb,always_ff,
+always_latch 和连续分配 assign 来避免这个陷阱, 有了这些处理, 使得变量的多进程写入变为非法, 这些进程可在
+不同的模块,接口或是测试程序中.
+1 module blk1 (...) ;
+2 import sig_defs::*;
+3
+4 always_comb
+5 result = a & b; //错误,有多个进程写入了result
+6 endmodule
+7
+8 module blk2 (...) ;
+
+## 第 50 页
+
+3. RTL建模 49
+9 import sig_defs::*;
+10
+11 always_comb
+12 result = a | b; //错误,有多个进程写入了result
+13 endmodule
+共享变量在验证代码中很有作用, 但必须小心处理进程之间的冲突, 可使用进程间的同步来实现, 例如事件触发器,
+信号量或是邮箱.
+
+## 第 51 页
+
+操作符陷阱
+陷阱 44: 表达式分配
+陷阱:如果在if条件中加入一个赋值,代码将无法编译.
+原因:SystemVerilog 允许在表达式中进行赋值, 但同 C 一样会包含一些陷阱, 但 SV 的语法与 C 不同, 这会使
+熟悉C的编程者感到困惑.
+在 Verilog 中, 表达式中并不允许赋值, 因此 if (a=b) 是非法的, 不幸的是一些有意义的表达式赋值 while (data
+=fscanf(... ) ....也是非法的.
+在 SystemVerilog 中允许了表达式的赋值, 这使得其他有意义的用法也可使用, 比如为 0 时退出循环,SV 需要
+赋值封闭在括号内,以防止用法出错,比如if(a=b).
+1 if (a=b) ... //在SV中非法.
+2 if ((a=b)) ... //在SV中合法,但无意义.
+3 while ((a=b)) ... //在SV中合法,但有意义.
+颇具讽刺意味的是,当防止了常见的C陷阱if(a=b)之后,SV中又包含了其他的陷阱,对于一个C编程者来说,一直
+会尝试类C的风格,之后将会惊讶为什么工具报告了一个语法错误?它是不是和Verilog一样不允许表达式的赋值?
+又或是工具中并未实现相关的功能,都不是,因为SV的语法与C不同.
+如何避免
+SV 语法有助于防止类 C 的陷阱, 但不同语法中的陷阱并不相同, 工程师必须学习和记住,C 和 SV 在表达式赋
+值中,使用了不同的语法.
+陷阱 45: 自主操作符与关联上下文的操作符
+陷阱:在一些操作符中科进行符号扩展,而在另一些操作符中则不能完成符号扩展,同时在其他一些操作符中,符号
+和尺寸的扩展都无法完成.
+原因: 一些 Verilog 和 SV 操作符将与上下文关联, 而另一些操作符则是自主的, 操作符的类型将关系到矢量的
+扩展.
+进行 4bit 矢量和 6bit 矢量的与操作, 之后将它们的结果赋给 8bit 矢量, 将发生什么? 与操作的操作数的符号是
+否与结果有关?赋值时的符号是否会影响结果?
+Verilog 和 SV 都是弱类型语言, 弱类型并不是指未包含数据类型的规则, 而提供了不同数据类型的内部规则,
+并能在不同数据类型之间进行分配,这些规则可区分操作符是自主型还是与上下文有关,如果工程师不了解这些差
+异,将会在操作结果中找到非预期的差异.
+与上下文关联的操作符: 在执行操作之前, 语句中的数据类型和尺寸都是完整的, 并在操作之前, 语句的所有操
+作数都可扩展成更大的尺寸,如下:
+1 logic [5:0] a = 6’b010101;
+2 logic [3:0] b = 4’b1111;
+3 logic [7:0] c;
+4 c = a & b; //结果为8bit(00000101)
+50
+
+## 第 52 页
+
+4. 操作符陷阱 51
+上例的位与操作的上下文中包含了 a,b,c 矢量的尺寸, 最大的矢量尺寸为 8bit, 因而在执行操作之前,4bit 和 6bit 矢
+量都将扩展成8bit矢量.
+自主型操作符: 只对操作数的数据类型产生影响, 而操作并不会对执行的上下文造成影响, 一元与操作会对操
+作数的所有bit进行与操作,并不会改变操作数的尺寸.
+1 logic [5:0] a = 6’b010101;
+2 logic [3:0] b = 4’b1111;
+3 logic [7:0] c;
+4 c = a | &b; //结果为8bit(00101011)
+上例b的一元and操作则是自主型,a和c的矢量尺寸不受b一元操作的影响,而一元操作的结果为1’b1.
+如果自主操作符是复合表达式的一部分,自主操作符的结果将加入到剩余的语句环境中.
+如果 &b 与上下文相关将发生什么? 首先 b 将被扩展成 8bit(00001111), 这时它的一元操作的结果为 1’b0, 而不
+是1’b1,而a|&b得结果为00101010,该结果是错的,这里并不是一个陷阱,因为一元与操作符是自主型操作符.
+如何避免
+Verilog 的操作是正确的, 其中使用了自主型和与上下文关联的操作符描述硬件行为, 而这个陷阱是由于不了解
+Verilog和SV操作符的规则所产生的不同结果,避免这个陷阱的唯一方法就是多了解Verilog和SV的语法,表4-1
+给出了Verilog和SV的操作符.
+表4-1操作数的尺寸和符号扩展1
+操作符 操作数的扩展类型 备注
+赋值语句: =<= 与上下文相关 赋值的左右侧都会影响尺寸的扩展, 但只有右侧会影响符号扩
+展2.
+赋值操作符: += -= *= 与上下文相关 赋值的左右侧都会影响尺寸的扩展, 左侧操作数可作为右侧分配
+/=%=&=|=^= 环境的一部分(比如a+=b可扩展为a=a+b).
+赋值操作符: <<= >>= - 左操作数与上下文关联, 右操作数则是自主类型, 左操作数可作
+<<<=>>>= 为右侧分配环境的一部分(比如a«=b可扩展为a=a«b).
+条件语句: ?: - 第一个操作数(即条件)是自主类型,第二个和第三个操作数与上
+下文关联.
+运算符: +-*|% 与上下文关联
+幂操作符: ** - 左操作数与上下文关联,右操作数则是自主类型.
+增量和减量操作符: ++ 自主类型
+--
+一元归约操作符: ~ & 自主类型 归约是自主类型,并且是无符号的1bit数值.
+~&|~|^~^^~
+位操作符: ~&|^~^^~ 与上下文关联
+移位操作符: << <<< - 左操作数与上下文关联,右操作数(移位因子)则是自主类型.
+>>>>>
+一元取反: ! 自主类型 归约是自主类型,并且是无符号的1bit数值.
+二元逻辑: &&|| 自主类型 归约是自主类型,并且是无符号的1bit数值.
+等式操作符: ==!==== 与上下文关联 归约是自主类型,并且是无符号的1bit数值.
+!====? !=?
+关系操作符: <<=>>= 与上下文关联 归约是自主类型,并且是无符号的1bit数值.
+串接操作符: {}{{}} 自主类型 结果为无符号数.
+位选中和片选中:[] [:] 自主类型 结果为无符号数.
+[+:] [-:]
+1此表中只给出了矢量操作数,而real类型(浮点数),开放式结构,开放式数组并未包含在本书中.
+2表达式分配还可放入另一个分配的右侧(例如d=(a=b+5)+c;),在这种情况下,嵌套分配将作为外层分配的一部分(也就是说a不会受到
+b+5结果(符号扩展)的影响,只会受到+c操作的符号影响).
+另外值得注意:如果一个与上下文相关的操作是一个自主操作的操作数,这时上下文相关操作的环境仅限于自身的操作数,而不是整个语句,如d
+=a>>(b+c);中,加法操作的环境仅限于b和c.
+
+## 第 53 页
+
+4. 操作符陷阱 52
+陷阱 46: 分配语句中的尺寸和符号扩展
+陷阱:输出声明为有符号类型,但设计中一直在进行无符号操作.
+原因:在分配语句中,符号扩展的环境只作用于分配的右侧.
+符号扩展的操作受控于操作符的操作数, 以及操作执行的环境, 自主操作符只受操作数的数据类型的影响, 与
+环境关联的操作符将会受到整个表达式中所有操作数的尺寸和数据类型的影响.
+在与环境关联的操作符动作之前, 它的操作数将首先扩展成环境中最大的矢量尺寸, 操作数扩展将分为三步,
+这些步骤将使用不同的环境规则:
+1. 评估分配语句两侧中所有自主操作符结果的尺寸和符号,这些信息将用于后续操作.
+2. 确认环境中最大的矢量尺寸,这个环境包含了分配语句的左右侧.
+3. 将所有与环境关联的操作数扩展成最大的矢量尺寸,扩展是采用零扩展还是符号扩展,将依赖于操作环境,如
+下:
+(cid:15) 如果右侧的操作数或自主操作结果为无符号,那么右侧结果将被处理成无符号,小矢量将使用零扩展.
+(cid:15) 如果右侧的操作数或自主操作结果为有符号,那么右侧结果将被处理成有符号,小矢量将使用符号扩展.
+注意第2步和第3步的差异,将会确认两侧的最大矢量尺寸,但符号扩展只会对右侧进行处理.
+Verilog中的操作扩展规则将反映在硬件中,下例将给出Verilog规则所预期的操作:
+1 logic [3:0] u1, u2; //无符号4bit矢量
+2 logic signed [3:0] s1, s2; //有符号4bit矢量
+3 logic [7:0] u3; //无符号8bit矢量
+4 logic signed [7:0] s3; //有符号8bit矢量
+5 logic o; //无符号1bit矢量
+6
+7 u3 = u1 + u2; //零扩展(无符号=无符号+无符号)
+8 s3 = s1 + s2; //符号扩展(有符号=有符号+有符号)
+9 s3 = s1 + 1; //符号扩展(有符号=有符号+无符号)
+10 s3++; //符号扩展(有符号=有符号+无符号)
+11 u3 += 2’b11; //u3=u3+2’b11,零扩展(无符号=无符号+无符号)
+12 s3 += 2’sb11; //s3=s3+2’sb11,符号扩展(有符号=有符号+有符号)
+如果工程师不了解扩展规则将出现陷阱,下例将给出不同的预期值:
+1 s3 = u1 + u2; //零扩展,左侧不会影响右侧的符号扩展.
+2 u3 = s1 + s2; //符号扩展,同上.
+3 s3 = s1 + u2; //零扩展,若右侧包含了无符号数则表示整个右侧环境为无符号.
+4 s3 = s1 + 1’b1; //零扩展
+5 s3 += 2’b11; //零扩展
+6 u3 += 2’sb11; //零扩展
+复合表达式中可混用自主操作符和与环境关联的操作符,在这种情况下,自主操作的结果类型将由环境关联的操作
+符决定,如下:
+1 {o,u3} = u1 + u2; //左侧出现了一个自主串接,它将会影响右侧操作的尺寸.
+2 u3 = u1 + |u2; //首先将完成u2的一元操作,之后将得到的1bit结果进行零扩展至8bit,在与u1相加.
+3 s3 = s1 + |s2; //陷阱,首先完成s2的一元操作,之后将得到的1bit结果进行零扩展至8bit,s1也将零扩展至8bit.
+事实上零扩展和符号扩展的陷阱是Verilog和SV中有意义的特性,比如+中,加法器的溢出将依赖于操作环境的最
+大矢量尺寸,同时操作符+也可用于有符号和无符号加法器,这也与操作环境有关.
+如何避免
+当出现矢量扩展时, 如果不了解矢量会使用零扩展还是符号扩展, 将产生陷阱, 为了避免这个陷阱, 工程师必须
+清楚地知道Verilog和SV的规则,一旦了解了规则,工程师就能正确使用操作中的尺寸和类型,Verilog-2001提供了
+$signed()和$unsigned()函数控制操作数的符号,而SV提供更多的应用,以控制类型,尺寸和符号的扩展规则,如
+下:
+1 s3 = s1 + u2; //陷阱,零扩展
+2 s3 = 8’(s1) + signed ’(u2); //OK,将s1强制转换成8bit(自主类型),并强制将u2转换成有符号数.
+
+## 第 54 页
+
+4. 操作符陷阱 53
+陷阱 47: 符号运算的规则
+陷阱:有符号加法器原来能正常工作,但加入一个进位输入后,现在只能进行无符号加法.
+原因:只有当整个右侧环境是有符号的,才能进行符号运算.
+Verilog和SV中可表征不同类型的硬件,比如操作符+可表示:
+(cid:15) 任意bit宽度的加法器,且不包含进位输入和输出.
+(cid:15) 任意bit宽度的加法器,不包含进位输入,但包含了进位输出.
+(cid:15) 任意bit宽度的加法器,且包含了进位输入和输出.
+(cid:15) 无符号加法器
+(cid:15) 有符号加法器
+(cid:15) 单精度浮点加法器
+(cid:15) 双精度浮点加法器
+运算类型受控于操作数类型和操作环境,为了执行有符号操作,所有操作数必须是有符号的,运算操作符也是与环境
+相关的,不光是运算操作符的操作数必须是有符号的,而且整个右侧中其他的操作数也必须是有符号的.
+下例给出了一个无陷阱的有符号加法器,它的仿真和综合都是正确的:
+1 module signed_adder_no_carry_in (input logic signed [3:0] a, b, //有符号4bit输入
+2 output logic signed [3:0] sum, //有符号4bit输出
+3 output logic co); //无符号1bit输出
+4 assign {co,sum} = a + b; //有符号5bit加法器
+5 endmodule
+上例的左侧串接是一个定义5bit无符号矢量的自主表达式,左侧的尺寸将影响右侧的加法操作,但不会影响右侧的
+符号,右侧的所有操作数都是有符号的,这时将影响加法器,并执行一个5bit有符号加法.
+使用无符号进位下例中加入了一个 1bit 进位输入, 这时将出现陷阱, 因为它无法仿真或综合成一个有符号加法
+器.
+1 module signed_adder_no_carry_in (input logic signed [3:0] a, b, //有符号4bit输入
+2 input logic ci , //无符号1bit输入
+3 output logic signed [3:0] sum, //有符号4bit输出
+4 output logic co); //无符号1bit输出
+5 assign {co,sum} = a + b + ci; //有符号5bit加法器
+6 endmodule
+在仿真中,只有当a或b为负值时问题才会出现,综合工具会因为a和b强制为无符号类型而发出警告,所以Verilog
+中的运算操作与环境相关,虽然a和b有符号,但ci是无符号的,这时环境中的所有操作数都将转换成无符号数.
+使用无符号进位将1bit进位输入声明为有符号类型,看上去可解决这个问题:
+1 module signed_adder_no_carry_in (input logic signed [3:0] a, b, //有符号4bit输入
+2 input logic signed ci , //有符号1bit输入
+3 output logic signed [3:0] sum, //有符号4bit输出
+4 output logic co); //无符号1bit输出
+5 assign {co,sum} = a + b + ci; //陷阱,ci将实现一个减法
+6 endmodule
+上例中完成了一个有符号运算,但使用了不正确的符号扩展,至少所需的功能是不正确的,这是由于加法操作符是与
+环境相关的,首先所有的操作数将扩展成最大的矢量尺寸,也就是左侧的5bit,在执行加法之前,a,b,ci都会使用符号
+扩展至5bit,a和b的操作是正确的,但ci的处理并不正确,如果ci为0,将扩展为5’b00000,如果ci为1将使用符
+号扩展为5’b11111,即为-1,而不是+1,这时加法操作的结果为a+b+-1.
+使用强制符号操作 Verilog-2001 引入了 $signed 和 $unsigned 转换函数,SV 中加入了符号强制转换, 符号强制
+转换可改变操作数的符号,以下可使用符号强制转换来修正有符号加法器:
+1 module signed_adder_no_carry_in (input logic signed [3:0] a, b, //有符号4bit输入
+2 input logic ci , //无符号1bit输入
+3 output logic signed [3:0] sum, //有符号4bit输出
+4 output logic co); //无符号1bit输出
+5 assign {co,sum} = a + b + signed ’(ci); //陷阱,ci还是一个减法
+6 endmodule
+对进位实现符号强制转换,同样会引入将进位声明为有符号类型相同的陷阱,当进位为1,使用符号扩展后依然为-1.
+
+## 第 55 页
+
+4. 操作符陷阱 54
+如何避免
+这个问题实际上是有符号的 1bit 数值无法表征数值和符号位, 声明或强制转换 1bit 数为有符号数时, 数值和符
+号位都是相同的,因而无法使用硬件进行描述.
+正确的方式应该将1bit进位输入放入到2bit有符号表达式中,如下:
+1 assign {co,sum} = a + b + signed ’({l ’b0,ci}); //有符号5bit加法器
+signed’(l’b0,ci) 可创建一个 2bit 有符号操作数, 其符号位一直为 0,2bit 符号数可使用符号扩展, 而扩展将会使用 0,
+以保证进位一直为正.
+陷阱 48: 位选中和片选中操作符
+陷阱:所有数据类型都声明为有符号类型,在操作中引用有符号矢量时,却得到了无符号结果.
+原因:片选中操作的结果都是无符号的.
+选中矢量的位或部分内容都是一类操作, 而位选中和片选中操作将会返回一个无符号数, 而不会关心矢量是否
+是有符号的,如果这类符号的变化不可预期,将成为符号运算的另一个陷阱.
+1 parameter MSB = 31;
+2
+3 logic signed [MSB:0] a, b; //有符号矢量
+4 logic signed [MSB:0] sum1, sum2; //有符号矢量
+5 logic signed [7:0] sum3; //8bit有符号矢量
+6
+7 assign sum1 = a + b; //有符号加法
+8 assign sum2 = a[MSB:0] + b[MSB:0]; //陷阱,无符号加法
+9 assign sum3 = {a[MSB],a[6:0]} + {b[MSB],b[6:0]}; //陷阱,无符号加法
+以上的两个陷阱都是由于片选中操作返回的无符号数造成的, 位选中和片选中操作都是自主类型,因此在加法操作
+之前将进行评估,这使得加法操作的环境也变为无符号.
+如何避免
+由于 sum2 分配中使用了完整的 a,b 矢量, 为了避免这类陷阱的最简单方法, 就是不使用片选中操作法, 而可使
+用与sum1相同的方式,但代码通常可在软件工具中生成,因而会自动使用片选中,甚至是在使用整个矢量的情况下,
+片选中可简化大量的参数化实现,以重新定义矢量的尺寸.在sum3示例中,并未使用片选中.如果必须在有符号矢
+量中使用片选中,应对片选中的结果进行强制转换,可使用Verilog-2001的$signed函数或是SV的符号强制转换,
+如下:
+1 assign sum2 = $signed(a[MSB:0]) + $signed(b[MSB:0]);
+2 assign sum3 = signed ’({a[MSB] ,a[6:0]}) + signed ’({b[MSB] ,b[6:0]});
+陷阱 49: 增量, 减量和分配操作符
+陷阱:在计数器中使用了++,计数值也是正确的,但其他代码读取的计数值却是错误的.
+原因:增量,减量和分配操作都是阻塞分配..
+SV 中提供了类 C 的 ++ 和 –操作符, 以及类 C 的分配操作符, 如 +=,-=,*= 和/=, 这些都可吸引 C 编程者的加
+入,并能用于验证testbench,当RTL模型中使用这些操作符将存在陷阱,这些操作符将会实现阻塞分配,在RTL模
+型中,阻塞分配只能用于组合逻辑,如果在时序逻辑中使用这些操作符,将出现一个竞争条件,如下:
+1 always_ff @(posedge clock, negedge reset_n)
+2 if (reset_n) fifo_write_ptr = 0;
+3 else if (! fifo_full) fifo_write_ptr++;
+4
+5 always_ff @(posedge clock)
+6 if (fifo_write_ptr == 15) fifo_full <= 1; //陷阱
+7 else fifo_full <= 0;
+
+## 第 56 页
+
+4. 操作符陷阱 55
+第一个过程块将在时钟边沿上修改 fifo_write_ptr, 由于并发运行,可能存在一个不同结果. 第二个过程块中, 在相同
+的时钟边沿上读取了fifo_write_ptr,由于在更新fifo_write_ptr时使用了++,该更新可出现在第二个过程块采样的前
+后,两种次序都是合法的,因此在不同的仿真器将出现不同的结果.
+如何避免
+SV 的增量, 减量和分配操作符都不能用于时序逻辑, 这些操作符只能用于组合逻辑, 比如 for 循环, 增量和减量
+操作数无法被并发的进程所读取,正确的fifo增量方式如下:
+1 always_ff @(posedge clock, negedge reset_n)
+2 if (reset_n) fifo_write_ptr = 0;
+3 else if (! fifo_full) fifo_write -ptr <= fifo_write -ptr + 1;
+陷阱 50: 前增量和后增量操作符
+陷阱:假定循环可执行16次,并在15次后退出,但循环的控制变量包含了数值16.
+原因:前增量和后增量将影响表达式的结果.
+以下代码是否完成了相同的功能?
+1 sum = i++;
+2 sum = i+1;
+答案是不同,且包含了一个陷阱.
+和 C 语言相同,SV 的 ++ 和 –可放置在变量名的前后 (例如 ++i,i–), 这两种用法即为前增量和后增量, 操作的结
+果是相同,使变量加1,在大多数环境中,前后增量可互换使用,在for循环中使用前后增量可得到相同的结果:
+1 for (int i =0; i <255; ++i) ...
+2 for (int i =0; i <255; i++) ...
+这两个示例能相同,是因为++i和i++都是独立语句,在i进行增量时并无其他语句对其进行读取,语句中可见到i的
+新值,并不会介意它是前增量还是后增量.
+这类陷阱在C中也存在.
+1 i = 10;
+2 j = i++; //将i分配给j,之后加1,j为10
+3 j = ++i; //将i加1,之后将结果分配给j,j为11
+两个示例都是正确的,只是与设计和验证工程师的意图有关,当然工程师不希望使用错误的操作符实现某个功能.
+在一些上下文中,前后增量的影响并不明显:
+1 i = 16;
+2 while (i --) ... //测试i后,i减1,循环将执行16次.
+3 while (--i) ... //减1后测试i,循环将执行15次.
+以上的示例都是正确的,只是关系到设计的意图,工程师并不希望使用一个错误的操作符来完成循环的执行.
+如何避免
+避免这个陷阱的方法,就是完整了解前后增量的功能,两种操作符都是有意义的,需要仔细区分.
+陷阱 51: 一条语句对变量的多次修改
+陷阱:在一条语句中,对一个变量进行了多次操作,在不同的仿真器中得到了不同的结果.
+原因:在分配语句的右侧,复合表达式对同一变量进行多次修改,那么修改次序将无法定义.
+SV包含了分配操作符(如+=,-=)和增减量操作符(++,–),这些操作符都将对操作数进行读取和修改,如下:
+1 j = ++i; //将i加1,并将结果分配给j.
+2 j = (i += 1); //将i加1,并将结果分配给j.
+
+## 第 57 页
+
+4. 操作符陷阱 56
+以上的示例在分配之前都会变量进行了修改,这是一个陷阱,因为在相同的表达式中对同一个变量进行了多次修改,
+如:
+1 i = 10;
+2 j = --i + ++i; //陷阱,对同一变量进行了多次操作.
+上例中对i进行多次的读取和修改,在SV中无法保证多次操作的次序,因而执行后j值可能是19,20或21(也可能
+是其他的数值),这关系到增量和减量的实际次序.
+如何避免
+应避免在一条语句中对同一个变量进行多次操作, 综合工具不允许这类操作, 因为它将造成不确定的结果, 正
+确的方式应按照设计者的意图进行处理.
+陷阱 52: 操作符评估的省略
+陷阱:在一条语句中调用了两次函数,但有时只会执行一次调用.
+原因:在一些条件下,仿真并不执行所有的操作数.
+软件仿真并不会采用与硬件相同的方式执行语句,如下:
+1 always @(posedge clock)
+2 if (mem_en && write) mem[addr] <= data_in; //无副作用
+上例的逻辑与操作符将检查mem_en和write是否都为真,在硬件中这类操作是一个与门,并会对两个输入连续检
+查,从而给出与门的输出,在仿真中的逻辑操作将从左到右,如果mem_en为假,这时逻辑与的操作结果已知,则不
+会再检查write,也就是在所有操作数被评估之前,操作结果已知的情况,被称为操作省略(operationshortcircuiting),
+这在Verilog/SV标准中都是允许的,但不是必须的.工具可省略逻辑与,逻辑或和?:条件操作符,同时标准中并未清
+晰告知其他的操作符能否省略,既没有明白地允许也没有明白地禁止.
+为什么要使用省略?除了上例之外,仿真结果是否能与硬件行为相匹配,如下:
+1 always @(posedge clock)
+2 if (f(i1,o1) && f(i2,o2)) //陷阱,可能出现副作用
+3 mem[addr] <= data_in;
+4
+5 function f(input [7:0] d_in, output [7:0] d_out);
+6 d_out = d_in + 1;
+7 if (d_out == 255) return 0;
+8 else return 1;
+9 endfunction
+上例的函数可传入不同的数值,并得到不同的返回.另外函数可返回一个状态标志,函数在&&操作符中调用了两次.
+在硬件中逻辑与将使用一个与门实现, 函数将使用组合逻辑替换, 并作为与门的输入, 同组合逻辑一样,o1 和
+o2将会连续更新.
+在软件中逻辑与操作将从左到右, 如果第一个函数的返回值为 0, 与操作可在不评估第二个操作数的情况下已
+知结果,仿真器或其他工具允许了操作的省略,这时第二个函数将不会调用,这时o2将无法更新到i2,陷阱.
+如何避免
+避免这类副作用只有一种方式, 即保证操作数的执行. 只有在操作数不会造成副作用的情况下, 实现操作数的
+省略,使得仿真可正确匹配硬件的行为.
+为避免上例的省略,可重新编写代码以保证每个函数都能被执行,如下:
+1 always @(posedge clock) begin
+2 temp1 = f(i1,o1);
+3 temp2 = f(i2,o2);
+4
+5 if (temp1 && temp2)
+6 mem[addr] <= data_in;
+7 end
+
+## 第 58 页
+
+4. 操作符陷阱 57
+陷阱 53: 取反 (!) 和反转 ( ) 操作符
+陷阱:if语句中无法执行所需的非真条件.
+原因:逻辑取反操作符和位反转操作符是不同的,并会造成不正确的用法.
+Verilog 新手有时会滥用逻辑取反 (!) 和位反转 ( ) 操作符, 在一些操作中, 它们的结果是相同的, 但在另一些操
+作中,它们的结果是不同的,如下:
+1 logic a; //1bit四态变量
+2 logic [1:0] b; //2bit四态变量
+3
+4 initial begin
+5 a = 1;
+6 b = 1;
+7 if (!a) ... //评估为假
+8 if (~a) ... //评估为假
+9 if (!b) ... //评估为假
+10 if (~b) ... //评估为真,陷阱
+11 end
+在1bit数值中使用取反和反转操作符的结果是相同的,但在矢量中,位反转首先将进行所有位的反转,之后才进行真
+假评估.
+如何避免
+位反转操作符不能用于负逻辑的真假测试,逻辑测试只能使用取反操作符.
+当然逻辑取反也不能用于数值反转,只有1bit数值时,取反和位反转的结果是相同的.
+陷阱 54: 数组的方法
+陷阱:在使用内建的sum方法累计数组中所有数值的总和时,得到了一个错误的结果.
+原因:一些SV数组方法是与上下文相关的.
+SV 中加入了一些可用于数组的内建函数, 被称为数组方法, 这里引入的陷阱是在 sum 方法使用时出现的, 当
+然其他数组方法使用时也会出现类似的陷阱.
+sum 方法可返回数组中所有元素的累计值, 下例中 fifties 数组中保存了四个 8bit 矢量, 并被初始化为整型值,
+数组值的累加将使用sum方法,并使用$display语句打印.
+1 logic [7:0] fifties [0:3] = ’{50,100,150,200}; //8bit数组
+2 $display(nfifties.sum is %0d”, fifties .sum); 陷阱//
+上例的累计值为500,而返回值为244,陷阱!
+这是由于 sum 方法和其他数组方法相同, 都是与上下文关联的, 在与上下文关联的操作中, 操作中的矢量尺寸
+将基于上下文的矢量尺寸.
+上例中每个数组元素为 8bit, 而 sum 操作中并未包含其他的数值, 因而操作环境即为 8bit, 当数组进行累计时,
+多余8bit尺寸的结果将被截断,而在环境中计算数组累加和的加法器也没有进位.
+如何避免
+避免这个陷阱的方式, 就是在数组方法使用的环境中, 指定方法可返回的最大矢量尺寸, 修改操作环境的方式
+主要有两种:
+第一种简单方式, 就是在方法返回中加入文本 0 值, 修改尺寸环境, 以下在 sum 返回中加入了 16bit 的文本 0
+值,这使得操作环境的尺寸变为16bit,以满足最大数值的要求,本例将返回的正确值为500.
+1 $display (” fifties . sum is %0d”, (fifties . sum + 16’d0));
+
+## 第 59 页
+
+4. 操作符陷阱 58
+第二种方式就是将方法返回值分配给一个更大的矢量,以改变环境的矢量尺寸,环境的矢量尺寸将基于分配语句的
+两侧,如下:
+1 int total; //32bit整型变量
+2 total = fifties .sum
+3 $display(”total is %0d”, total);
+陷阱 55: 数组子集的方法
+陷阱:对数组中特定元素的累加,却得到了一个错误的结果.
+原因:使用sumwith()只是对with()表达式的判断值进行累加,而不是数组元素的累加.
+SV 中提供一些数组方法, 用于搜索和维护数组中的数据, 这些方法只能用于开放式数组, 其中包含了数组搜索,
+数组排序,数组归约.
+sum 方法就是一种数组归约的方法, 它可返回数组中所有元素的累加和, 可选的 with() 可过滤一些数组元素,
+当使用sumwith()将包含一个微妙的陷阱.
+下例中数组所有数值的累积和将大于7.
+1 program automatic test;
+2 initial begin
+3 int count, a[] = ’{9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
+4 count = a.sum with (item > 7); //陷阱:预期值为17,但实际值为2.
+5 $display(”\”a.sum with(item > 7)\” returns %0d”, count);
+6 end
+7 endprogram
+当使用with()时,将使用with过滤出的数值,在sum中进行累加,而不是对数组元素的数值进行累加,上例的item>
+7是一个真假判断表达式,将得到1’b1或1’b0,如果数组为9,8,7,3,2,1,表达式可得1’b1,1’b1,1’b0,1’b0,1’b0,
+1’b0,所以最后的累积和为2.
+其他数组方法在使用with()时,存在相同的陷阱.
+如何避免
+使用关系表达式的判断结果,选择是否累加数组元素,可使用两种简单的方法:
+1 count = a.sum with((item > 7) ? item : 0);
+2 count = a.sum with((item > 7) * item);
+
+## 第 60 页
+
+常见的编程陷阱
+陷阱 56: 零时刻下异步和同步复位的验证
+陷阱:设计在零时刻有时能复位,有时无法复位.
+原因:initial过程块和always过程块并未给出一个次序.
+这是一个常见的验证陷阱, 主要是未理解 initial 和 always 过程块之间的事件调度, 由于 initial 名称使得一些工
+程师认为 initial 块的执行一定是先于 always, 而另一些工程师则相信 initial 块可保证在所有 always 块被激活后执
+行.
+那么它们之间的次序是怎样的? 如果需要验证零时刻下设计的复位, 该问题的答案并不简单, 它依赖于设计采
+用的是异步复位还是同步复位.
+下例说明了testbench如何实现设计的异步复位.
+1 module chip (input logic clock, input logic reset_n, ... );
+2 always_ff @(posedge clock, negedge reset_n) //异步复位
+3 if (!reset_n) q <= 0;
+4 else q <= d;
+5 endmodule
+6
+7 module test (input logic clock, output logic reset_n, ... );
+8 initial begin
+9 reset_n = 0; //陷阱,在零时刻下激活复位
+10 #10 reset_n = 1;
+11 end
+12 endmodule
+13
+14 module top;
+15 logic clock, reset_n, ...;
+16 test test (.*); //连接设计和testbench
+17 chip dut (.*);
+18
+19 initial begin
+20 clock = 0; //在第5个时间单位上出现第一次时钟上升沿.
+21 forever #5 clock = ~clock;
+22 end
+23 endmodule
+上例中,如果仿真器首先激活always_ff,将遇到它的敏感表,并将其挂起等待reset_n下降沿,之后当test模块中的
+initial被激活,会将reset_n拉低,always_ff将检测到这个变化进行复位.
+由于无法保证过程块之间的激活次序,Verilog 和 SV 标准没有规定零时刻下 initial 和 always 块的执行次序, 所
+以test模块中的initial块可在always_ff之后被激活,在这种情况下,零时刻下的触发操作将丢失,同时零时刻下的
+异步复位也失败了.
+为了给出激活次序, 在验证事件出现时, 必须给出特定的编程结构, 所以出现了一些解决该陷阱的方法, 以保证
+reset_n在零时刻拉低之前,always_ff能首先激活,在分析这个方案之前,先看看设计的同步复位:
+1 module chip (input logic clock, input logic reset_n, ... );
+2 always_ff @(posedge clock) //同步复位
+3 if (!reset_n) q <= 0;
+4 else q <= d;
+5 endmodule
+6
+59
+
+## 第 61 页
+
+5. 常见的编程陷阱 60
+7 module test (input logic clock, output logic reset_n, ... );
+8 initial begin
+9 reset_n = 0; //陷阱,在零时刻下激活复位
+10 #10 reset_n = 1;
+11 end
+12 endmodule
+13
+14 module top;
+15 logic clock, reset_n, ...;
+16 test test (.*); //连接设计和testbench
+17 chip dut (.*);
+18
+19 initial begin
+20 clock = 1; //陷阱,此时出现第一个时钟上升沿
+21 forever #5 clock = ~clock;
+22 end
+23 endmodule
+上例给出了两个修改,always_ff变为同步复位,top模块的时钟生成器在零时刻变为正边沿,这是为了在零时刻进行
+设计复位.
+异步复位需要 always_ff 块在复位初始化之前被激活, 因此在设计和复位激活之间产生了一个竞争条件, 而在
+同步复位中,需要always_ff和initial块必须在时钟初始化之前被激活,由于这三个块的激活次序无法确定,因而它
+们之间都会竞争条件.
+如何避免
+首先必须了解 Verilog 中并发语句的事件调度, 同时还需了解硬件的类型, 不同类型的硬件需要不同的事件次
+序.
+最简单的推荐方式, 即在零时刻下避免生成设计的时钟和复位, 如果时钟和复位出现在零时刻之后, 所有的过
+程块都已被激活,事件之间的次序已不再重要.
+如果零时刻下设计的复位是必须的, 则必须混合使用阻塞和非阻塞分配, 阻塞分配可立即更新左侧值, 而非阻
+塞分配的数值更新将包含一个时钟延时,在仿真零时刻下,必须保证所有过程块都在此时时钟延时前被激活.
+如果设计使用了异步复位,时钟和复位都需使用非阻塞分配进行初始化.
+1 module test (input logic clock, output logic reset_n, ... );
+2 initial begin
+3 reset_n <= 0; //复位将在时钟延时后被激活
+4 #10 reset_n = 1;
+5 ...
+6 end
+7 endmodule
+8
+9 module top;
+10 ...
+11 initial begin
+12 clock <= 1; //在时钟延时后将出现第一个时钟上升沿
+13 forever #5 clock = ~clock;
+14 end
+15 endmodule
+在使用异步复位时,并不理会时钟和复位的次序,只要它们在零时刻的时钟延时后出现即可,若它们被放入到时序逻
+辑的敏感表中,如果时序逻辑被激活,将在零时刻被复位.
+如果设计使用了同步复位, 那么时钟和复位出现的次序将很重要, 复位信号必须在第一个时钟边沿出现之前被
+激活,为了保证这个事件次序,时钟初始化必须使用非阻塞分配,而复位信号必须使用阻塞分配,也就是在时钟延时
+之前被更新.
+1 module test (input logic clock, output logic reset_n, ... );
+2 initial begin
+3 reset_n = 0; //复位将在时钟延时前被激活
+4 #10 reset_n = 1;
+5 ...
+6 end
+7 endmodule
+8
+9 module top;
+
+## 第 62 页
+
+5. 常见的编程陷阱 61
+10 ...
+11 initial begin
+12 clock <= 1; //在时钟延时后将出现第一个时钟上升沿
+13 forever #5 clock = ~clock;
+14 end
+15 endmodule
+非阻塞分配是为了保证所有过程块都被激活,无论是initial还是always.
+SV如何避免
+在SV中testbench可使用program而非module进行建模:
+1 program automatic test (input logic clock, output logic reset_n);
+2 initial begin
+3 reset_n <= 0; //复位将被验证事件激活
+4 #10 reset n <= 1;
+5 ...
+6 end
+7 endprogram
+8
+9 module top;
+10 ...
+11 initial begin
+12 clock <= 1; //在时钟延时后将出现第一个时钟上升沿
+13 forever #5 clock = ~clock;
+14 end
+15 endmodule
+program块中包含了特殊的事件调度语义,以避免测试和设计之间的常见竞争条件,program块中的数值变化可保证
+放入模块和接口的阻塞和非阻塞分配之后,并能提供仿真零时刻下异步复位调度的正确次序,注意program无法解
+决零时刻下同步复位的调度.
+陷阱 57:if...else 的嵌套
+陷阱:if语句与else分支配对时发生了错误.
+原因:else分支只能与最近的未包含else的if语句配对,begin...end结构可覆盖默认的配对.
+Verilog 和 SV 中 if...else 中的 else 分支是可选的, 它可能会在不同的 if...else 语句中引入冲突, 有些结构中不
+能指定可选的else分支,如下:
+1 if (a >= 5)
+2 if (a <= 10) $display (” ’a’ is between 5 and 10”);
+3 else $display (” ’a’ is less than 5”); //陷阱,if配对出错
+上例的意图是希望else与第一个if语句配对,但语言规则中可自动将else与最近的if语句配对,示例中的意图无法
+改变语言的配对规则.
+上例的实际结果为:
+1 if (a >= 5)
+2 if (a <= 10) $display (” ’a’ is between 5 and 10”);
+3 else $display (” ’a’ is less than 5”); //配对正确
+如何避免
+自动的if...else配对可使用begin...end结构覆盖,如下:
+1 if (a >= 5) begin
+2 if (a <= 10) $display (” ’a’ is between 5 and 10”);
+3 end
+4 else $display (” ’a’ is less than 5”); //配对正确
+支持语言的文本编辑器可避免这类陷阱,它可正确理解嵌套的if...else语句的意图,正确排列if语句和else.
+
+## 第 63 页
+
+5. 常见的编程陷阱 62
+陷阱 58: 四态值的等值判断
+陷阱:testbench中丢失了设计输出的信号,而且是在输出测试中.
+原因:等值判断可包含三个结果,真,假或未知类型,而if...else中只包含两个分支.
+验证中的常见任务即是比较设计数据和预期数据,Verilog 可使用等值表达式 ==, 它的用法与 C 语言类似, 但并
+不相同!同时还包含了一个不等值操作符,这也与C类型,但存在差异.
+下例是testbench与其他编程语言类似的用法,但使用了四态逻辑,因此无法得到预期的功能:
+1 always @(posedge test_clock)
+2 if (data != expected) //陷阱
+3 $display(”Error on data: saw %h, expected %h”, data, expected);
+上例中如果数据一直是已知类型,代码可正常工作,但数据若为X或Z,if分支将无法判断,因为数据中的X或Z将
+被视为一个设计错误,而在验证代码中将会产生数据的丢失.
+这些陷阱是由于不了解等值和不等值操作符对四态数值的处理,对应的规则如下:
+(cid:15) 如果两操作符在数字上相等,操作结果为真.
+(cid:15) 如果两操作符在数字上不等,操作结果为假.
+(cid:15) 如果有一个操作数是未知类型,操作结果则未知.
+真,假和未知结果可使用1bit数值表示,1’b1,1’b0和1’bx.
+if...else 判断中只包含了两个分支, 如果表达式为真,if 分支将执行, 如果表达式为假或未知, 将执行 else 分支,
+上述的验证代码使用了if分支捕获错误,但没有给出else,因而当表达式结果中出现逻辑z或x时,将得到一个设计
+错误,而不等值操作符中也可返回未知类型,这将使验证代码的if分支无法运行,那么设计错误将无法检出.
+如何避免
+避免这类陷阱,首先需要了解四态值的评估,设计和验证工程师都需了解四态值的评估方式.
+Verilog中还可使用特殊的验证操作符,也就是恒等操作符(===和!==),以替换等值操作符,如下:
+1 always @(posedge test_clock)
+2 if (data !== expected) //它可检出bit位中的X或Z.
+3 $display(”Error on data: saw %h, expected %h”, data, expected);
+恒等操作符将进行两操作数之间的位比较, 而在位比较中将使用四态值, 如果所有 bit 都相同, 评估将为真, 如果有
+bit位不同,评估将返回假,不恒等操作符的结果正好相反.
+陷阱 59: 事件触发的竞争条件
+陷阱:在同步处理中可使用事件类型,但有时事件触发时,无法激活对应的处理.
+原因:如果在相同的时间单位中触发事件,进程将无法检出事件.
+Verilog 使用 event 类型和 -> 时间触发操作符, 以及 @ 事件时间控制符, 提供了进程内的同步机制, 大多数工
+程师并不了解语言中还提供了这个特性,因而更不了解如何使用.
+在Verilog事件触发时,很容易引入仿真的竞争条件,如下代码给出了潜在的竞争条件:
+1 module event_examplel;
+2 event get_data, send_data; //握手标志
+3 initial -> get_data; //陷阱,将在零时刻触发
+4
+5 always @(get_data) begin //等待一个get_data事件
+6 ... //get_data处理代码
+7 ... //完成处理将触发send_data
+8 -> send_data; //实现send_data处理的同步
+9 end
+10
+11 always @(send_data) begin //等待一个send_data事件
+
+## 第 64 页
+
+5. 常见的编程陷阱 63
+12 ... //send_data处理代码
+13 ... //完成处理将触发get_data
+14 -> get_data; //实现get_data处理的同步
+15 end
+16 endmodule
+两个always块将完成简单的握手机制,event类型将作为完成信号和使能信号,在initial块中将启动握手序列.
+这需要在仿真零时刻下所有过程块都被激活, 否则将出现一个陷阱, 如果 initial 块在 always @(get_data) 之前
+被激活,该握手序列将无法启动.
+Verilog如何避免
+在 Verilog 中解决这个问题的唯一方式, 是延迟 initial 块的触发, 直到所有过程块都被激活. 这时可在语句中加
+入一个显式的零延时,如下:
+1 initial #0 -> get_data; //延时触发
+2
+3 always @(get_data) begin //等待get_data事件
+4 ... //处理get_data
+使用#0延时可在所有过程块被激活后触发get_data,这可保证always@(get_data)能在零时刻下启动握手序列.
+Verilog 中 #0 延时的滥用, 可能造成难以调试的竞争条件, 一些 Verilog 培训师推荐不使用 #0, 因为它存在一定
+的危险性.
+SV如何避免
+SV提供了两种方案,可在不使用#0的情况下,消除事件触发的竞争条件.
+SV解决方案1
+SV 定义了一个非阻塞事件触发->>, 它可在零延时后触发事件, 这等同于非阻塞语句, 但它可消除零时刻的竞争条
+件,并且不需要#0延时,在非阻塞延时后触发get_data,可在事件触发之前,使得always过程块变为激活.
+1 initial #0 ->> get_data; //延时触发
+2
+3 always @(get_data) begin //等待get_data事件
+4 ... //处理get_data
+SV解决方案2
+它可使触发能在整个时间单位中都可见,而不是完成事件的瞬间触发.
+1 module event_examplel;
+2 event get_data, send_data; //握手标志
+3 initial -> get_data; //将在零时刻触发
+4
+5 always begin
+6 wait(get_data.triggered) //等待一个get_data事件
+7 ... //get_data处理代码
+8 ... //完成处理将触发send_data
+9 -> send_data; //实现send_data处理的同步
+10 end
+11
+12 always begin
+13 wait(send_data.triqgered) //等待一个send_data事件
+14 ... //send_data处理代码
+15 ... //完成处理将触发get_data
+16 -> get_data; //实现get_data处理的同步
+17 end
+18 endmodule
+当 get_data 触发时,wait(get_data.triggered) 将在时间单位中返回真, 在当前的仿真时间单位内, 如果出现触发事
+件,wait语句都将被激活,因而在上例中,如果initial块在第一个always块之前被激活,当第一个always块变为激活
+以及执行wait(get_data.triggered)语句时,该触发都是可见的.
+陷阱 60: 信号量同步
+陷阱:在使用信号量时,处理并未同步,即使使用了等待,有些处理还是在此之前被运行.
+
+## 第 65 页
+
+5. 常见的编程陷阱 64
+原因:信号量键值放入存储区,并不需要获取其他的键值,而键值获取也无需等待之前的请求服务.
+Verilog 的 event 数据类型提供了过程块的同步, 过程化的握手和通讯方式受限于主流的面对对象的验证方法
+学, 所以 SV给出了两种内部同步机制,以提供更灵活和强大的事件触发方式, 这些机制就是信号量和邮箱, 因而需
+要对这些新的同步机制进行讨论,本章将介绍信号量存在的陷阱.
+信号量类似于保存了一定数量的键值或令牌的存储区,且有从存储区中获取和释放键值的方法.
+put() 的参数可指定放入存储区的键值个数, 在存储区中可放入任意个键值, 并不关心有多少个键值已被获取,
+进程可放入一个从不会使用的键值(这是一个潜在陷阱,它使得不正确的代码可从存储区中获取多个键值).
+get() 方法可从存储区中获取键值, 并能请求多个键值, 如果请求的键值无效, 调用处理将被阻塞, 直到所需的键
+值变为有效.
+在 get 中也存在一个微妙而不直观的陷阱, 如果请求了多个键值, 而键值并不有效时, 请求将被放入 FIFO(先进
+先出)并等待所请求的键值变为有效,如果有多个处理的请求无法满足,请求将依照接收的次序放入FIFO,当键值有
+效后,队列中的请求将按照FIFO的次序被服务.
+当每次 get 调用时, 都会尝试获取键值, 而不是首先将请求放入 FIFO, 如果请求的键值有效,get 将被服务, 而不
+会在FIFO中等待.
+1 module sema4_example ( ... );
+2 semaphore s_test = new; //创建一个信号量存储区
+3 initial begin: Block1 //在仿真零时刻
+4 s_test.put(5); //加入5个键值到存储区
+5 s_test.get(3); //只剩下2个键值
+6 s_test.get(4); //无法满足,存储区中只剩下2个键值,请求将被放入FIFO
+7 $display(”Block1 completed at time %0d”, $time);
+8 end: Block1
+9
+10 initial begin: Block2 #10 //仿真时间为10
+11 s_test.get(2); //陷阱,此语句将首先被服务,而get(4)还放置在FIFO中.
+12 s_test.get(l); //该请求将被放入FIFO,因为当前的存储区已空.
+13 $display(”Block2 completed at time %0d”, $time);
+14 end: Block2
+15
+16 initial begin: Block3 #20 //仿真时间为20
+17 s_test.put(3); //FIFO中无法产生运行,由于第一个是get(4).
+18 #10 //仿真时间为30
+19 s_test.put(2); //get(4)和get(1)都将被服务,并按照它们在FIFO中的位置进行服务
+20 $display(”Block3 completed at time %0d”, $time);
+21 end: Block3
+22 endmodule
+在get方法调用时,如果存储区中包含了足够的键值,可立即获取,而并不会放入到FIFO进行等待.
+如何避免
+get 请求可被立即服务, 而不会关心 FIFO 中包含的 get 请求, 避免这类陷阱的方式, 可使 get 请求每次只请求
+一个键值,这使得FIFO中不会包含只等待一个键值的请求,当键值有效后,FIFO中的第一个请求将被服务,新产生
+的get请求不能被放入到FIFO的前端.
+当处理需要多个键值,可为多个键值多次调用get,能使用一个循环重复请求,如下:
+1 repeat (3) s_test.get(l); //需要3个键值,但每次只请求一个
+当处理完成后,可将多个键值使用一个put释放,这时并不需要每次只释放一个键值.
+陷阱 61: 邮箱同步
+陷阱:邮箱的工作是正常的,但在仿真中的执行会出现错误.
+原因:如果尝试从邮箱中读取错误的数据类型将出现运行时错误.
+邮箱不光能在进程内实现同步, 还可在不同进程间传递信息, 默认情况下邮箱是无类型的, 这意味着任何类型
+
+## 第 66 页
+
+5. 常见的编程陷阱 65
+的消息都可放入到邮箱中,此时的陷阱是,当使用get方法从邮箱中获取信息时,接收变量必须与放入的数据类型相
+同,否则将生成一个运行时错误.
+1 module mbox_example1 ( ... );
+2 logic [15:0] a, b;
+3 int i , j , s;
+4 struct packed {int u, v, w;} d_in, d_out;
+5 mailbox mbox1 = new; //无类型邮箱
+6
+7 initial begin
+8 mboxl.put(a); //放入消息
+9 mboxl.put(i); //放入消息
+10 mboxl.put(d_in); //放入消息
+11 mboxl.get(b); //数据类型匹配,可获取信息
+12 mboxl.get(b); //与i类型不匹配
+13 end
+14 endmodule
+如何避免
+避免这类陷阱的方式有三种, 第一种就是手动管理方法的数据类型, 这种方式容易产生错误, 这需要验证工程
+师跟踪放入邮箱的数据类型以及对应的次序,以确认可从邮箱中能获取到正确类型.
+第二种方法就是使用 try_get() 而不是 get(), 它可根据传入的参数获取一个信息, 并返回一个状态标志, 状态标
+志包含了以下三种:
+(cid:15) 如果从邮箱中未获取到消息,可返回0.
+(cid:15) 如果消息与接收变量的类型兼容,并接收到一条消息,将返回1.
+(cid:15) 如果消息与接收变量的类型不兼容,并导致未收到消息,则返回一个负值.
+try_get()返回值将被条件语句处理,用于确认下一步的验证操作,下例中使用了无类型的邮箱和try_get()方法:
+1 module mbox_example1 ( ... );
+2 logic [15:0] a, b;
+3 int i , j , s;
+4 struct packed {int u, v, w;} d_in, d_out;
+5 mailbox mbox1 = new; //无类型邮箱
+6
+7 initial begin
+8 s = mboxl.try_get(d_out);
+9 case (s)
+10 1: $display(”try_get() succeeded”);
+11 0: $display(”try_get() failed , no message in mailbox”);
+12 default: $display (”try_get () failed due to type error”);
+13 endcase
+14 end
+15 endmodule
+第三种避免运行错误的方式是采用有类型的邮箱,这类邮箱包含了一个固定的类型,如果代码尝试使用不兼容的类
+型放置消息,编译工具将给出一个编译错误,这时get方法可安全使用,因为邮箱的类型已知,如下:
+1 typedef struct {int a, b} data_packet_t;
+2 mailbox #(data-packet_t) mbox2 = new; //类型邮箱
+在上例中,只有data_packet_t类型的消息能被放入到邮箱中,如果在put参数中使用了其他类型,将出现一个编译
+错误.
+陷阱 62: 时钟块的触发
+陷阱:无法让测试程序等待时钟块的边沿.
+原因:当测试等待的时钟块边沿出现是,无需使用posedge或negedge关键字.
+测试代码在使用@事件控制等待时钟块边沿时,无需指定posedge或negedge,下例将引入编译错误:
+1 program automatic test (input logic clk ,
+2 input logic grant,
+3 output logic request);
+4
+5 clocking cb @(posedge clk);
+6 output request;
+
+## 第 67 页
+
+5. 常见的编程陷阱 66
+7 input grant;
+8 endclocking
+9
+10 initial begin
+11 @(posedge cb) //陷阱:无需选择时钟块的边沿
+12 $display(”At %0d: clocking block triggered”, $time);
+13 end
+14 endprogram
+如何避免
+当测试代码使用 @ 等待时钟块延时, 只需给出时钟块的名称即可, 因为时钟块定义中已经指定了时钟的边沿,
+如下:
+1 initial begin
+2 @(cb)
+3 $display(”At %0d: clocking block triggered”, $time);
+4 end
+使用时钟块作为事件控制,可使测试代码更加智能和易于维护,尤其是在接口中定义的时钟块,测试程序并不需要知
+道接口使用了时钟的上升沿,下降沿,还是两边沿.所有的测试程序只需引用时钟块的名称即可.
+陷阱 63: 判断语句的分号
+陷阱:在条件不为真时,依然执行了if中的语句.
+原因:在判断语句后使用分号是合法的,这可区分if语句的内外.
+分号用于标识一个完整的编程语句, 也就是一个非空的操作语句, 在 if 之后错放分号是合法的, 但分号错放将
+引入其他的语句或begin...end块,这些都不是所需的.
+1 module foo;
+2 reg a;
+3 initial begin
+4 a = 1;
+5 if (a); //分号出错,但不是语法错误
+6 $display(” ’a’ is true”); //陷阱,当a未假时也将打印.
+7 end
+8 endmodule
+上例并不是语法错误,分号给出了一个合法语句,也就是只有一条语句的if,$display并不是if的一部分,因而每次都
+会打印消息,不管a为真为假.
+下例将给出一个分号错放,它将引入后续代码的语法错误:
+1 module foo;
+2 reg a;
+3 initial begin
+4 a = 1;
+5 if (a); //分号出错,但不是语法错误
+6 $display(” ’a’ is true”); //陷阱,当a未假时也将打印.
+7 else //语法错误,else未跟随在if之后
+8 $display(” ’a’ is false”);
+9 end
+10 endmodule
+如何避免
+这个陷阱是从 C 继承而来,Verilog 和 SV 中都会包含这类语法和语义, 防止它的方法就是了解 Verilog 语法, 并
+正确使用分号.
+支持语言的文本编辑器有助于避免这类陷阱,并能自动添加缩进,下例是缩进给出的一个错误:
+1 initial begin
+2 a = 1;
+3 if (a);
+4 $display(” ’a’ is true”); //语句没有自动缩进
+
+## 第 68 页
+
+5. 常见的编程陷阱 67
+陷阱 64:for 循环的分号
+陷阱:for循环只执行了一次.
+原因:for循环声明后的分号将使循环只执行一次.
+for中的分号错放在语义上是合法的,并会造成循环只执行一次.
+1 module foo;
+2 integer i;
+3 initial begin
+4 for (i=0; i<=15; i=i+1); //分号错误并不是一个错误
+5 begin
+6 $display(”Loop pass executing”); //将造成只执行一次
+7 end
+8 end
+9 endmodule
+上例并不是一个语法错误, 但 begin...end 和 $display 并不是 for 的一部分, 循环会执行 16 次, 但不会包含 be-
+gin...end和$display.
+这类陷阱在while,repeat,forever和foreach循环中都会出现.
+循环执行一个空语句并不是一个编码错误, 常见的验证代码风格可在 repeat 循环中使用一条空语句, 这是为了
+跨越多个时钟周期:
+1 initial begin
+2 reset_n <= 0;
+3 repeat (8) @(posedge clock) //在8个时钟周期内将执行空操作
+4 reset_n = 1;
+5 end
+如何避免
+这也是继承C的陷阱,使用对应的文本编辑器可预防这类陷阱.
+陷阱 65: 无限循环
+陷阱:循环无法退出,当循环变量达到退出值时,循环将再次开始.
+原因:声明的循环变量太小,使得循环无法退出.
+当控制表达式为假,for 循环将退出, 在大多数编程语言中, 如果为 for 循环编写一个一直为真的控制表达式, 将
+产生一个无法退出的无限循环,这在Verilog中是一个常见的编程陷阱,因为Verilog允许定义小型的矢量尺寸.
+下例的意图是给出一个16次的循环,控制变量将0-15之间.
+1 reg [3:0] i; //4bit循环控制变量
+2 for (i=0; i<=15; i=i+l) //陷阱,i<=15将一直为真.
+3 begin /* loop body */ end
+如何避免
+避免陷阱的简单方式, 就是增大控制变量的尺寸, 在 Verilog 中可使用 integer 或在 SV 中使用 int, 它们都是
+32bit有符号类型.
+SV允许在for循环中声明控制变量,这使得查看变量的类型和尺寸更加简单.
+1 reg [3:0] i;
+2 for (int i=0; i<=15; i=i+l)
+3 begin /* loop body */ end
+
+## 第 69 页
+
+5. 常见的编程陷阱 68
+陷阱 66: 循环并发造成的仿真锁定
+陷阱:在仿真中,for要么被锁定要么执行了一些非预期的操作.
+原因:并发循环中使用了同一个控制变量.
+Verilog 中包含两种编程结构用于在同一作用域中调用并发线程, 在同一时刻下触发的多个组合 always 块, 以
+及 fork...join, 如果在并发线程的执行中共享了变量, 将会相互影响, 下例给出了简单 testbench 中两个并发的测试,
+每个测试中都有一个for循环,并都包含了一个控制变量i,一个循环对i加1,另一个循环则对i减1.
+1 program automatic test;
+2 logic [7:0] a, b, c, sum, dif;
+3 int i;
+4
+5 adder subtractor dut (.*);
+6
+7 initial begin
+8 fork
+9 begin: add_test
+10 for (i = 0; i < 10; i++) begin //加1
+11 a = i;
+12 b = i + 10;
+13 #10 $display(”At %0d, in scope %m: i=%0d sum=%0d”, $time, i , sum);
+14 end
+15 end
+16
+17 begin: dif_test
+18 for (i = 8; i > 2; i --) begin //减1
+19 c = i;
+20 #10 $display(”At %0d, in scope %m: i=%0d dif=%0d”, $time, i , dif);
+21 end
+22 end
+23 join
+24
+25 $display(”\nTests finished at time %0d\n”, $time);
+26 $finish;
+27 end
+28 endprogram
+如何避免
+正确的方式就是在每个循环中使用不同的控制变量,最简单的方式就是使用SV的本地声明:
+1 initial begin
+2 fork
+3 begin: add_test
+4 for (int i = 0; i < 10; i++) begin //i为本地变量
+5 ...
+6 end
+7 end
+8
+9 begin: dif_test
+10 for (int i = 8; i > 2; i --) begin //i为本地变量
+11 ...
+12 end
+13 end
+14 join
+陷阱 67: 循环控制变量的引用
+陷阱:将循环的Verilog风格转换成SV风格,代码无法被编译.
+原因:在for循环中声明的本地控制变量无法再循环之外进行引用.
+Verilog需要预先声明for循环中使用的控制变量,由于变量在for之外声明,因而可作为静态变量使用.
+1 reg [31:0] a, b, c;
+2 integer a[0:31], b[0:31], c[0:31];
+3 integer i;
+
+## 第 70 页
+
+5. 常见的编程陷阱 69
+4
+5 initial begin
+6 for (i=O; i<=31; i=i+l) begin
+7 c[i] = a[i] + b[i ];
+8 end
+9 $display (” i is %0d”, i);
+10 end
+SV允许在for中声明本地的控制变量,该变量将在循环开始时动态分配,并在循环退出时销毁,因为是动态变量,所
+以在循环外部是不可见的,以下代码将给出一个语法错误:
+1 reg [31:0] a, b, c;
+2
+3 initial begin
+4 for (int i=O; i<=31; i=i+l) begin
+5 c[i] = a[i] + b[i ];
+6 end
+7 $display (” i is %0d”, i);
+8 end
+如何避免
+从技术上说这并不是一个陷阱, 因为这是一个语法错误, 而不是一个非预期的运行时行为, 但这关系到是否能
+在for之外引用控制变量.
+陷阱 68: 函数默认的返回尺寸
+陷阱:函数只能返回数值的最低有效位.
+原因:如果未指定返回类型,Verilog函数默认的返回类型为1bitlogic.
+以下函数给出了两个整型值的加法,并可返回结果,示例中的3+4将返回1而不是7.
+1 module test;
+2 int result;
+3
+4 function sum (int a, b); //未给出返回类型
+5 return (a + b);
+6 endfunction
+7
+8 initial begin
+9 result = sum(3,4);
+10 $display(”sum(3,4) return = %h (hex)”, result);
+11 end
+12 endmodule: test
+非空函数都能返回一个包含尺寸和类型的数值,如果未指定尺寸和类型,默认的返回类型为logic,尺寸为1bit,如果
+从未指定返回尺寸和类型的函数中返回一个多bit数值,该数值将被截断,且不会发生错误或是警告,也就是数值的
+最低有效位将被返回.
+如何避免
+为避免这个陷阱,可显式指定函数的返回类型和尺寸,一个好的代码风格也要求这么做,如下:
+1 function int sum1 (int a, b);
+2 function [15:0] sum1 (int a, b);
+3 function logic sum1 (int a, b);
+4 function bit [31:0] sum1 (int a, b);
+5 function real sum1 (int a, b);
+陷阱 69: 任务和函数的默认参数
+陷阱:尝试为任务和函数的input参数设定一个默认值时,得到了一个语法错误.
+原因:任务和函数参数的方向可从之前的参数中继承,但只有input和inout参数才可包含默认值.
+
+## 第 71 页
+
+5. 常见的编程陷阱 70
+任务和函数的形参可以是 input,output,inout 或 ref, 在 SV 中默认为 input 的任务和函数参数无需指定方向, 方
+向指定具有附着性,一旦指定将影响后续的参数,直到指定新的方向.
+SV 允许为任务和函数的 input 和 inout 参数配置一个默认值, 当任务和函数被调用时, 在未传递的形参中可使
+用默认值.
+下例将因为第二个参数start的默认值指定,得到一个编译错误:
+1 function automatic int array_sum(ref int a[] , int start=0);
+2 for (int i=start; i<a.size(); i++)
+3 array_sum += a[i));
+4 endfunction
+只有 input 和 inout 参数可包含默认值, 以上的问题是由于 start 中并未给出显式的方向定义, 如果所有参数都未指
+定方向,start可默认为input,并能指定一个默认值,但上例中并不是这种情况.
+如何避免
+为避免这个方向陷阱,可为任务和函数的所有参数指定好方向:
+1 function int array_sum(ref int a[] , input int start=0);
+陷阱 70: 连续赋值的延时
+陷阱:有些连续分配会给出延时,另一些则不会.
+原因:连续分配的延时可消除输入毛刺.
+连续分配可将右侧表达式的处理传递给左侧的 net 或变量, 设计者经常会使用连续分配来建模组合逻辑, 在可
+综合的RTL模型中,连续分配通常作为零延时语句使用,当右侧表达式变化时,可立即更新到左侧的net或变量中,
+在testbench或BFM中,有时需要在右侧表达式变更和左侧net或变量更新之间加入一个传播延时.
+下例给出了两种时钟延时的类型:
+1 module clock_gen;
+2 timeunit 1ns; timeprecision 1ns;
+3 logic clock0, clock3, clock6;
+4
+5 initial begin
+6 clock0 <= 0;
+7 forever #5 clock0 = ~clock0;
+8 end
+9
+10 assiqn #3 clock3 = clock0; //可工作正常
+11 assign #6 clock6 = clock0; //陷阱,clock6无法给出时钟
+12
+13 initial begin
+14 $timeformat (-9, 0, ”ns”, 7);
+15 $monitor(”%t: clock0 = %b clock3 = %b clock6 = %b”, $time, clock0, clock3, clock6);
+16 #30 $finish;
+17 end
+18 endmodule: clock_gen
+输出如下:
+1 0ns: clock0 = 0 clock3 = x clock6 = x
+2 3ns: clock0 = 0 clock3 = 0 clock6 = x
+3 5ns: clock0 = 1 clock3 = 0 clock6 = x
+4 8ns: clock0 = 1 clock3 = 1 clock6 = x
+5 10ns: clock0 = 0 clock3 = 1 clock6 = x
+6 13ns: clock0 = 0 clock3 = 0 clock6 = x
+7 15ns: clock0 = 1 clock3 = 0 clock6 = x
+8 18ns: clock0 = 1 clock3 = 1 clock6 = x
+如何避免
+由于 clock3 变更, 而 clock6 并无变化, 这是由于连续分配中的固有延时机制, 这意味着在连续分配的左侧 net
+或变量中如果出现两次或多次变化时,只有最后一次变更是有效的,也就是说之前的变更将不会出现.
+
+## 第 72 页
+
+5. 常见的编程陷阱 71
+clock3 的 3ns 延时小于 clock0 的 5ns 半周期, 因而 clock0 的所有变化都将传递给 clock3, 而 clock6 的 6ns 延
+时大于clock0的5ns,因此clock0的变化不会传递给clock6.
+为避免这个陷阱,clock6 可使用传送延时的机制, 而不是固有延时的机制, 最简单的方式就是在一个 always 块
+中使用非阻塞的分配延时,如下:
+1 always @(clock0)
+2 clock6 <= #6 clock0; //6ns的分配延时
+原始延时和 net 延时都可使用固有延时, 所以在连续分配中都会包含相同的陷阱,Verilog 可使用固有延时或传送延
+时,指定pin到pin的路径延时结构,这类结构将使上例中给出的逻辑变得相当复杂.
+为获取 Verilog 过程块中固有延时和传送延时的更多细节, 可参考著者的论文”Understanding Verilog Blocking
+andNonblockingAssignments”1.
+1UnderstandingVerilogBlockingandNonblockingAssignments,byStuartSutherland. PublishedintheproceedingsofInternationalCa-
+denceUsersGroup,SanJose,1996.Alsoavailableatfromtheauthor’swebsite,http://www.sutherland.com/papers.html
+
+## 第 73 页
+
+面对对象和多线程编程的陷阱
+陷阱 71: 类的编程
+陷阱:有些代码在initial过程块中编译正常,但放入类定义之后,编译出错.
+原因:类定义中只能包含属性(变量)和方法(任务和方法),不能放入过程语句.
+Bar类定义中包含了Foo对象,并尝试初始化变量i:
+1 class Foo;
+2 int data; //属性
+3 function int get (...) ; //方法
+4 ...
+5 endfunction
+6
+7 task put (...) ;
+8 ...
+9 endtask
+10 endclass
+11
+12 class Bar;
+13 Foo f = new; //创建对象f
+14 f.data = 3; //陷阱,非法的分配语句
+15 endclass
+上例将引入一个编译错误,因为执行代码只能包含在任务和函数中,在类定义中不能包含分配语句,执行语句,initial
+或always块,f.data=3;是执行语句,并没有包含在任务或函数中,这不被允许的.
+如何避免
+当 Bar 类需要分配数值给 Foo 对象, 如果只需在 Foo 对象构造时进行分配, 可使用 Foo 构造函数对 data 进行
+初始化,如下:
+1 class Foo;
+2 int data; //属性
+3 functionnew(intd);
+4 this.data=d;
+5 endfunction
+6 endclass
+7
+8 class Bar;
+9 Foof=new(3);
+10 endclass
+如果Bar还需要对变量进行修改,可在Bar中加入其它的分配方法,类定义中的所有执行语句必须包含在任务或函
+数中:
+1 class Foo;
+2 int data; //属性
+3 ...
+4 endclass
+5
+6 class Bar;
+7 Foo f = new;
+8
+9 function change_data(d);
+10 f.data = d;
+11 endfunction
+12 endclass
+72
+
+## 第 74 页
+
+6. 面对对象和多线程编程的陷阱 73
+指南:在类定义的构造器中包含其他的类句柄是合法的(例如Foof=new;),当然这有些让人沮丧,在类中封闭的代
+码执行之前,对象将被构造,如果对象的创建或初始化必须使用一个特定的次序,这将产生问题,因此在类构造器中
+调用其它类的构造器,能更好地控制初始化.
+陷阱 72: 面对对象 testbench 的接口用法
+陷阱:当testbench使用接口连接设计时,若尝试使用类对象创建测试值时,将产生编译错误.
+原因:静态的结构化组件比如接口,无法被动态代码直接驱动.
+下例的 Driver 类是一个动态对象, 需要驱动 arb_ifc 接口, 但这是一个静态设计对象, 由于动态对象无法直接驱
+动静态对象,比如模块或接口,因此以下代码是非法的.
+1 interface arb_ifc(input logic clk};
+2 ...
+3 endinterface
+4
+5 program automatic test (arb_ifc.TEST arb);
+6 class Driver;
+7 arb_ifc arb; //陷阱,类无法初始化接口
+8
+9 function new(arb_ifc arb); //陷阱,任务和函数参数不能是一个接口
+10 this.arb = arb;
+11 endfunction
+12 endclass
+13
+14 initial begin
+15 Driver d;
+16 d = new(arb};
+17 end
+18 endprogram
+如何避免
+接口是表征硬件的结构化组件, 它可包含信号, 代码和断言, 结构化组件无法传递给动态代码, 但是接口指针可
+在动态类对象中使用,这个接口指针被称为虚指针(virtualinterface),虚指针使得动态对象可包含一个静态实例对象
+的句柄,以便在动态类对象和静态对象之间传递数据.
+Driver类中可包含arb_ifc实例的虚指针,如下:
+1 class driver;
+2 virtual arb_ifc arb; //接口指针
+3
+4 function new(virtual arb_ifc arb); //接口指针
+5 this.arb = arb;
+6 endfunction
+7 endclass
+虚接口可连接基于类的testbench和dut(DeviceUnderTest,待测设备).
+陷阱 73: 邮箱的所有对象包含了相同的值
+陷阱:代码中创建随机对象,并将它们放入了一个邮箱中,但放入邮箱的所有对象都包含了相同的值.
+原因:类构造器可创建一个对象句柄,为了包含多个对象,类构造器必须多次调用.
+邮箱可在并发进程之间进行同步处理,并能在同步期内在进程间传递信息.
+下例可将10个随机对象放入邮箱:
+1 class My_class;
+2 rand int data;
+3 rand logic [47:0] address;
+4 ...
+5 endclass
+6
+
+## 第 75 页
+
+6. 面对对象和多线程编程的陷阱 74
+7 My_class h = new; //陷阱,只构造了一个My_class对象
+8 repeat(10) begin
+9 h.randomize(); //对象中的随机属性
+10 mbx.put(h); //将对象句柄保存在邮箱中
+11 end
+从邮箱中获取对象的线程,会发现所有对象都包含了相同的值,且只有最后的随机调用会被生成,陷阱!
+这个陷阱是由于只构建了一个对象,之后被重复随机化,邮箱中包含了所有句柄,只引用了一个对象.
+如何避免
+为了随机化多个对象,首先必须对它们进行构建,上例必须在一个循环中调用构造器:
+1 my_class h;
+2 repeat (10) begin
+3 h = new; //构造My_class对象
+4 h.randomize(); //随机化对象属性
+5 mbx.put(h); //将对象保存在邮箱中
+6 end
+陷阱 74: 用 input 和 ref 参数传递方法句柄
+陷阱:方法中构造和初始化了一个对象,但对象的数值并不可见.
+原因:方法的输入参数将会创建变量的本地副本,它们在调用作用域中是不可见的.
+方法 (任务和函数) 参数的默认方向为 input, 方法中将会使用输入参数创建的本地变量, 当方法调用时, 实参将
+复制到本地副本,而方法中本地副本的任何变化都不会传递给调用作用域.
+下例的函数中将构造两个对象,并为传递给函数的句柄变量分配对象句柄.
+1 function void build_env(Consumer c, Producer p); //陷阱
+2 c = new(); //构建对象并将句柄保存在c中.
+3 p = new(); //构建对象并将句柄保存在p中.
+4 ...
+5 endfunction
+6
+7 initial begin
+8 Consumer c;
+9 Producer p;
+10 build_env(c, p); //构造和配置对象
+11 c.randomize; //错误:c并未包含一个对象句柄
+12 end
+代码对build_env函数的调用无法获取在函数中构建的对象,因为在函数参数中并未指定方向,这时将默认为input,
+在函数中c和p都是本地变量,因此它们无法传递给调用build_env的环境.
+如何避免
+在构造对象的方法中, 可将句柄参数声明为 ref, 方法的调用环境会将 ref 参数视为一个引用, 在以下声明中, 当
+方法构建的对象保存在c和p时,调用build_env的环境中可获取到这些对象句柄.
+1 function void build_env(ref Consumer c, ref Producer p);
+陷阱 75: 对象数组的构造
+陷阱:在声明一个对象数组时,产生了一个语法错误.
+原因:对象数据实际上是一个对象句柄的数组,每个句柄都必须单独构造.
+有时需要构造一个对象句柄数组, 用于保存多个对象句柄, 通常会这个数组称为对象数组, 但实际上它是句柄
+数组,而不是实际对象的数组.
+
+## 第 76 页
+
+6. 面对对象和多线程编程的陷阱 75
+下例将尝试创建一个包含8个对象的数组,但代码无法工作:
+1 class Transaction;
+2 ...
+3 endclass
+4
+5 initial begin
+6 Transaction trans[8]; //8个Transaction对象的数组
+7 trans = new; //错误,无法对对象数组调用new
+8 trans = new[8]; //错误,无法对数组元素调用new
+9 end
+上例将产生一个编译错误,而且trans构造器的调用也存在语法错误,这是由于trans是数组名,而不是变量的句柄
+名.
+如何避免
+句柄数组中的每个对象都必须单独构建,并将对象句柄分配给数组元素,如下:
+1 initial begin
+2 Transaction trans[8];
+3 foreach (trans[i ])
+4 trans[i] = new(); //构造对象并将句柄保存在数组中
+5 end
+陷阱 76: 静态任务和函数都不可重入
+陷阱:有时在任务正常工作时,却得到了错误的结果.
+原因:在调用静态任务和函数时,如果之前的调用一直在执行,将造成不可预期的结果.
+Verilog 和 SV 的任务和函数默认为静态, 这与 C(它的函数将默认为自动类型) 不同, 在静态任务和函数的本地
+存储中包含了input参数,并能在每次任务或函数的调用中共享,而在自动类型的任务和函数中,将在每次调用时创
+建新的存储,并不是在所有的调用中使用唯一存储,在硬件建模时,任务和函数都默认为静态,因为硬件存储也是静
+态的,而testbench是一个软件程序而不是硬件描述.
+如果验证工程师期望与类 C 语言相同的行为时,Verilog 和 SV 的默认静态存储将引入不可预期的行为, 验证任
+务的静态存储更加明显,任务可在仿真期内执行,因此可能在之前的任务还在执行时,又重新调用同一任务.
+下例给出了一个名为 watchdog 的任务, 用于发送中断请求, 该任务可延时多个时钟周期, 之后可在中断未被接
+受时,打印超时错误.中断号和时钟周期数可作为输入参数,测试代码将调用该任务两次,也就是给出两个不同的中
+断请求.
+1 program test ( input logic clock,
+2 input logic [1:0] ack,
+3 output logic [1:0] irq);
+4 initial begin: irs_test
+5 $display(”Forking off two interrupt requests... ”);
+6 fork
+7 watchdog (0,20): //在20个周期内必须接收到ack[0]
+8 watchdog (1,50); //在50个周期内必须接收到ack[1]
+9 begin
+10 irq[0] = 1’b1;
+11 irq[1] = 1’b1;
+12 wait (ack)
+13 $display(”Received ack at %0d, disabling watchdog”, $time};
+14 disable watchdog; //获取到ack将取消两个watchdog任务.
+15 end
+16 join_any
+17 $display(”\At %0d, test completed or timed out”, $time};
+18 $finish; //终止仿真
+19 end: irs test
+20
+21 task watchdog ( input int irg_num, //陷阱,静态存储
+22 input int max_cycles //陷阱,静态存储
+23 );
+24 $display(”At %0d: Watchdog started for IRQ[%0d] for %0d cycles”, $time, irq_num, max_cycles);
+
+## 第 77 页
+
+6. 面对对象和多线程编程的陷阱 76
+25 repeat(max_cycles) @(posedge clock) //延时的最大值为max_cycles
+26 $display(”Error at %0d: IRQ[%0d] no after %0d cycles”, $time, irq_num, max_cycles);
+27 endtask: watchdog
+28 endprogram: test
+上例可以运行, 但得不到所需的结果, 第二次对 watchdog 的调用将覆盖第一次调用的 irq_num 和 max_cycles, 第
+一次调用将会一直运行,这时将包含不正确的数值.
+Verilog如何避免
+在Verilog中,可在任务和函数声明时加入automatic关键字,能将任务和函数的所有存储都配置成自动类型.
+1 task automatic watchdog ( ... );
+自动类型的任务和函数可视为一个能重入的任务和函数,任务和函数可在之前的调用一直运行时再次被调用, 每次
+调用都会创建新的存储,因而它可实现递归调用.
+SV如何避免
+SV允许使用automatic指定模块,接口和程序,因而可修正上例程序的声明:
+1 program automatic test { ... );
+2 ...
+3 task watchdog ( ... )
+在程序声明中可加入automatic关键字,这时程序中的所有函数和任务都将默认为自动类型,这个默认行为与C相
+同,但注意在类定义中声明的任务和函数都默认为自动类型,无需显式声明.
+陷阱 77: 静态和动态变量的初始化
+陷阱:testbench的变量无法正确初始化.
+原因: 默认情况下, 接口, 包中的任务和函数包含的变量以及语句组都是静态的, 这与 C 和 C++ 不同, 而静态变
+量只能被初始化一次.
+大多数验证工程师都会有编程背景, 造成很多人认为验证程序也使用自动存储, 因此在块中将进行变量初始
+化.
+下例在if中将声明一个addr本地变量,并使用bus接口的address总线初始化本地变量addr.
+1 interface bus_ifc;
+2 logic [31:0] address;
+3 endinterface
+4
+5 program monitor (bus_ifc.MONITOR bus);
+6 initial begin
+7 @(posedge bus.cb.grant);
+8 if (bus.cb.command == READ) begin
+9 logic [31:0] addr = bus.cb.address; //陷阱,addr将为X
+10 $display(”Bus addr = %h”, addr);
+11 end
+12 end
+13 endprogram
+上例中无论接口address的数值如何,本地变量addr只会包含X值.
+下例函数需要打印出数组中的最大值:
+1 program sums;
+2 function void maxx(ref int a[]) ;
+3 int max = a[0]; //本地变量
+4 foreach (a[i ])
+5 if (a[i] > max) max = a[i ];
+6
+7 $display (”Max value is %0d”, max); //陷阱
+8 endfunction
+9 endprogram
+
+## 第 78 页
+
+6. 面对对象和多线程编程的陷阱 77
+本例只有在第一次调用时会产生正确的结果,随后的调用可打印最大值或是之前调用的结果.
+这个问题是由于任务, 函数或 begin...end 块中默认使用静态存储, 在编译期内静态变量只能实现一次分配和初
+始化,在第一个示例中,addr将被address初始化,但在addr的静态存储创建时,address包含了X,当仿真期内if语
+句执行时,addr静态变量无法被重新初始化,这样将一直保持原有值X.
+第二个示例中, 本地变量 max 被初始化为 a[0] 的数值, 在后续的操作中,max 无法被重新初始化, 由于 max 无
+法被重新初始化,它将一直保持原有的数值.
+如何避免
+为避免这个陷阱, 在过程块, 函数或任务中, 需将变量配置成 automatic, 使之能重新初始化, 这里包含了三种方
+法:
+(cid:15) 显式声明特定的变量为automatic.
+(cid:15) 任务和函数需声明为automatic,使其包含的变量都默认为automatic.
+(cid:15) 程序, 模块, 接口和包定义可声明为 automatic, 使其包含的任务, 函数中的所有变量以及过程块都默认为
+automatic.
+上两个示例的程序可声明为automatic:
+1 program automatic monitor;
+2 program automatic sums;
+陷阱 78: 分支线程所需的自动变量
+陷阱:在产生多个测试分支时,得到了错误的结果,但每个测试分支都运行正常.
+原因:并发线程会因为共享变量而产生冲突,例如索引.
+测试程序可产生多个并发测试线程,每个线程都会有自己的存储区,但线程间存储会产生冲突.
+下例 for 循环中的 fork...join_none 块产生了三个并发线程, 最重要的是 join_none, 它允许了并发线程的产生.
+如果使用join,则表示每个线程完成后将允许下一个线程启动.常见的验证需求中都要求给出并发线程,而不是顺序
+线程.
+本例的每个并发线程都将使用循环控制变量thread_id,用于数组的索引.
+1 program automatic test (input logic clock);
+2 int d_array[3] = ’{10,11,12};
+3 initial begin
+4 for (int thread_id=0; thread_id<3; thread_id++)
+5 fork
+6 $write(” thread_id=%0d ”, thread_id}; //陷阱
+7 $display (”d_array[thread_id] =%0d”, d_array[thread_id]); //陷阱
+8 join_none
+9 #10 $finish;
+10 end
+11 endprogram
+期望的结果如下:
+1 thread_id=0 d_array[thread_idl=10
+2 thread_id=1 d_array[thread_idl=11
+3 thread_id=2 d_array[thread_idl=12
+当仿真运行时,打印的消息并不是预期的.
+1 thread id=3 d_array[thread_id]=0
+2 thread id=3 d_array[thread_id]=0
+3 thread id=3 d_array[thread_id]=0
+上例在fork...join_none块之外声明了thread_id,这意味着每个分支线程将共享同一个thread_id变量,而不是在每
+个线程中包含一个独立的变量,由于三个线程是并发的,thread_id将被覆盖,由于d_array是两态值,当出现越界访
+问时,将返回0.
+
+## 第 79 页
+
+6. 面对对象和多线程编程的陷阱 78
+如何避免
+每个线程都需定义自己的本地存储,因此在每个线程中都可定义自动变量:
+1 program test (input logic clock);
+2 int d_array[3] = ’{10,11,12};
+3 initial begin
+4 for (int thread_id=0; thread_id<3; thread_id++)
+5 fork
+6 automatic int thread_id =i; //每个线程的本地变量
+7 $write(” thread_id=%0d ”, thread_id};
+8 $display (”d_array[thread_id] =%0d”, d_array[thread_id]);
+9 join_none
+10 #10 $finish;
+11 end
+12 endprogram
+陷阱 79:disable fork
+陷阱:当执行disablefork时,有时还会中止当前作用域之外的线程.
+原因:disablefork将会中止当前线程启动的所有线程.
+disablefork将会中止当前线程启动的所有激活线程,问题是它还能中止当前作用域外的线程.
+下例调用了 do_action 任务, 之后将调用 start_a_thread 任务两次, 并在延时 10 和 30 上产生两个线程, 之后等
+待一段时间,使用disablefork中止两线程,但同时将do_action启动的start_a_thread也中止了,陷阱.
+1 program automatic test;
+2 task start a thread (int delay);
+3 fork
+4 begin
+5 $display{”@%0d start_a_thread{%0d) - started”, $time, delay);
+6 #(delay);
+7 $display(”@%0d start_a_thread(%0d) - complete”, $time, delay);
+8 end
+9 join_none
+10 endtask
+11
+12 initial begin
+13 do_action();
+14 start_a_thread(10);
+15 start_a_thread(30);
+16 #15 disable fork; //陷阱
+17 #100; //等待所有线程完成
+18 end
+19
+20 task do_action;
+21 start_a_thread(20);
+22 endtask
+23 endprogram
+仿真结果如下:
+1 @0 start_a_thread(20) - started
+2 @0 start_a_thread(10) - started
+3 @0 start_a_thread(30) - started
+4 @10 start_a_thread(10) - complete
+注意在输出中线程20并未完成,因而它是被隐含中止的,这是一个陷阱.
+如何避免
+放置在 fork..join 块中的代码可使用 disable fork 创建一个防火墙, 可创建一个线程用于限制 disable fork 的作
+用域.
+下例在initial中加入了fork...join来隔离do_action调用,以影响disablefork的结果.
+1 initial begin
+
+## 第 80 页
+
+6. 面对对象和多线程编程的陷阱 79
+2 do_action();
+3 fork
+4 begin
+5 start_a_thread(10);
+6 start_a_thread(30);
+7 #15 disable fork;
+8 end
+9 join
+10 #100;
+11 end
+仿真结果如下:
+1 @0 start_a_thread(20) - started
+2 @0 start_a_thread(10) - started
+3 @0 start_a_thread(30) - started
+4 @10 start_a_thread(10) - complete
+5 @20 start_a_thread(20) - complete
+陷阱 80: 语句块的失效
+陷阱:当在一个线程中尝试失效一个语句块时,它将停止所有线程中的该语句块.
+原因:失效语句块命令可停止所有线程中同名语句块..
+任务 start_test 可产生一个线程, 其中包含了 terminator 块, 该任务将被模块调用三次, 而模块将在顶层模块中
+被实例化三次,这样将会在9个并发的独立线程中运行9个terminator块.
+当第二个实例的第二次调用中,terminator被失效,如下:
+1 module test (input instance_id);
+2 initial begin
+3 #1;
+4 start_test(1,instance_id); //任务的三次调用
+5 start_test(2,instance_id);
+6 start_test(3,instance_id);
+7 end
+8
+9 task automatic start_test (int thread, int inst);
+10 fork : monitor
+11 begin
+12 $display(”@%0d: %m inst: %0d, thread: %0d, before disable”, $time, inst , thread);
+13 #10;
+14 if ((thread==2) && (inst==2))
+15 disable monitor; //陷阱,会影响多个线程
+16 #1;
+17 $display(”@%0d: m inst: %0d, thread: %0d, after disable”, $time, inst , thread);
+18 end
+19 join_none
+20 endtask: start_test
+21 endmodule: test
+22
+23 module top;
+24 test t1 (.instance_id(1)); //test模块的三次实例化
+25 test t2 (.instance_id(2));
+26 test t3 (.instance_id(3));
+27 endmodule: top
+仿真输出如下:
+1 @ 1: top.t1.start_test.monitor inst: 1, thread: 3, before disable
+2 @ 1: top.t1.start_test.monitor inst: 1, thread: 2, before disable
+3 @ 1: top.t1.start_test.monitor inst: 1, thread: 1, before disable
+4 @ 1: top.t2.start_test.monitor inst: 2, thread: 3, before disable
+5 @ 1: top.t2.start_test.monitor inst: 2, thread: 2, before disable
+6 @ 1: top.t2.start_test.monitor inst: 2, thread: 1, before disable
+7 @ 1: top.t3.start_test.monitor inst: 3, thread: 3, before disable
+8 @ 1: top.t3.start_test.monitor inst: 3, thread: 2, before disable
+9 @ 1: top.t3.start_test.monitor inst: 3, thread: 1, before disable
+10
+11 @12: top.t1.start test.monitor inst: 1, thread: 3, after disable
+
+## 第 81 页
+
+6. 面对对象和多线程编程的陷阱 80
+12 @12: top.t1.start_test.monitor inst: 1, thread: 2, after disable
+13 @12: top.t1.start -test.monitor inst: 1, thread: 1, after disable
+14 @12: top.t3.start_test.monitor inst: 3, thread: 3, after disable
+15 @12: top.t3.start test.monitor inst: 3, thread: 2, after disable
+16 @12: top.t3.start_test.monitor inst: 3, thread: 1, after disable
+在实例2的monitor块将中止所有线程,不光是实例2的线程2.
+这个陷阱是由于monitor是块名而不是线程名,失效块名将使包含同名块的所有线程被中止.
+如何避免
+disable 语句中可将静态的层次名作为参数, 也可使用一个关联层次名, 或是使用一个完整层次名, 为了避免以
+上陷阱,可指定中止start_test调用的特定线程,但start_test是一个自动任务,而自动任务不包含一个静态层次名,
+因而特定实例的任务无法被特定线程所中止.
+为了并发运行 9 个线程, 同时也有能力取消单个线程, 那么并发必须出现在模块实例层, 且任务必须是静态的,
+如下:
+1 module test (input instance_id);
+2 initial begin
+3 #1;
+4 start_test (thread_id , instance_id); //任务的一次调用
+5 end
+6
+7 task start_test (int thread, int inst); //静态任务
+8 begin : monitor //命名块(非分支线程)
+9 $display(”@%0d: %m inst: %0d, thread: %0d, before disable”, $time, inst , thread);
+10 #10;
+11 if ((thread==2) && (inst==2))
+12 disable monitor; //只影响单个线程
+13 #1;
+14 $display(”@%0d: m inst: %0d, thread: %0d, after disable”, $time, inst , thread);
+15 end : monitor
+16 join_none
+17 endtask: start_test
+18 endmodule: test
+19
+20 module top;
+21 test t1 (.instance_id(1), .thread_id(1)}; //test模块的9个实例
+22 test t2 (.instance_id(1), .thread_id(2)};
+23 test t3 (.instance_id(1), .thread_id(3)};
+24 test t4 (.instance_id(2), .thread_id(1)};
+25 test t5 (.instance_id(2), .thread_id(2)};
+26 test t6 (.instance_id(2), .thread_id(3)};
+27 test t7 (.instance_id(3), .thread_id(1)};
+28 test t8 (.instance_id(3), .thread_id(2}};
+29 test t9 (.instance_id(3), .thread_id(3}};
+30 endmodule: top
+在时间1上将启动9个线程,之后只有实例2的线程2被取消,其他的线程不受影响,继续执行:
+1 @ 1: top.t1.start_test.monitor inst: 1, thread: 1, before disable
+2 @ 1: top.t2.start_test.monitor inst: 1, thread: 2, before disable
+3 @ 1: top.t3.start_test.monitor inst: 1, thread: 3, before disable
+4 @ 1: top.t4.start_test.monitor inst: 2, thread: 1, before disable
+5 @ 1: top.t5.start_test.monitor inst: 2, thread: 2, before disable
+6 @ 1: top.t6.start_test.monitor inst: 2, thread: 3, before disable
+7 @ 1: top.t7.start_test.monitor inst: 3, thread: 1, before disable
+8 @ 1: top.t8.start_test.monitor inst: 3, thread: 2, before disable
+9 @ 1: top.t9.start_test.monitor inst: 3, thread: 3, before disable
+10
+11 @12: top.t1.start_test.monitor inst: 1, thread: 1, after disable
+12 @12: top.t2.start_test.monitor inst: 1, thread: 2, after disable
+13 @12: top.t3.start_test.monitor inst: 1, thread: 3, after disable
+14 @12: top.t4.start_test.monitor inst: 2, thread: 1, after disable
+15 @12: top.t6.start_test.monitor inst: 2, thread: 3, after disable
+16 @12: top.t7.start_test.monitor inst: 3, thread: 1, after disable
+17 @12: top.t8.start_test.monitor inst: 3, thread: 2, after disable
+18 @12: top.t9.start_test.monitor inst: 3, thread: 3, after disable
+
+## 第 82 页
+
+6. 面对对象和多线程编程的陷阱 81
+陷阱 81: 仿真过早退出
+陷阱:在调用$finish之前且还有其他测试在执行时,仿真却退出了.
+原因:当所有编程块完成,$finish将隐含调用,即使仿真还在运行.
+硬件设计模型需要连续运行, 例如 always 块将在每个时钟周期被触发, 而验证代码将在测试完成后退出, 在
+Verilog中测试模块必须在测试完成时显式报告,也就是使用$finish.
+SV将加入一个结构,封闭验证代码,被称为程序块,而不是使用Verilog模块,程序块可声明在program...endprogram
+之间.
+1 program automatic test( //验证程序
+2 output logic [63:0] test_data ,
+3 output logic reset_n,
+4 input logic [63:0] results ,
+5 input logic test_clk );
+6
+7 initial begin
+8 reset_n <= 0;
+9 @(posedge test_clk) reset_n = 1;
+10 fork
+11 test1 task (...) ;
+12 test2 task (...) ;
+13 join
+14 end //无需调用$finish
+15 endprogram
+不同于模块,程序块并不需要连续运行,当到达程序块末尾时,仿真会自动完成,无需调用$finish,如果验证代码被分
+割成多个程序块,将在所有程序块结束后,仿真会自动退出.
+通常情况下, 当测试完成时仿真会自动退出, 事实上隐含的自动完成解决了 Verilog 中忘记使用 $finish 的陷阱,
+当然自动中止也会存在陷阱, 如果一些测试代码在程序块中执行, 而另一些测试代码在 Verilog 模块中执行, 当程
+序块完成后, 仿真将退出, 但是其他的验证代码还在模块中运行. 另一个陷阱是当程序块产生了多个并发测试线
+程时, 并不会等待其他线程结束. 当程序块结束后, 仿真将自动结束, 而不会查看是否有其他线程正在执行, 使用
+fork...join_any和fork...join_none,测试程序可产生线程,但不会等待所有线程的结束.
+1 program automatic test (...) ;
+2 initial begin
+3 fork
+4 test1 task (...) ;
+5 test2 task (...) ;
+6 join_none
+7 end //陷阱,仿真可在任务完成之前退出.
+8 endprogram
+如何避免
+仿真的非预期自动退出可使用测试程序的挂起来避免, 直到所有测试都已完成. 如果在 Verilog 模块中运行了
+测试,在程序块中可包含一个wait语句或是延时,以等待模块中测试的完成,在测试模块中可设定一个标志,或事件
+触发,又或是SV信号量,来标记测试模块的完成,如果测试程序中产生了验证线程,也可使用一个waitfork实现挂
+起,等待所有线程的结束.
+1 program automatic test (...) ;
+2 initial begin
+3 fork
+4 test1 task (...) ;
+5 test2 task (...) ;
+6 join_none
+7 wait fork;
+8 end
+9 endprogram
+
+## 第 83 页
+
+随机化, 覆盖和断言的陷阱
+陷阱 82:rand 变量无法实现随机化
+陷阱:标记为rand的类变量无法实现随机化.
+原因:属性必须包含一个rand或randc标记才可实现随机化,其中可包含其他对象的处理.
+为使对象变量的数值可以随机化, 对象中的每个变量都必须声明为 rand 或 randc, 当对象的 randomize 方法调
+用时,可生成随机数.
+下例包含了一个 Payload 类, 它包含了一个可随机化的 data 属性, 在 Header 类中包含了一个可随机化的 addr 属
+性,以及Payload对象的举兵,当Header对象随机化时,只有addr可获取到随机值,data无法实现随机化,虽然它
+被标记为rand.
+1 program automatic test;
+2 class Payload;
+3 rand int data[8]; //data被标记为随机化
+4 endclass
+5
+6 class Header;
+7 rand int addr; //addr被标记为随机化
+8 Payload p; //Payload对象的句柄
+9
+10 function new;
+11 this.p = new;
+12 endfunction
+13 endclass
+14
+15 initial begin
+16 Header h = new;
+17 assert(h.randomize()); //随机化addr和data
+18 $display(h.addr); //显示addr
+19 foreach (h.p.data[i ])
+20 $display(h.p.data[i ]); //陷阱,data并未随机化
+21 end
+22 endprogram
+若属性声明为 rand 或 randc,randomize 方法也只能在对象作用域中对属性进行随机化, 如果属性是其他对象的
+句柄, 子类中的属性和句柄必须指定为 rand 或 randc, 在上例中,Header::addr 标记为 rand, 因此可更新为随机
+值,Payload对象即Header::p并未给出rand标识,因此它的变量不会实现随机化,即使Payload::data包含了rand
+标识.
+如何避免
+所有对象变量中都可更新随机值,即使包含句柄也必须给出rand标识符.
+1 class Header;
+2 rand int addr;
+3 rand Payload p;
+4 ...
+5 endclass
+82
+
+## 第 84 页
+
+7. 随机化,覆盖和断言的陷阱 83
+陷阱 83: 无法检出的随机化错误
+陷阱:即使调用了随机化功能,类变量还是无法获取到随机值.
+原因:randomize方法可返回一个错误状态,如果约束无法满足,将无法获取到随机值.
+所有条件无法都使用约束来解决, 如果约束无法满足, 变量将不能随机化, 在类变量随机化时, 当约束处理成功
+randomize方法将返回1,如果不成功将返回0.
+下例错误指定了一个约束,如a必须小于b,b必须小于a,这类随机化错误将无法检出.
+1 program automatic test;
+2 class Bad;
+3 rand bit [7:0] a, b;
+4 constraint ab {a < b; b < a;} //约束无法满足
+5 endclass
+6
+7 initial begin
+8 Bad b = new;
+9 void ’(b.randomize()); //陷阱,方法的返回值被忽略
+10 end
+11 endprogram
+如果成功标志未被检查,只有当一个或多个类对象的约束无法满足,造成无法实现随机化时才会体现,这些类变量的
+随机化错误无法被检出.
+如何避免
+使用SV断言可检查randomize的返回状态,该方法可返回:
+(cid:15) 如果成功生成随机值,将返回1.
+(cid:15) 由于无法满足约束而无法生成随机值时,将返回0.
+下例将使用一个断言来测试randomize的成功,断言语句可定义一个致命的断言错误,它能中止仿真或形式验证.
+1 program automatic test;
+2 class Bad;
+3 rand bit [7:0] a, b;
+4 constraint ab {a < b; b < a;}
+5 endclass
+6
+7 initial begin
+8 Bad b = new;
+9 assert(b.randomize()) else $fatal;
+10 end
+11 endprogram
+陷阱 84:$assertoff 失效随机化
+陷阱:使用了断言检查随机化错误,并在复位期内并不需要进行随机化.
+原因:$assertoff断言可失效断言中的执行语句.
+在 randomize 方法调用时, 可返回一个数值用于指示随机化的成功和失败, 一种常见的方式是采用立即断言监
+控randomize方法的返回值,如下:
+1 program test;
+2 ...
+3 Bustrans tr;
+4
+5 initial begin
+6 tr = new;
+7 $assertoff(); //陷阱,在复位期内失效了所有断言
+8 rst_n <= 0;
+9 assert (tr.randomize) else $display(”randomization failed”); //tr.randomize的调用失效
+10 #10 rst_n <= 0;
+11 $asserton();
+
+## 第 85 页
+
+7. 随机化,覆盖和断言的陷阱 84
+12 ...
+13 end
+14 endprogram
+上例的意图是在复位期内关闭所有断言,用于防止断言失败的消息,但在复位期内,对象tr需进行随机化,但tr的属
+性并未获取到随机值,因为在复位期内断言语句中对tr.randomize的调用失效了.
+如何避免
+避免这个陷阱有一些方法, 其一是采用 if...else 替换 assert 语句, 用于检查 randomize 方法的返回值, 使用这类
+实现,意味着randomize调用并未包含在断言监控或是断言报告中.
+第二种方式是在随机化调用的作用域中不要调用 $assertoff,$assertoff 任务中可传递层次空间的名字, 例如设
+计的顶层名或特定模块名,可将它们包含的断言关闭.
+第三种方法就是在调用randomize的断言语句中加入标号,可紧跟$assertoff将特定的断言打开:
+1 program test;
+2 ...
+3 Bustrans tr;
+4
+5 initial begin
+6 tr = new;
+7 $assertoff(); //在复位期内失效了所有断言
+8 $asserton(tr_rand); //打开特定断言
+9 rst_n <= 0;
+10 tr_rand: assert (tr.randomize) else $display(”randomization failed”);
+11 #10 rst_n <= 0;
+12 $asserton();
+13 ...
+14 end
+15 endprogram
+第四种方法就是在$assertoff之前使用断言,如下:
+1 program test;
+2 ...
+3 Bustrans tr;
+4
+5 initial begin
+6 tr = new;
+7
+8 tr_rand: assert (tr.randomize) else $display(”randomization failed”);
+9 $assertoff(); //在复位期内失效了所有断言
+10 rst_n <= 0;
+11 #10 rst_n <= 0;
+12 $asserton();
+13 ...
+14 end
+15 endprogram
+在上例中,如果randomize方法调用和$assertoff处于不同的进程,必须使用一些进程同步的机制,以保证断言关闭
+前可实现随机化.
+陷阱 85: 多个随机变量的布尔约束
+陷阱:在为多个随机变量指定约束时,将出现不可预期的结果.
+原因:若出现两个布尔关系操作符,前一个操作符的真假结果将与后者进行比较.
+在随机lo,med和hi时将给出了以下的类约束,也就是lo<med<hi;
+1 class bad1;
+2 rand bit [7:0] lo, med, hi;
+3 constraint increasing { lo < med < hi;} //陷阱
+4 endclass
+运行的结果如下:
+
+## 第 86 页
+
+7. 随机化,覆盖和断言的陷阱 85
+1 lo = 20, med = 224, hi = 164
+2 lo = 114, med = 39, hi = 189
+3 lo = 186, med = 148, hi = 161
+4 lo = 214, med = 223, hi = 201
+以上的约束并没有引起错误,但随机值并不是预期的结果,在第一行med大于hi,在第二和三行中,lo大于med,在
+第四行中,lo和med都大于hi.
+约束无法工作的原因是由于布尔小于表达式的评估无法从左到右, 这意味着 med 和 hi 不会进行比较,lo < med
+的比较结果将与hi进行比较,约束等同于:
+1 constraint increasing {(lo < med) < hi;}
+约束实际上只对hi有效,也就是hi值不能大于0或1,变量lo和med可实现随机化,但没有被约束.
+下例给出了类似的问题,约束的意图是为了创建a,b,c的等值:
+1 class bad2;
+2 rand bit [7:0] a, b, c;
+3 constraint equal {a == b == c;}
+4 endclass
+代码的运行结果如下:
+1 a = 25, b = 173, c = 0
+2 a = 65, b = 151, c = 0
+3 a = 190, b = 33, c = 0
+4 a = 65, b = 32, c = 0
+不同仿真器给出的结果如下:
+1 a = 61, b = 1, c = 0
+2 a = 9, b = 9, c = 1
+3 a = 115, b = 222, c = 0
+4 a = 212, b = 212, c = 1
+约束等价于(a==b)==c,a和b随机值的比较结果将影响c值.
+如何避免
+约束中包含的多个布尔表达式应使用多条语句,如下:
+1 constraint increasing {
+2 lo < med;
+3 med < hi;
+4 }
+5
+6 constraint equal {
+7 a == b;
+8 b == c;
+9 }
+陷阱 86: 随机变量的负值
+陷阱:为使随机值包含负值时,才发现随机值只能包含正值.
+原因:未约束随机只会为给定类型提供两态值.
+以下的i和b都是可保存负值的有符号变量.
+1 class Negs;
+2 rand int data;
+3 rand byte address; //陷阱,address可为负.
+4 endclass
+int和byte类型都是有符号类型,randomize方法可为这些变量生成正负的随机值,如果这些变量被用于一个需要正
+值的环境,结果将是非预期或是错误的,例如为地址总线生成一个负值.
+如何避免
+
+## 第 87 页
+
+7. 随机化,覆盖和断言的陷阱 86
+当测试变量的随机值作为激励传递给硬件时, 最好只使用无符号类型, 例如 bit 或 logic, 这可保证随机值一直为
+正.
+有时候也需要使用有符号类型, 并不只需要正值, 例如使用 SV DPI 将类 C 的 int,byte,shortint,longint 类型变量
+传递给C函数时,这时需要有符号类型,在只需要非负值时,随机化可被约束为非负值.
+1 class Negs;
+2 rand int data;
+3 rand byte address;
+4 constraint pos { data >= 0; address >= 0;}
+5 endclass
+陷阱 87: 覆盖报告只会默认给出组信息而非 bin 信息
+陷阱:在覆盖组中指定了覆盖bin,用于跟踪特定数值的覆盖,但在报告中只给出了整个覆盖组的信息.
+原因:get_coverage()和get_inst_coverage()方法中并不会给出单独bin的覆盖信息.
+SV 为设计验证提供了强大的功能覆盖, 在功能覆盖中, 验证工程师可定义 covergroup(覆盖组), 一个覆盖组可
+封装多个coverpoint(覆盖点)和crosscoverage(交叉覆盖),而覆盖点有可使用一个或多个bins进行分割,每个bins
+可包含设计中的特定表达式,或是这些表达式使用的数值范围,交叉覆盖可合并多个覆盖bins,如下的覆盖组定义:
+1 enum {s1,s2,s3,s4,s5} state_e, nstate_e;
+2 covergroup cSM@(posedge clk);
+3 coverpoint state_e {
+4 bins state1 = (s1);
+5 bins state2 = (s2);
+6 bins state3 = (s3);
+7 bins state4 = (s4);
+8 bins state5 = (s5);
+9 bins st1_3_5 = (s1=>s3=>s5);
+10 bins st5_1 = (s5=>s1);
+11 }
+12 endgroup
+覆盖组bins可对状态机中每个状态的激活进行计数,并能在特定状态的转换序列出现时进行计数(s1=>s3=>s5和
+s5=>s1).
+SystemVerilog 还提供了内建的方法, 用于覆盖信息的报告, 在报告中将列出覆盖组中每个单独 bins 的包含信
+息,但这并不是覆盖报告的默认方式,陷阱!
+当 get_inst_coverage 方法调用时, 将会获取覆盖组特定实例的信息, 并会返回基于所有覆盖点和交叉覆盖点的
+覆盖信息.
+当get_coverage方法调用时,将会获取覆盖组所有实例的信息.
+覆盖报告中的覆盖信息将基于覆盖点或交叉覆盖点, 但并无内建方法可报告交叉点中单独 bins 的细节, 如果覆
+盖未达到100%,设计者无法了解那个bins为空.
+如何避免
+如果需要每个 bins 的覆盖细节, 那么每个覆盖组只能包含一个覆盖点, 而一个覆盖点中也只能包含一个 bins,
+当覆盖报告时,给出的覆盖信息即为覆盖点bins的覆盖细节.
+陷阱 88: 覆盖报告一直为 0
+陷阱:定义了一个覆盖组后,在覆盖报告中覆盖一直为0%.
+原因:覆盖组是一种特殊类型,必须在使用之前进行构建.
+下例在类定义中定义了一个覆盖组, 它是为了提供类属性的覆盖, 当类对象构造时, 覆盖组无法跟踪对应的信
+息.
+
+## 第 88 页
+
+7. 随机化,覆盖和断言的陷阱 87
+1 program automatic test;
+2 event cg_sample;
+3
+4 covergroup CG_xyz @(cg_sample); //覆盖组定义
+5 coverpoint x;
+6 coverpoint y;
+7 coverpoint z;
+8 endgroup
+9
+10 class Abc;
+11 rand bit [7:0] a, b, c;
+12
+13 covergroup CG_abc @(cg_sample); //覆盖组定义
+14 coverpoint a;
+15 coverpoint b;
+16 coverpoint c;
+17 endgroup
+18 endclass
+19
+20 initial begin
+21 Abc a1 = new; //Abc的对象实例
+22 ... //生成激励
+23 $get_coverage(); //陷阱,覆盖为0
+24 end
+25 endprogram
+无覆盖可报告的原因是由于覆盖组是类定义中的一个特殊类型,为了生成覆盖报告,覆盖组对象必须在new方法使
+用之前被构建,也就是在类对象构造之前,上例中并不会构建CG_xyz覆盖对象,但会构造一个Abc对象实例,但在
+构造类对象时,并不会构造CG_abc覆盖组实例,这样CG_xyz和CG_abc覆盖组将无法收集到任何信息,对于这
+个代码错误也不会给出错误或警告,并只能给出错误或不完整的覆盖报告.
+如何避免
+覆盖组实例必须构造, 才能收集覆盖信息, 当在类中定义了覆盖组, 覆盖组实例的构造必须包含在类构造器中,
+因此每当类对象构造时,对象的覆盖组实例也将自动构建.
+1 program automatic test;
+2 event cg_sample;
+3
+4 covergroup CG_xyz @(cg_sample); //覆盖组定义
+5 coverpoint x;
+6 coverpoint y;
+7 coverpoint z;
+8 endgroup
+9
+10 class Abc;
+11 rand bit [7:0] a, b, c;
+12
+13 covergroup CG_abc @(cg_sample); //覆盖组定义
+14 coverpoint a;
+15 coverpoint b;
+16 coverpoint c;
+17 endgroup
+18
+19 function new;
+20 CG_abc = new; //覆盖组实例
+21 endfunction
+22 endclass
+23
+24 initial begin
+25 Abc a1 = new; //Abc的对象实例
+26 CG_xyz = new; //覆盖组实例
+27 ... //生成激励
+28 $get_coverage(); //覆盖报告正常
+29 end
+30 endprogram
+覆盖报告为0%的另一个原因是覆盖组并没有被触发,可能是它的触发器未被触发或是覆盖组实例的sample方法
+未被调用.
+
+## 第 89 页
+
+7. 随机化,覆盖和断言的陷阱 88
+陷阱 89: 覆盖报告将包含所有实例
+陷阱:为覆盖组创建了多个实例,但在覆盖报告中包含了所有实例.
+原因:默认情况下,覆盖报告将会包含覆盖组的所有实例.
+下例将检查每两个x:y像素对之间的覆盖.
+1 covergroup pixelProximity(ref bit signed [12:0] pixel1 ,
+2 ref bit signed [12:0] pixel2)
+3 @(newPixel);
+4 cp1: coverpoint (pixel2 - pixel1) {
+5 bins It = {[1:$]}; //pixel1坐标小于pixel2
+6 bins eq = {0}; //像素重合?
+7 bins gt = {[-4096:-1]}; //pixel1坐标大于pixel2
+8 }
+9 endgroup
+10
+11 pixelProximity px, py;
+12 initial begin
+13 bit signed [12:0] x1, y1, x2, y2;
+14 px = new(x1, y1); //构造第一个覆盖组
+15 py = new(x2, y2); //构造第二个覆盖组
+16 ...
+17 $get_coveraqe(); //陷阱,将报告px和py覆盖
+18 end
+上例将构造两个覆盖对象 px 和 py, 每个覆盖组中包含了独立的覆盖, 但在覆盖报告中会将所有覆盖组的计数都统
+计到一个数值中,陷阱!
+如何避免
+覆盖组中需设定per_instance覆盖选项,如下:
+1 covergroup pixelProximity(ref bit signed [12:0] pixel1 ,
+2 ref bit signed [12:0] pixel2)
+3 @(newPixel);
+4 option.per_instance = 1; //每个覆盖组实例将分别报告
+5 cp1: coverpoint (pixel2 - pixel1) {
+6 ...
+7 }
+8 endgroup
+陷阱 90: 覆盖方向参数的粘着性
+陷阱:有时覆盖组构造器的调用无法编译.
+原因:覆盖组ref参数无法传递一个常量.
+通常的覆盖参数可使用数值和变量, 默认的方向为 input, 用于传递常量, 而 ref 可用于覆盖点的变量传递, 方向
+具有粘着性,也就是除非指定新方向,否则将一直保持原有的方向设定.
+在下例中将为覆盖组构造器传入变量 va, 并为 low 传入 0,high 传入 50, 代码看上去是正确的, 但却会获得一
+个编译错误:
+1 covergroup cg (ref int ra, int low, int high)
+2 @(posedge clk);
+3 coverpoint ra { //通过引用传递采样变量
+4 bins good = {[low: high]};
+5 bins bad[] = default;
+6 }
+7 endgroup
+8
+9 initial begin
+10 int va, vb;
+11 int min=0, max=50;
+12 cg c1 = new(va, min, max); //ok
+13 cg c2 = new(vb, 0, 50); //陷阱,不能向ref参数传递常量
+
+## 第 90 页
+
+7. 随机化,覆盖和断言的陷阱 89
+14 end
+在以上的覆盖组定义中,ra是一个ref参数并指定了默认方向,它将影响后续的参数,直到指定新的方向.由于low和
+high未给出方向,因而它们也是ref参数,而ref参数必须传入变量,而不允许传入一个常量.
+如何避免
+最好能指定每个覆盖组参数的方向,尤其是ref,为防止之前的陷阱可使用:
+1 covergroup cg (ref int ra, input int low, input int high)
+2 ...
+3 endgroup
+陷阱 91: 断言的空匹配
+陷阱:即使属性未被激活,断言的匹配分支依然被执行.
+原因:在出现空匹配时,断言的匹配分支也将被执行.
+assertproperty结构中将包含可选的匹配和失败分支.
+1 assert property (p_req_ack) $display(”passed”);
+2 else $display(”failed”);
+如果属性匹配将执行匹配分支,如果断言失败将执行失败分支,匹配和失败分支中可包含任意的可执行语句,如需执
+行多条语句可使用begin...end.
+大多数属性定义中都会包含一个隐含操作符, 即 |-> 或 |=>, 用于触发断言的运行, 隐含操作符之前的序列表达
+式被称为前导,而之后的序列表达式为后道,使用隐含操作符的属性定义可有三种结果:匹配,失败和空匹配,如果隐
+含前导为真,后道将被评估,属性的匹配和失败将基于后道的检测,如果前导为假,将不理会后道,属性将返回一个空
+匹配.
+以下断言可在每次断言成功时,进行增量计数,断言将检查req有效后的下一个时钟上ack是否跟随变化.
+1 assert property (p_req_ack) req_ack_count++; else $error; //陷阱
+2 property p_req_ack;
+3 @(posedge elk) req |-> ##1 ack; //如果req有效,将在下一个时钟检查ack
+4 endproperty
+这个陷阱是由于assertproperty语句无法区分真实匹配和空匹配,而这两者都会引发通过分支的执行,因而计数结
+果中将包含ack跟随req变更的次数(成功匹配)和req未被激活的时钟周期数(空匹配),陷阱!
+如何避免
+避免这个陷阱, 需要在断言属性中执行所需的语句, 而不是通过语句,SystemVerilog 断言执行的语句将与表达
+式评估相关联,下例将在函数中放入一个增量计数器,它将在ack跟随req变更时(property成功匹配(而非断言成
+功))被调用.
+1 assert property (p_req_ack) else $error; //无通过分支
+2
+3 property p_req_ack;
+4 @(posedge clk) $rose(req) |-> ##1 ($rose(ack), inc_cnt);
+5 endproperty
+6
+7 function void inc_cnt;
+8 req_ack_count++; //在空匹配时不会运行
+9 endfunction
+该陷阱的修正将在 SystemVerilog 标准的下一个版本中, 也就是 2008 版,IEEE 1800 SystemVerilog 标准中将提供
+新的系统任务, 用于控制断言通过分支的执行:$assertvacuousoff 和 $assertvacuouson, 这些系统任务允许设计者
+使能和失效空匹配中的断言通过分支.
+以上的示例可指定另一个解决方式,SystemVerilog 覆盖可用于计数 ack 跟随 req 变更的次数, 而不是使用断言
+通过分支.
+
+## 第 91 页
+
+7. 随机化,覆盖和断言的陷阱 90
+陷阱 92: 过程块的并发断言
+陷阱:在过程代码并未执行断言时,断言的通过分支已被执行.
+原因:过程代码中的并发断言会在每个时钟周期上触发,而不仅仅是在过程代码执行断言时.
+并发断言可放入initial或always块,用于监控过程代码,比如if语句.
+1 always_ff @(posedge clk) begin
+2 if (state_e == FETCH)
+3 assert property (p_req_ack) //陷阱
+4 $display (”passed”); //通过分支
+5 else $display(”failed”); //失败分支
+6 end
+7
+8 property p_req_ack;
+9 @(posedge clk) req |-> ##1 ack; //如果req有效,将在下一个时钟检查ack
+10 endproperty
+以上断言的意图是,当state_e为FETCH,将检查req后续的ack,以及每个req的下一个时钟周期上的ack.
+以下的仿真结果中, 仿真运行了 9 个时钟周期, 其中四次 state_e 为 INIT, 四次 state_e 为 FETCH, 表中给出了
+state_e和req的数值,以及对应的下一个时钟周期上ack的数值.
+1 1st cycle 2nd cycle output message and notes
+2 ------------ --------- ----------------------------------------
+3 state_e reg ack
+4 ------------ ---------
+5 INIT 0 0 passed //空匹配,陷阱
+6 INIT 1 0 passed //空匹配,陷阱
+7 INIT 1 1 passed //空匹配,陷阱
+8
+9 FETCH 0 0 passed //空匹配
+10 FETCH 1 0 failed //失败
+11 FETCH 1 1 passed //成功匹配
+上例给出两类陷阱,一类是输出的第一行中,当断言运行时,state_e不为FETCH,由于断言正在运行,并不关心if条
+件是否为假,过程代码中的并发断言会一直保持并行状态,因此断言将在并发线程中运行,会与过程块并行,由于断
+言是并发锻压,将在每个clk上升沿执行,而不会关心if条件的真假,陷阱!
+第二类陷阱为输出的第二行,ack 并未跟随 req, 这应该是一个断言失败, 但断言却报告了一个空匹配. 这个陷阱
+是由于if语句被视为断言属性的隐含操作,当if条件为假,属性将出现一次空匹配,而不会查看req和ack的数值.
+如何避免
+事实上并无陷阱需要避免, 之前示例中的断言并不存在缺陷, 在隐含操作符的前导为假时, 将出现一次空匹配,
+这在上例中并不可见,实际上存在两种隐含类型, 过程代码的if(state_e==FETCH)和断言属性的 req|->,如果这
+两个隐含操作都为假,都将出现空匹配.
+为了避免断言通过分支的误导,无需在并发断言中使用通过分支,来监控过程代码的条件语句,$assertvacuousoff可
+解决空匹配时通过分支的执行问题.
+陷阱 93:assert...else 语句的失配
+陷阱:当断言成功时却执行了失败分支.
+原因:断言中存在一个未包含else的if通过语句时,会与断言的else进行配对.
+assert和assertproperty可包含以下的通过和失败分支.
+1 assert property (p_req_ack) $display(”passed”);
+2 else $display(”failed”);
+如果在通过分支中包含了条件语句if或if...else,将在示例中包含一个陷阱:
+1 assert property (p_req_ack)
+2 if (cnt_en) req_ack_count++; //陷阱
+3 else $fatal;
+
+## 第 92 页
+
+7. 随机化,覆盖和断言的陷阱 91
+上例中if将于后续的else产生失配,但这不是一个语法错误,因为失败分支也是可选的.
+如何避免
+避免这个陷阱可在if条件中加入beign...end,如下:
+1 assert property (p_req_ack)
+2 begin
+3 if (cnt_en) req_ack_count++;
+4 end
+5 else $fatal;
+陷阱 94: 断言无法失败
+陷阱:如果在断言属性的后道中包含一个开放式延时,将导致断言无法失败.
+原因:在属性的后道包含一个开放式延时,将导致后道一直等待条件返回真.
+当断言序列中包含了一个不可见的开放式范围时,将引入不可预期的断言结果.
+以下断言属性的意图在于,ack跟随req之后的下一个时钟周期上将出现done的跟随.
+1 property p_req_ack2;
+2 @(posedge clk)
+3 $rose(req) |-> ##[1:$] $rose(ack) ##1 $rose(done);
+4 endproperty
+在上例中断言前导将等待req的上升沿,在req出现上升沿之前,断言在每个时钟周期上出现一个空匹配,当req为
+高后, 后道将等待 ack 为高, 一旦 ack 为高,done 需在下一个时钟上也为高, 如果这些都匹配, 属性也将匹配, 如果
+done未跟随ack,断言也无法失败,因为后道将一直等待ack的上升沿,以及后续done的上升沿.
+下一个属性类似于之前的示例,除了ack和done评估之前的开放式范围.
+1 property p_req_ack2;
+2 @(posedge clk)
+3 $rose(req) |-> ##[1:5] $rose(ack) ##[1:$] $rose(done);
+4 endproperty
+上例中如果ack的上升沿未在5个时钟时钟内出现,后道将失败,如果ack在req后的5个时钟周期内为高,后道
+将一直等待done的上升沿,因为又使用了开放式范围,属性可在开放式范围的起始点失败,一旦开放式范围被启动,
+后道将无法失败,并将一直等待通过条件.
+如何避免
+该陷阱是由于后道中包含了一个开放式范围的测试, 一种解决方案是将后道分解成单独的序列和属性, 第一个
+属性用于检查req后的ack上升沿,第二个属性用于检查ack后一个时钟上的done.
+1 property p_req_ack;
+2 @(posedge clk) $rose(req) |-> ##[1:$] $rose(ack);
+3 endproperty
+4
+5 property p_ack_done;
+6 @(posedge clk) $rose(ack) |-> ##1 $rose(done);
+7 endproperty
+另一个解决方案是使用重复操作符([->n]),该操作符可提供ack的持续检查,可在done未跟随ack时失败,而不是
+一直等待后续的done.
+1 property p_req_ack2;
+2 @(posedge clk)
+3 $rose(req) |-> ##1 ($rose(ack)[->1]) ##1 $rose(done);
+4 endproperty
+
+## 第 93 页
+
+工具兼容性的陷阱
+陷阱 95: 默认的仿真时间单位和精度
+陷阱:设计输出的时间将在不同的仿真器中变更.
+原因:不同的仿真器会有不同的默认时间单位(使用‘timescale标识符).
+Verilog的时间是一个64bit无符号整型,延时可使用#跟随一个数值表示,但延时不能指定执行的时间单位.
+1 #2 sum = a + b; //编程语句的延时执行
+2 and #3 (y, a, b); //两输入and门的传播延时
+在Verilog中可使用‘timescale标识符指定模块的时间单位,标识符包含了两部分,一是模块的时间单位,另一是模
+块的时间精度,其中可指定1,10或100的倍数值,以及s到fs的时间单位,模块的时间精度可描述模块的延时类型,
+精度关联于时间单位,仿真中所有延时将使用设计指定的最小精度.
+以下是‘timescale的示例:
+1 ‘timescale 1ns/100ps //1ns时间单位,100ps精度
+2 module A (...) ;
+3 #2.3 ... //延时2.3ns
+4 endmodule
+5
+6 module B (...) ;
+7 #5.5 ... //陷阱,未知5.5的单位
+8 endmodule
+9
+10 ‘timescale 1ps/1ps
+11 module C (...) ;
+12 #7 ... //延时7ns
+13 endmodule
+在使用‘timescale时常用有两个陷阱,文件次序的关联性以及非标准的默认值.
+‘timescale 并不能绑定模块或文件, 一旦指定后, 将影响所有的模块和文件, 直到新的 ‘timescale 被指定, 这意
+味着如果在一些设计或文件中指定了时间单位,而其他文件并未指定时,如果改变文件的编译次序,将使一些文件中
+无法获取到时间单位,这将导致不同的仿真结果.
+如果文件中未给出‘timescale,编译器将使用一个默认时间单位,这将导致不同的仿真器将得到不同的结果.
+Verilog如何避免
+为在Verilog中避免这类陷阱,可使用强制性的编码规则,这里有三种‘timescale指定的编码风格:
+(cid:15) 不使用‘timescale,只使用软件工具的默认时间单位.因为在模型中可能包含不同的模型,比如IP或ASIC单
+元库,这些商用Verilog模型都会包含‘timescale标识符.
+(cid:15) 保证在每个模块,设计和testbench文件的起始处都包含了‘timescale,这可消除多文件编译时,对于编译次序
+的依赖,或是在单独文件编译时,依赖于软件工具的默认时间单位.
+(cid:15) 只在一个文件中指定‘timescale,而其他文件只需包含该文件.
+SystemVerilog如何避免
+SystemVerilog 中增加了两个功能, 用于帮助 ‘timescale 的应用, 首先给出了关键字 timeunit 和 timeprecision,
+用于在模块中指定的时间单位和精度,这些关键字可用于接口,程序和包.
+在模块定义的时间单位和精度,可消除多文件和单文件编译时对文件次序的依赖.
+92
+
+## 第 94 页
+
+8. 工具兼容性的陷阱 93
+另一个增强是在延时中可显式指定时间单位,这也可消除时间单位与‘timescale之间的关联性.
+1 module B (...) ;
+2 timeunit lns;
+3 timeprecision lps;
+4 #5.5 ... //延时5.5ns
+5 ’1ms ... //延时1ms
+6 endmodule
+陷阱 96: 包链
+陷阱:自定义包可在所有仿真器中编译,但使用该包的设计只能在一些仿真器中被编译.
+原因: 当一个包导入到第二个包中, 而设计或 testbench 只导入了第一个包时, 有些仿真器可载入两个包的有效
+声明,有些却不能完成.
+SystemVerilog 包为声明定义提供了一个共享空间, 模块, 接口或程序都能导入特定的包元素, 或是使用通配导
+入,将整个包导入.包也可导入到其他包中.
+1 package foo;
+2 typedef int unsigned uint_t;
+3 function int func_a (int a);
+4 return ~a;
+5 endfunction
+6 endpackage
+7
+8 package bar;
+9 import foo::*; //通配导入foo包
+10 function int func_b (uint_t b);
+11 return ~func_a(b);
+12 endfunction
+13 endpackage
+14
+15 module test;
+16 import bar::*; //通配导入bar
+17 uint t c; //陷阱,引用了foo包定义
+18
+19 ...
+20 endmodule
+上例中test模块导入了bar包,同时引用了uint_t定义,该定义并不在bar包中,而在bar导入的foo包中,这被视
+为包链.有些软件工具允许包链,有些却不允许.这是由于SystemVerilog2005标准定义的缺失,它既没有允许包链
+也没有禁止.
+如何避免
+为保证设计和验证代码能在所有软件工具中工作,不要使用包链.如下:
+1 module test;
+2 import bar::*; //通配导入bar
+3 import foo::*; //通配导入foo
+4 uint t c; //陷阱,引用了foo包定义
+5
+6 ...
+7 endmodule
+陷阱 97: 随机数生成器并不一致
+陷阱:在不同的工具中无法都支持约束随机测试.
+原因:IEEE规范中未定义SystemVerilog的约束随机生成中使用的随机数生成器(RNG).
+IEEE 1800-2005 SystemVerilog 规范中定义了所需的约束随机数生成器 (RNG), 但标准中并未指定随机数生成
+或约束解析的算法.
+
+## 第 95 页
+
+8. 工具兼容性的陷阱 94
+下例将给出标准 RNG 和约束解析器包含的一个陷阱, 可在不同的工具中运行该测试, 该测试能在同一仿真器
+的不同版本中获得一致的结果.
+1 class bad_constraint;
+2 rand bit [7:0] a, b, c;
+3 constraint equal {a == b == c;}
+4 endclass
+不同工具生成的随机数如下:
+1 //1
+2 a = 25, b = 173, c = 0
+3 a = 65, b = 151, c = 0
+4 a = 190, b = 33, c = 0
+5 a = 65, b = 32, c = 0
+6
+7 //2
+8 a = 61, b = 1, c = 0
+9 a = 9, b = 9, c = 1
+10 a = 115, b = 222, c = 0
+11 a = 212, b = 212, c = 1
+12
+13 //2,来自于相同工具的不同版本
+14 a = 9, b = 9, c = 1
+15 a = 212, b = 212, c = 1
+16 a = 17, b = 17, c = 1
+17 a = 150, b = 184, c = 0
+每个工具给出的随机值并不重复,即使相同工具的不同版本也是如此,这意味着不同工具之间运行的约束随机测试
+无法匹配,另外以上的结果也显示出相同工具的不同版本也无法保证能获得相同的结果,陷阱!
+如何避免
+标准的 RNG 和约束解析器应保证在不同工具之间生成的约束随机测试能保持一致, 但在本书的编写过程中,IEEE
+SystemVerilog标准工作组并无计划对这些重要的算法进行标准化.
+最好的解决方法就是让验证组保持对工具和版本的跟踪, 必须确认工具版本的更新是否会影响验证结果, 另外
+如何验证组需要使用多种工具,则必须对这些工具和对应版本的测试结果进行跟踪.
+陷阱 98:always_latch/always_ff 的内存模型
+陷阱:在SystemVerilog中,有些仿真器无法使用$readmemb载入内存模型.
+原因:$readmemb和$readmemh任务不能用于载入always_latch或always_ff所需的RAM模型.
+一般情况下,RAM 的总线功能模型既需要同步操作 (基于时钟) 也需要异步操作 (基于使能信号), 抽象层实现的
+同步RAM如同触发器,而实现的异步RAM如同锁存器,如果它们使用SystemVerilog的always_latch或always_ff
+过程块,将包含一个陷阱.
+1 module RAM ( inout wire [63:0] data,
+2 input logic [7:0] address,
+3 input logic write_enable , read_enable );
+4 logic [63:0] mem [0:255];
+5
+6 always_latch //异步写入(锁存行为)
+7 if (write_enable) mem[address] <= data; //写入RAM
+8
+9 assign data = read_enable ? mem[address] : 64’bz;
+10 endmodule
+11
+12 module test;
+13 wire [63:0] data;
+14 logic [7:0] address;
+15 logic write_enable , read_enable;
+16
+17 RAM ram1 (.*); //RAM模型的实例
+18
+19 initial begin
+
+## 第 96 页
+
+8. 工具兼容性的陷阱 95
+20 $readmemh (”ram_data.dat”, ram1.mem); //陷阱
+21 ...
+上例中至少 RAM 模型的功能是正确的, 但 always_latch 的综合规则中禁止了多个过程块对同一个变量的写
+入,testbench 将会尝试使用$readmemh任务载入RAM 模型,这是Verilog内存模型的常见载入方式,但第二个过
+程块中对RAM存储(mem)的写入时非法的,在仿真器中将得到以下错误:
+1 Error -[ICPD] Invalid combination of procedural drivers
+2 Variable ”mem” is driven by an invalid combination of procedural
+3 drivers. Variables written on left -hand of ”always_latch” cannot
+4 be written to by any other processes, including other
+5 ”always_latch” processes.
+但有些仿真器在运行上例时,并不会出现错误和警告,因为它们不会将$readrnemh和$readrnemb视为分配语句.
+如何避免
+避免该问题可在通用的 always 块中使用抽象的 RAM 模型,SystemVerilog 的 always_latch 或 always_ff 过程块
+是为了构建可综合的RTL模型,这些结构中无法包含于综合规则冲突的抽象模型.
+异步的锁存RAM模型可使用以下代码:
+1 module RAM
+2 ...
+3 always @* //异步写入(锁存行为)
+4 if (write_enable) mem[address] <= data; //写入RAM
+5 ...
+陷阱 99: 非标准的语言扩展
+陷阱:SystemVerilog代码只能在一种工具中工作.
+原因:有些工具中加入Verilog和SystemVerilog的专用扩展.
+有些 Verilog 和 SystemVerilog 工具中加入了标准之外的专用扩展, 这些扩展只在一些工具中有效, 使用这些扩
+展的代码无法在所有工具中都能正常工作.
+有些 SystemVerilog 工具允许在 solve...before 约束操作符中使用可选操作符 hard, 而其他的工具并不允许, 如
+下:
+1 constraint ab {
+2 solve a before b hard;
+3 if (a inside {32, 64, 128, 256}) a == b
+4 else a > b;
+5 }
+hard并不是SystemVerilog的关键字,且不是IEEE1800-2005标准的一部分,如果hard用于其他的工具时,将得
+到一个语法错误.
+有些 SystemVerilog 工具还允许在类方法定义时, 使用 pure virtual 关键字, 这也不是标准的一部分, 使用该关
+键字的 testbench 将无法在其他工具中编译, 同时还提供使用该关键字的验证库, 那么这些库无法在其他工具中使
+用.
+如何避免
+使用非标准的关键字或语法只能在特定的工具中获取所需的结果, 特定的关键字可防止相同的验证代码能在其
+他的软件工具中使用,为了避免这类陷阱,应在代码中使用条件编译,使其在所有的工具中都能被编译,如下:
+1 constraint ab {
+2 ’ifdef VENDOR_A
+3 solve a before b hard;
+4 ’else
+5 solve a before b;
+6 ’endif
+7 if (a inside {32, 64, 128, 256}) a == b
+8 else a > b;
+9 }
+
+## 第 97 页
+
+8. 工具兼容性的陷阱 96
+上例中宏名VENDOR_A必须在代码编译之前被设定,它可在源码中指定,或是工具的命名行中指定.
+陷阱 100: 数组语法和串接
+陷阱:有些工具需使用一种文本数组的语法,而其他工具又需要另一种不同的语法.
+原因:数组文本和结构文本应封闭在’{和}中,但在SystemVerilog的早期草案中使用过{和}.
+Verilog 串接操作符可将一个或多个数值和信号合并到单个矢量,SystemVerilog 的数组和结构文本 (也就是分配
+模式)中可列出一个或多个单独值,为使工程师和软件工具了解这些结构的差异,可在数组或结构文本中使用’{},使
+其不同于Verilog串接的{},数组或结构文本中可列出不同的数值.
+1 logic [7:0] data; //8bit矢量
+2 data = {4’hF, bus}; //数值串接
+3 int data [4]; //4个整型的数组
+4 data = ’{0, 1, 2, 3}; //数值列表
+5
+6 typedef struct {
+7 int a, b;
+8 logic [3:0] opcode;
+9 } instruction_word;
+10 instruction_word = ’{7, 5, 3}; //数值列表
+如何避免
+使用条件编译可避免数组或结构的文本风格的差异, 使其可在 SystemVerilog 3.1a 和 IEEE 1800 风格下都能被编
+译.
+1 int data [4];
+2
+3 initial begin
+4 ’ifdef VENDOR_A
+5 data = ’{0, 1, 2, 3};
+6 ’else
+7 data = {0, 1, 2, 3};
+8 ’endif
+9
+10 ...
+11 end
+陷阱 101: 模块端口的浮点数 (real) 传递
+陷阱:有些工具允许输入端口声明为real(浮点数),其他的工具则不能.
+原因: 模块的输出端口可声明为 real 类型, 并传递浮点数, 而模块的输入端口也可声明为 var real, 也能传递浮
+点数.
+SystemVerilog 可通过端口传递浮点数, 但在 IEEE 标准中并没有明确指定, 模块的 output 端口可声明为 real(双精
+度)或shortreal(单精度)类型,当输入端口必须声明为varreal或varshortreal,如:
+1 module fp_adder (output real result ,
+2 input var real a, b);
+3 ...
+4 endmodule
+在 SystemVerilog 3.1a 的草案中, 并不需要在 input 端口中使用 var, 在本书编写过程中, 有些 SystemVerilog 工具
+已开始使用IEEE标准,如果忽略var关键字将得到一个错误,设计者应注意这两种标准的差异.
+如何避免
+这类陷阱无需避免, 只需在模块端口声明时, 给出一个条件编译, 使其可在 SystemVerilog 3.1a 和 IEEE 1800
+风格下都能被编译.
+
+## 第 98 页
+
+索引表 (略)
+97
