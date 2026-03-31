@@ -176,6 +176,13 @@
         "model": "glm5"
       },
       {
+        "id": "bro_chengbenxia",
+        "name": "bro_chengbenxia",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-bro-chengbenxia",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\bro_chengbenxia\\agent",
+        "model": "glm5"
+      },
+      {
         "id": "zx_assistant_01",
         "name": "zx_assistant_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_assistant_01",
@@ -231,6 +238,13 @@
       "match": {
         "channel": "feishu",
         "accountId": "my_kuailexia"
+      }
+    },
+    {
+      "agentId": "bro_chengbenxia",
+      "match": {
+        "channel": "feishu",
+        "accountId": "bro_chengbenxia"
       }
     },
     {
@@ -323,6 +337,10 @@
         "my_kuailexia": {
           "appId": "cli_a921d618c0b85bdf",
           "appSecret": "ZR6ZHMvKW7HiIfkjl42LfhE1nmBnHRLG"
+        },
+        "bro_chengbenxia": {
+          "appId": "cli_a9415da270389bc6",
+          "appSecret": "OjxvNqWNrFts3valgJ77cdKadDx1LncI"
         },
         "zx_xiaohongshu": {
           "appId": "cli_a94df37921e29cc2",

@@ -1,0 +1,10 @@
+collections:
+  memory-root-bro-chengbenxia:
+    path: C:\Users\LWS\.openclaw\workspace-bro-chengbenxia
+    pattern: MEMORY.md
+  memory-alt-bro-chengbenxia:
+    path: C:\Users\LWS\.openclaw\workspace-bro-chengbenxia
+    pattern: memory.md
+  memory-dir-bro-chengbenxia:
+    path: C:\Users\LWS\.openclaw\workspace-bro-chengbenxia\memory
+    pattern: "**/*.md"
