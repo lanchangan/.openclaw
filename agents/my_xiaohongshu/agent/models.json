@@ -284,7 +284,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 200000,
-          "maxTokens": 16000
+          "maxTokens": 16000,
+          "api": "openai-completions"
         },
         {
           "id": "tc-code-latest",
@@ -300,7 +301,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 196608,
-          "maxTokens": 32768
+          "maxTokens": 32768,
+          "api": "openai-completions"
         },
         {
           "id": "hunyuan-2.0-instruct",
@@ -316,7 +318,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 128000,
-          "maxTokens": 16000
+          "maxTokens": 16000,
+          "api": "openai-completions"
         },
         {
           "id": "hunyuan-2.0-thinking",
@@ -332,7 +335,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 128000,
-          "maxTokens": 32000
+          "maxTokens": 32000,
+          "api": "openai-completions"
         },
         {
           "id": "hunyuan-t1",
@@ -348,7 +352,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 64000,
-          "maxTokens": 32000
+          "maxTokens": 32000,
+          "api": "openai-completions"
         },
         {
           "id": "hunyuan-turbos",
@@ -364,7 +369,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 32000,
-          "maxTokens": 16000
+          "maxTokens": 16000,
+          "api": "openai-completions"
         },
         {
           "id": "minimax-m2.5",
@@ -380,7 +386,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 196608,
-          "maxTokens": 32768
+          "maxTokens": 32768,
+          "api": "openai-completions"
         },
         {
           "id": "kimi-k2.5",
@@ -396,7 +403,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 32768
+          "maxTokens": 32768,
+          "api": "openai-completions"
         }
       ]
     }

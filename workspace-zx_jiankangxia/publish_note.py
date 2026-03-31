@@ -1,0 +1,104 @@
+import requests
+import json
+import sys
+
+BASE_URL = "http://localhost:18060"
+TIMEOUT = 120
+
+def publish_note(title, content, images, tags=None):
+    """Publish a new note."""
+    try:
+        payload = {
+            "title": title,
+            "content": content,
+            "images": images if isinstance(images, list) else [images]
+        }
+        if tags:
+            payload["tags"] = tags if isinstance(tags, list) else [tags]
+        
+        resp = requests.post(
+            f"{BASE_URL}/api/v1/publish",
+            json=payload,
+            timeout=120
+        )
+        data = resp.json()
+        
+        if data.get("success"):
+            print("Note published successfully!")
+            print(f"   Post ID: {data.get('data', {}).get('post_id', 'Unknown')}")
+        else:
+            print(f"Publish failed: {data.get('error', 'Unknown error')}")
+        
+        return data
+    except requests.exceptions.ConnectionError:
+        print("Cannot connect to MCP server.")
+        sys.exit(1)
+
+# 发布笔记
+title = "优甲乐服用指南 | 桥本姐妹必看！"
+
+content = """优甲乐服用指南 | 桥本姐妹必看！什么时候吃？怎么吃？能停吗？
+
+很多桥本姐妹拿到优甲乐处方后一脸懵：这药要吃多久？什么时候吃？能自己停吗？今天一篇讲清楚！
+
+【什么时候需要吃优甲乐？】
+
+1. TSH升高 + T3/T4降低
+甲减指标明确，医生会建议开始服用
+
+2. TPOAb/TgAb阳性 + 有甲减症状
+即使指标刚超标，但出现疲劳、怕冷、体重增加、脱发等症状
+
+3. 备孕/怀孕期间
+孕期甲减会影响宝宝智力发育，TSH一般要求控制在2.5以下
+
+4. 甲状腺切除术后
+必须终身服用，替代甲状腺功能
+
+【优甲乐怎么吃？】
+
+最佳时间：空腹，早餐前30-60分钟
+建议定闹钟，每天固定时间服用
+
+服用方式：
+- 用白开水送服（不要用豆浆/牛奶/咖啡）
+- 不要和其他药物同服（如钙片、铁剂需间隔4小时）
+- 忘记吃了？想起来就补，如果快到下次服药时间就跳过，不要双倍
+
+饮食注意：
+- 服药后30-60分钟再吃早餐
+- 避免高纤维、豆制品、咖啡影响吸收
+
+【优甲乐能停药吗？】
+
+注意：大部分情况不能擅自停药！
+
+可能停药的情况：
+- 亚临床甲减，抗体转阴，甲状腺功能恢复
+- 药物性甲减（如碘治疗后暂时性甲减）
+
+不能停药的情况：
+- 桥本导致的永久性甲减
+- 甲状腺切除术后
+- 孕期（需医生评估）
+
+重要提醒：
+即使感觉好了，也要定期复查（每3-6个月）！擅自停药可能导致甲减反弹，比不吃还危险。
+
+【总结】
+优甲乐是替代治疗，不是"治病"药。桥本姐妹要学会和它和平共处，定期复查、调整剂量，生活质量完全可以很正常！
+
+有问题的姐妹评论区交流～
+
+#桥本甲状腺炎 #优甲乐 #甲减 #甲状腺健康 #桥本甲减 #健康养生 #甲状腺 #女性健康 #优甲乐服用指南 #慢性病管理"""
+
+images = [
+    "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800",
+    "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800",
+    "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800"
+]
+
+tags = ["桥本甲状腺炎", "优甲乐", "甲减", "甲状腺健康", "女性健康"]
+
+result = publish_note(title, content, images, tags)
+print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -33,6 +33,71 @@
       "frozenResultCapturedAt": 1774747317572,
       "endedHookEmittedAt": 1774747512689,
       "cleanupCompletedAt": 1774747512690
+    },
+    "7db09fa7-c5a4-4b55-8499-3b4ad94bc882": {
+      "runId": "7db09fa7-c5a4-4b55-8499-3b4ad94bc882",
+      "childSessionKey": "agent:main:subagent:0d1c7122-1624-4c03-8ffa-2983e3438115",
+      "controllerSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterOrigin": {
+        "to": "user:ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "accountId": "default"
+      },
+      "requesterDisplayKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "task": "请帮我完成以下任务：\n\n1. 创建飞书文档，标题：股票量化分析与交易技能推荐 - 2026年3月31日\n2. 读取文件：C:\\Users\\LWS\\.openclaw\\workspace\\股票量化分析与交易技能推荐.md\n3. 使用 feishu_doc 工具将内容写入文档\n4. 返回文档链接\n\n重要步骤：\n1. 使用 feishu_doc create 创建文档\n2. 使用 feishu_doc write 写入内容（这一步必须执行！）\n3. 返回文档链接\n\n文档发送给用户：ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "cleanup": "keep",
+      "expectsCompletionMessage": true,
+      "spawnMode": "run",
+      "model": "custom-43-133-33-215-3000/glm-5",
+      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "runTimeoutSeconds": 120,
+      "createdAt": 1774923868482,
+      "startedAt": 1774923870122,
+      "sessionStartedAt": 1774923868482,
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": true,
+      "retainAttachmentsOnKeep": false,
+      "endedAt": 1774923990153,
+      "outcome": {
+        "status": "timeout"
+      },
+      "endedReason": "subagent-complete",
+      "frozenResultText": "让我检查 Feishu 扩展的源代码，了解如何调用工具：",
+      "frozenResultCapturedAt": 1774923988561,
+      "endedHookEmittedAt": 1774924295381,
+      "cleanupCompletedAt": 1774924295382
+    },
+    "a5f50845-d038-4fdc-96e9-055b795e0a28": {
+      "runId": "a5f50845-d038-4fdc-96e9-055b795e0a28",
+      "childSessionKey": "agent:main:subagent:6a13cd4c-19cb-46c6-a653-88f69b6335c0",
+      "controllerSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterOrigin": {
+        "channel": "webchat"
+      },
+      "requesterDisplayKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "task": "创建飞书文档并发送内容\n\n任务：\n1. 使用 feishu_doc 工具创建文档，标题：\"股票量化分析与交易技能推荐 - 2026年3月31日\"\n2. 读取文件：C:\\Users\\LWS\\.openclaw\\workspace\\股票量化分析与交易技能推荐.md\n3. 使用 feishu_doc write 将内容写入文档\n4. 返回文档链接\n\n用户 open_id: ou_e7a32d874706bf82f2d409b0427b7e9e\n\n重要：\n- 必须调用 feishu_doc create 创建文档\n- 必须调用 feishu_doc write 写入内容\n- 返回文档链接格式：https://feishu.cn/docx/{doc_token}",
+      "cleanup": "keep",
+      "expectsCompletionMessage": true,
+      "spawnMode": "run",
+      "model": "custom-43-133-33-215-3000/glm-5",
+      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "runTimeoutSeconds": 120,
+      "createdAt": 1774924198704,
+      "startedAt": 1774924199114,
+      "sessionStartedAt": 1774924198704,
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": true,
+      "retainAttachmentsOnKeep": false,
+      "endedAt": 1774924268540,
+      "outcome": {
+        "status": "ok"
+      },
+      "endedReason": "subagent-complete",
+      "frozenResultText": "我遇到了一个问题：当前环境中没有可用的 `feishu_doc` 工具。\n\n**情况说明：**\n- ✅ 已成功读取文件内容（股票量化分析与交易技能推荐.md）\n- ❌ 无法创建飞书文档 - `feishu_doc` 工具不在可用工具列表中\n- ❌ 飞书通道也未配置\n\n**当前可用工具：**\nbrowser, canvas, edit, exec, lcm_*, message, process, read, sessions_yield, tts, web_fetch, web_search, write\n\n**可能的原因：**\n1. 飞书扩展未启用\n2. 飞书应用未配置或 Token 过期\n3. 权限设置问题\n\n**建议主代理操作：**\n1. 检查 OpenClaw 配置文件中的飞书扩展设置\n2. 运行 `openclaw gateway status` 检查服务状态\n3. 确认飞书应用的权限范围包含 `docx:document`, `drive:drive` 等必要权限\n\n**文件内容已准备就绪：**\n文件路径：`C:\\Users\\LWS\\.openclaw\\workspace\\股票量化分析与交易技能推荐.md`\n文件大小：约 8KB\n包含完整的股票量化分析与交易技能推荐内容\n\n由于缺少必要的飞书工具，我无法完成创建文档的任务。需要主代理协助配置飞书扩展。",
+      "frozenResultCapturedAt": 1774924268596,
+      "endedHookEmittedAt": 1774924573719,
+      "cleanupCompletedAt": 1774924573720
     }
   }
 }

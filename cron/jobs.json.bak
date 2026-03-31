@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1774746862526,
+      "updatedAtMs": 1774914580625,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -18,8 +18,8 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "执行每日新闻与市场早报任务：\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接，格式：📰 [新闻标题] - [一句话摘要]\\n🔗 来源：[网站名称] | [链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
-        "model": "volcengine-plan/ark-code-latest",
+        "message": "执行每日新闻与市场早报任务：\\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\\n\\n1. 国际新闻TOP5：搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\\n\\n2. 国内新闻TOP5：搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\\n\\n3. 半导体行业新闻：搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\\n\\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\\n\\n5. 股票推荐TOP5：搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\\n\\n6. 基金推荐TOP5：搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\\n\\n7. openclaw，claude code及其同类产品的最新进展\\n\\n输出要求：\\n- 使用飞书卡片格式\\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\\n- 每个部分用清晰标题分隔\\n- 重要信息加粗\\n- 股票/基金推荐包含代码/名称+推荐理由\\n- 每条新闻/信息必须附上来源和链接，格式：📰 [新闻标题] - [一句话摘要]\\n🔗 来源：[网站名称] | [链接]\\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\\n\\n**重要步骤**：\\n1. 使用 feishu_doc create 创建飞书文档\\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\\n3. 获取文档链接\\n4. 发送飞书卡片消息，附上文档链接\\n\\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
+        "model": "glm-5",
         "thinking": "low",
         "timeoutSeconds": 600
       },
@@ -30,13 +30,14 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1774825200000,
-        "lastRunAtMs": 1774746646522,
+        "nextRunAtMs": 1774998000000,
+        "lastRunAtMs": 1774911600022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 216004,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 0
+        "lastDurationMs": 221319,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       },
       "deleteAfterRun": false
     },
@@ -85,7 +86,7 @@
       "name": "装修任务检查-周一",
       "enabled": true,
       "createdAtMs": 1774099033292,
-      "updatedAtMs": 1774224022156,
+      "updatedAtMs": 1774828932348,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * 1",
@@ -106,15 +107,13 @@
         "to": "ou_e7a32d874706bf82f2d409b0427b7e9e"
       },
       "state": {
-        "nextRunAtMs": 1774828800000,
-        "lastRunAtMs": 1774224000019,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 22137,
-        "lastErrorReason": "rate_limit",
+        "nextRunAtMs": 1775433600000,
+        "lastRunAtMs": 1774828800024,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 132324,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 3,
-        "lastError": "⚠️ API rate limit reached. Please try again later.",
+        "consecutiveErrors": 0,
         "lastDelivered": true
       }
     }

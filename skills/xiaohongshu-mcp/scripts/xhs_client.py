@@ -37,14 +37,14 @@ def check_status():
         if data.get("success"):
             login_info = data.get("data", {})
             if login_info.get("is_logged_in"):
-                print(f"✅ Logged in as: {login_info.get('username', 'Unknown')}")
+                print(f"[OK] Logged in as: {login_info.get('username', 'Unknown')}")
             else:
-                print("❌ Not logged in. Please run the login tool first.")
+                print("[FAIL] Not logged in. Please run the login tool first.")
         else:
-            print(f"❌ Error: {data.get('error', 'Unknown error')}")
+            print(f"[ERROR] {data.get('error', 'Unknown error')}")
         return data
     except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to MCP server. Make sure xiaohongshu-mcp is running on localhost:18060")
+        print("[FAIL] Cannot connect to MCP server. Make sure xiaohongshu-mcp is running on localhost:18060")
         sys.exit(1)
 
 
@@ -68,7 +68,7 @@ def search_notes(keyword, sort_by="综合", note_type="不限", publish_time="�
         
         if data.get("success"):
             feeds = data.get("data", {}).get("feeds", [])
-            print(f"🔍 Found {len(feeds)} notes for '{keyword}':\n")
+            print(f"[SEARCH] Found {len(feeds)} notes for '{keyword}':\n")
             
             for i, feed in enumerate(feeds, 1):
                 note_card = feed.get("noteCard", {})
@@ -82,11 +82,11 @@ def search_notes(keyword, sort_by="综合", note_type="不限", publish_time="�
                 print(f"    xsec_token: {feed.get('xsecToken')}")
                 print()
         else:
-            print(f"❌ Search failed: {data.get('error', 'Unknown error')}")
+            print(f"[FAIL] Search failed: {data.get('error', 'Unknown error')}")
         
         return data
     except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to MCP server.")
+        print("[FAIL] Cannot connect to MCP server.")
         sys.exit(1)
 
 
@@ -110,7 +110,7 @@ def get_note_detail(feed_id, xsec_token, load_comments=False):
             note = note_data.get("note", {})
             comments = note_data.get("comments", {})
             
-            print(f"📝 Note Details:\n")
+            print(f"[NOTE] Note Details:\n")
             print(f"Title: {note.get('title', 'No title')}")
             print(f"Author: {note.get('user', {}).get('nickname', 'Unknown')}")
             print(f"Location: {note.get('ipLocation', 'Unknown')}")
@@ -121,16 +121,16 @@ def get_note_detail(feed_id, xsec_token, load_comments=False):
             
             comment_list = comments.get("list", [])
             if comment_list:
-                print(f"\n💬 Top Comments ({len(comment_list)}):")
+                print(f"\n[COMMENTS] Top Comments ({len(comment_list)}):")
                 for c in comment_list[:5]:
                     user_info = c.get("userInfo", {})
                     print(f"  - {user_info.get('nickname', 'Anonymous')}: {c.get('content', '')}")
         else:
-            print(f"❌ Failed to get details: {data.get('error', 'Unknown error')}")
+            print(f"[FAIL] Failed to get details: {data.get('error', 'Unknown error')}")
         
         return data
     except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to MCP server.")
+        print("[FAIL] Cannot connect to MCP server.")
         sys.exit(1)
 
 
@@ -142,7 +142,7 @@ def get_feeds():
         
         if data.get("success"):
             feeds = data.get("data", {}).get("feeds", [])
-            print(f"📋 Recommended Feeds ({len(feeds)} notes):\n")
+            print(f"[FEEDS] Recommended Feeds ({len(feeds)} notes):\n")
             
             for i, feed in enumerate(feeds, 1):
                 note_card = feed.get("noteCard", {})
@@ -154,11 +154,11 @@ def get_feeds():
                 print(f"    Likes: {interact.get('likedCount', '0')}")
                 print()
         else:
-            print(f"❌ Failed to get feeds: {data.get('error', 'Unknown error')}")
+            print(f"[FAIL] Failed to get feeds: {data.get('error', 'Unknown error')}")
         
         return data
     except requests.exceptions.ConnectionError:
-        print("❌ Cannot connect to MCP server.")
+        print("[FAIL] Cannot connect to MCP server.")
         sys.exit(1)
 
 
