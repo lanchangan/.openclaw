@@ -180,7 +180,7 @@
         "name": "bro_chengbenxia",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-bro-chengbenxia",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\bro_chengbenxia\\agent",
-        "model": "glm5"
+        "model": "kimi"
       },
       {
         "id": "zx_assistant_01",
@@ -348,8 +348,7 @@
         },
         "my_work_robot": {
           "appId": "cli_a9340a6fd922dcc6",
-          "appSecret": "iEXatjRUBk8cCfedbOBlibZ6ZkYCJeN0",
-          "userAccessToken": true
+          "appSecret": "iEXatjRUBk8cCfedbOBlibZ6ZkYCJeN0"
         },
         "zx_assistant_01": {
           "appId": "cli_a934126ad938dbc6",
@@ -364,7 +363,7 @@
           "appSecret": "jUjnf9I9LKkG2GhXHGsPWc1z0hbM4JkJ"
         }
       },
-      "groupAllowFrom": "[oc_959ee261398abd06dd44199eb5ec0f82]",
+      "groupAllowFrom": ["oc_959ee261398abd06dd44199eb5ec0f82"],
       "appId": "cli_a92dc000da789cc2",
       "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ"
     }
