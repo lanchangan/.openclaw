@@ -1,13 +1,17 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.23-2",
-    "lastTouchedAt": "2026-03-25T04:37:50.304Z"
+    "lastTouchedAt": "2026-03-25T16:08:49.223Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-19T14:12:56.339Z",
-    "lastRunVersion": "2026.3.13",
+    "lastRunAt": "2026-03-25T13:08:14.702Z",
+    "lastRunVersion": "2026.3.23-2",
     "lastRunCommand": "doctor",
     "lastRunMode": "local"
+  },
+  "browser": {
+    "enabled": true,
+    "defaultProfile": "openclaw"
   },
   "auth": {
     "profiles": {
@@ -17,47 +21,103 @@
       }
     }
   },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "custom-llm-chudian-site": {
+        "baseUrl": "https://llm.chudian.site/v1",
+        "apiKey": "sk-ag-409a12b98c07a25dc7efc587468e1a6e",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "minimax-m2.5",
+            "name": "minimax-m2.5 (Custom Provider)",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 190000,
+            "maxTokens": 16000
+          }
+        ]
+      },
+      "custom-customll": {
+        "baseUrl": "https://llm.chudian.site/v1",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "custom-llm-chudian-site/minimax-m2.5",
+            "name": "custom-llm-chudian-site/minimax-m2.5"
+          }
+        ]
+      }
+    }
+  },
   "agents": {
     "defaults": {
       "model": {
-        "primary": "volcengine-plan/ark-code-latest"
+        "primary": "custom-customll/custom-llm-chudian-site/minimax-m2.7",
+        "fallbacks": []
       },
       "models": {
-        "volcengine/doubao-seed-1-8-251228": {},
-        "volcengine-plan/kimi-k2.5": {},
-        "volcengine-plan/doubao-seed-code": {},
-        "volcengine-plan/ark-code-latest": {},
-        "volcengine/kimi-k2-5-260127": {},
-        "volcengine/glm-4-7-251222": {},
-        "volcengine/doubao-seed-code-preview-251028": {},
-        "volcengine/deepseek-v3-2-251201": {},
-        "volcengine-plan/doubao-seed-code-preview-251028": {},
-        "volcengine-plan/glm-4.7": {},
-        "volcengine-plan/kimi-k2-thinking": {}
+        "custom-llm-chudian-site/minimax-m2.7": {
+          "alias": "minimax2.7"
+        },
+        "custom-llm-chudian-site/qwen3.5-plus": {
+          "alias": "qwen"
+        },
+        "custom-llm-chudian-site/glm-5": {
+          "alias": "glm5"
+        },
+        "custom-llm-chudian-site/doubao-seed-2.0-pro": {
+          "alias": "doubao-pro"
+        },
+        "custom-llm-chudian-site/deepseek-v3.2": {
+          "alias": "deepseek"
+        },
+        "custom-llm-chudian-site/kimi-k2.5": {
+          "alias": "kimi"
+        },
+        "custom-llm-chudian-site/doubao-seed-2.0-code": {
+          "alias": "doubao-code"
+        },
+        "custom-llm-chudian-site/glm-4.7": {
+          "alias": "glm4.7"
+        },
+        "custom-llm-chudian-site/minimax-m2.5": {
+          "alias": "minimax2.5"
+        }
       },
       "workspace": "C:\\Users\\LWS\\.openclaw\\workspace",
       "compaction": {
-        "mode": "safeguard"
+        "mode": "safeguard",
+        "keepRecentTokens": 20000
       }
     },
     "list": [
       {
         "id": "main",
-        "model": "volcengine-plan/kimi-k2.5"
+        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
       },
       {
         "id": "my_robot_01",
         "name": "my_robot_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_robot_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_robot_01\\agent",
-        "model": "volcengine-plan/ark-code-latest"
+        "model": "custom-llm-chudian-site/qwen3.5-plus"
       },
       {
         "id": "my_work_robot",
         "name": "my_work_robot",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_work_robot",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_work_robot\\agent",
-        "model": "volcengine-plan/ark-code-latest"
+        "model": "custom-llm-chudian-site/glm-5"
       },
       {
         "id": "zx_assistant_01",
@@ -76,7 +136,10 @@
     ]
   },
   "tools": {
-    "profile": "full"
+    "profile": "full",
+    "sessions": {
+      "visibility": "all"
+    }
   },
   "bindings": [
     {
@@ -113,6 +176,13 @@
         "channel": "feishu",
         "accountId": "zx_robot_01"
       }
+    },
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "default"
+      }
     }
   ],
   "commands": {
@@ -122,7 +192,8 @@
     "ownerDisplay": "raw"
   },
   "session": {
-    "dmScope": "per-channel-peer"
+    "dmScope": "per-channel-peer",
+    "idleMinutes": 10080
   },
   "hooks": {
     "internal": {
@@ -175,16 +246,26 @@
           "appSecret": "jUjnf9I9LKkG2GhXHGsPWc1z0hbM4JkJ"
         }
       },
-      "groupAllowFrom": "[oc_959ee261398abd06dd44199eb5ec0f82]"
+      "groupAllowFrom": "[oc_959ee261398abd06dd44199eb5ec0f82]",
+      "appId": "cli_a92dc000da789cc2",
+      "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ"
+    },
+    "openclaw-weixin": {
+      "accounts": {}
     }
   },
   "gateway": {
     "port": 18789,
     "mode": "local",
     "bind": "loopback",
+    "controlUi": {
+      "allowedOrigins": [
+        "file://"
+      ]
+    },
     "auth": {
       "mode": "token",
-      "token": "e41cba0e4bec389ce97fd7b82a2c636632dfd57fc0e16e9c"
+      "token": "clawx-dfe70a3305b6332790cd6c23d9c90ebe"
     },
     "tailscale": {
       "mode": "off",
@@ -229,45 +310,39 @@
       }
     }
   },
+  "skills": {
+    "entries": {
+      "pdf": {
+        "enabled": true
+      },
+      "xlsx": {
+        "enabled": true
+      },
+      "docx": {
+        "enabled": true
+      },
+      "pptx": {
+        "enabled": true
+      },
+      "tavily-search": {
+        "enabled": true
+      },
+      "brave-web-search": {
+        "enabled": true
+      }
+    }
+  },
   "plugins": {
     "allow": [
-      "feishu",
-      "lossless-claw",
-      "memory-lancedb-pro",
-      "openclaw-weixin"
+      "lossless-claw"
     ],
-    "slots": {
-      "memory": "memory-lancedb-pro"
-    },
+    "slots": {},
     "entries": {
       "feishu": {
-        "enabled": true
+        "enabled": false
       },
       "lossless-claw": {
         "enabled": true
-      },
-      "memory-lancedb-pro": {
-        "enabled": true,
-        "config": {
-          "embedding": {
-            "apiKey": "dummy",
-            "model": "nomic-embed-text",
-            "baseURL": "http://localhost:11434/v1"
-          },
-          "llm": {
-            "apiKey": "f3edcab4-1a28-4d2c-90ad-56b4fc440ca7",
-            "model": "doubao-seed-1-6-thinking-250615",
-            "baseURL": "https://ark.cn-beijing.volces.com/api/v3"
-          },
-          "autoCapture": true,
-          "autoRecall": true,
-          "autoRecallMinLength": 8,
-          "retrieval": {
-            "candidatePoolSize": 20,
-            "minScore": 0.45,
-            "hardMinScore": 0.55
-          }
-        }
       },
       "openclaw-weixin": {
         "enabled": true
