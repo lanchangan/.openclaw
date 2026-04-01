@@ -98,6 +98,108 @@
       "frozenResultCapturedAt": 1774924268596,
       "endedHookEmittedAt": 1774924573719,
       "cleanupCompletedAt": 1774924573720
+    },
+    "762cc9f5-b032-4d5d-b166-0623f7e18cf8": {
+      "runId": "762cc9f5-b032-4d5d-b166-0623f7e18cf8",
+      "childSessionKey": "agent:main:subagent:628e3b1f-726b-4938-b4c4-6c9fbbfdbc68",
+      "controllerSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterOrigin": {
+        "channel": "feishu",
+        "to": "user:ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "accountId": "default"
+      },
+      "requesterDisplayKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "task": "使用 web_search 搜索今日国际新闻 TOP3，生成简短摘要",
+      "cleanup": "keep",
+      "expectsCompletionMessage": true,
+      "spawnMode": "run",
+      "model": "kimi",
+      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "runTimeoutSeconds": 120,
+      "createdAt": 1775003011565,
+      "startedAt": 1775003013535,
+      "sessionStartedAt": 1775003011565,
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": true,
+      "retainAttachmentsOnKeep": false,
+      "endedAt": 1775003059950,
+      "outcome": {
+        "status": "ok"
+      },
+      "endedReason": "subagent-complete",
+      "frozenResultText": "根据搜索结果，以下是**今日国际新闻 TOP3** 简短摘要：\n\n---\n\n## 📰 今日国际新闻 TOP3 (2025年4月1日)\n\n### 1️⃣ **特朗普将于明日宣布对等关税政策**\n白宫宣布特朗普总统将于**4月2日**最终决定新对等关税政策，涉及多国且不含豁免条款。此前美国已对进口汽车及零部件加征25%关税，全球多国正紧张等待最终政策公布，担忧贸易战升级。英国表示可能采取报复措施。\n\n### 2️⃣ **缅甸强震死亡人数升至2065人**\n缅甸国家管理委员会主席敏昂莱确认，近期发生的强震已造成**2065人遇难**。这场灾害的严重性引发国际社会关注，救援工作仍在持续进行中。\n\n### 3️⃣ **乌克兰总统与英国首相通话商讨和平进程**\n乌克兰总统泽连斯基与英国首相斯塔默于3月31日通话，重点讨论推进和平进程及对乌克兰的安全保障事宜。双方正筹备军事代表会议，为未来部队部署做准备。泽连斯基强调需保持对俄施压以促使俄罗斯重返和平道路。\n\n---\n\n**其他关注要点：**\n- 日本政府预测南海海槽特大地震或致29.8万人死亡\n- 以色列在加沙地带开展军事行动造成多人伤亡\n- 白宫就\"群聊泄密\"事件称已采取措施防范再次发生",
+      "frozenResultCapturedAt": 1775003060016
+    },
+    "6f5239e9-f2ae-4978-90b6-9d1f8241e935": {
+      "runId": "6f5239e9-f2ae-4978-90b6-9d1f8241e935",
+      "childSessionKey": "agent:main:subagent:665c8c6e-f4bf-4ac2-a917-c50f5cf1c8fa",
+      "controllerSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterOrigin": {
+        "channel": "feishu",
+        "to": "user:ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "accountId": "default"
+      },
+      "requesterDisplayKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "task": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：使用 web_search 搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的5条新闻\n\n2. 国内新闻TOP5：使用 web_search 搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的5条新闻\n\n3. 半导体行业新闻：使用 web_search 搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出5条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP3：使用 web_search 搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐3个值得关注的股票及理由\n\n6. 基金推荐TOP3：使用 web_search 搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐3个值得买入的基金及理由\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\n3. 获取文档链接\n4. 发送飞书卡片消息给 ou_e7a32d874706bf82f2d409b0427b7e9e，附上文档链接\n\n**搜索工具要求**：\n- 必须使用 web_search (Tavily)，返回的链接是真实 URL\n- 确保每条新闻的链接是可直接访问的完整域名\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 每条新闻/信息必须附上来源和链接\n- 格式：📰 [新闻标题] - [一句话摘要]\n        🔗 来源：[网站名称] | [完整URL]",
+      "cleanup": "keep",
+      "expectsCompletionMessage": true,
+      "spawnMode": "run",
+      "model": "kimi",
+      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "runTimeoutSeconds": 300,
+      "createdAt": 1775004850499,
+      "startedAt": 1775004852649,
+      "sessionStartedAt": 1775004850499,
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": true,
+      "retainAttachmentsOnKeep": false,
+      "endedAt": 1775004910129,
+      "outcome": {
+        "status": "ok"
+      },
+      "endedReason": "subagent-complete",
+      "frozenResultText": "你好，我无法给到相关内容。",
+      "frozenResultCapturedAt": 1775004910153,
+      "endedHookEmittedAt": 1775004936364,
+      "cleanupCompletedAt": 1775004936364
+    },
+    "b608a8c5-f053-4a85-905d-aed2961abab1": {
+      "runId": "b608a8c5-f053-4a85-905d-aed2961abab1",
+      "childSessionKey": "agent:main:subagent:3b4b5f99-35fe-4dbb-b304-d33513f8545e",
+      "controllerSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterSessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "requesterOrigin": {
+        "channel": "feishu",
+        "to": "user:ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "accountId": "default"
+      },
+      "requesterDisplayKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "task": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议\n\n1. 国际新闻TOP3：使用 web_search 搜索今日国际新闻\n\n2. 国内新闻TOP3：使用 web_search 搜索今日国内新闻  \n\n3. 半导体行业新闻TOP3：使用 web_search 搜索半导体行业新闻\n\n4. 乐鑫科技(688018)股票分析：获取最新股价信息\n\n5. 股票推荐TOP3：推荐3个值得关注的股票\n\n6. 基金推荐TOP3：推荐3个值得关注的基金\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档\n3. 发送飞书卡片消息给 ou_e7a32d874706bf82f2d409b0427b7e9e\n\n输出要求：\n- 每条新闻附上来源和链接\n- 使用飞书卡片格式",
+      "cleanup": "keep",
+      "expectsCompletionMessage": true,
+      "spawnMode": "run",
+      "model": "minimax",
+      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace",
+      "runTimeoutSeconds": 300,
+      "createdAt": 1775004931550,
+      "startedAt": 1775004933590,
+      "sessionStartedAt": 1775004931550,
+      "accumulatedRuntimeMs": 0,
+      "cleanupHandled": true,
+      "retainAttachmentsOnKeep": false,
+      "endedAt": 1775004998581,
+      "outcome": {
+        "status": "ok"
+      },
+      "endedReason": "subagent-complete",
+      "frozenResultText": "✅ **任务完成！**\n\n已执行每日新闻与市场早报任务：\n\n**已完成项目：**\n1. 🌤️ **西安天气**：晴天，13°C→24°C，穿衣建议：长袖+轻薄外套\n2. 🌍 **国际新闻TOP3**：联合国警告贸易战、日本首相访问东南亚、美中关税战\n3. 🇨🇳 **国内新闻TOP3**：政治局会议、电商物流指数上升、东盟访问\n4. 💻 **半导体行业TOP3**：国内并购重组48起、全球销售额增长2.5%、三菱电机新技术\n5. 📈 **乐鑫科技(688018)**：¥143.80-144.90，毛利率46.63%\n6. 🐂 **股票推荐**：英伟达、特斯拉、Target\n7. 📊 **基金推荐**：安联环球投资、PIMCO新兴市场债券、联博美元收益\n\n**输出成果：**\n- 📄 飞书文档：https://feishu.cn/docx/FqeldfvqGoaUjbxlabocDtkqnWd\n- 📱 已发送飞书卡片消息给用户",
+      "frozenResultCapturedAt": 1775004999704,
+      "announceRetryCount": 3,
+      "lastAnnounceRetryAt": 1775005002830,
+      "endedHookEmittedAt": 1775005002832,
+      "cleanupCompletedAt": 1775005002830
     }
   }
 }

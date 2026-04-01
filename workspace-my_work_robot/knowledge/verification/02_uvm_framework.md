@@ -16,19 +16,7 @@
 
 ## 1. UVM 概述
 
-### 1.1 UVM 是什么
-
-UVM (Universal Verification Methodology) 是 Accellera 组织制定的通用验证方法学，
-基于 SystemVerilog 语言，融合了 OVM、VMM 等方法学的优点。
-
-**核心特点：**
-- 基于 SystemVerilog 的面向对象框架
-- 可重用的验证组件
-- 标准化的测试平台架构
-- 工厂模式支持对象替换
-- 配置数据库支持参数化
-
-### 1.2 UVM 类层次结构
+### 1.1 UVM 类层次结构
 
 ```
 uvm_void
@@ -44,42 +32,7 @@ uvm_void
     │   ├── uvm_scoreboard
     │   ├── uvm_env
     │   └── uvm_test
-    ├── uvm_report_object
-    ├── uvm_phase
     └── uvm_config_db
-```
-
-### 1.3 UVM 测试平台架构
-
-```
-                    ┌─────────────────────────────────────┐
-                    │           uvm_test_top              │
-                    │  ┌───────────────────────────────┐  │
-                    │  │           my_test             │  │
-                    │  │  ┌─────────────────────────┐  │  │
-                    │  │  │        my_env           │  │  │
-                    │  │  │  ┌───────────────────┐  │  │  │
-                    │  │  │  │     my_agent      │  │  │  │
-                    │  │  │  │ ┌─────┐ ┌───────┐ │  │  │  │
-                    │  │  │  │ │driver│ │monitor│ │  │  │  │
-                    │  │  │  │ └──┬──┘ └───┬───┘ │  │  │  │
-                    │  │  │  │    │        │     │  │  │  │
-                    │  │  │  │ ┌──▼──┐     │     │  │  │  │
-                    │  │  │  │ │sequencer   │     │  │  │  │
-                    │  │  │  │ └─────┘     │     │  │  │  │
-                    │  │  │  └───────────────────┘  │  │  │
-                    │  │  │           │            │  │  │
-                    │  │  │     ┌─────▼─────┐      │  │  │
-                    │  │  │     │ scoreboard│      │  │  │
-                    │  │  │     └───────────┘      │  │  │
-                    │  │  └─────────────────────────┘  │  │
-                    │  └───────────────────────────────┘  │
-                    └─────────────────────────────────────┘
-                                         │
-                                         ▼
-                                    ┌─────────┐
-                                    │   DUT   │
-                                    └─────────┘
 ```
 
 ---
@@ -89,7 +42,6 @@ uvm_void
 ### 2.1 工厂注册
 
 ```systemverilog
-// 类定义时注册到工厂
 class my_packet extends uvm_sequence_item;
     `uvm_object_utils(my_packet)  // 注册到工厂
     
@@ -98,7 +50,6 @@ class my_packet extends uvm_sequence_item;
     endfunction
 endclass
 
-// component 类注册
 class my_driver extends uvm_driver;
     `uvm_component_utils(my_driver)  // 注册到工厂
     
@@ -106,31 +57,17 @@ class my_driver extends uvm_driver;
         super.new(name, parent);
     endfunction
 endclass
-
-// 带参数的类注册
-class my_packet #(int WIDTH=32) extends uvm_sequence_item;
-    `uvm_object_param_utils(my_packet #(WIDTH))
-    
-    function new(string name = "my_packet");
-        super.new(name);
-    endfunction
-endclass
 ```
 
 ### 2.2 创建对象
 
 ```systemverilog
-// 使用工厂创建对象（推荐）
+// 使用工厂创建对象
 my_packet pkt;
 pkt = my_packet::type_id::create("pkt");
 
-// 在 component 中创建
 my_driver drv;
 drv = my_driver::type_id::create("drv", this);
-
-// 创建并设置父组件
-my_agent agt;
-agt = my_agent::type_id::create("agt", this);
 ```
 
 ### 2.3 工厂覆盖
@@ -138,7 +75,6 @@ agt = my_agent::type_id::create("agt", this);
 ```systemverilog
 // 类型覆盖
 initial begin
-    // 用 my_extended_packet 替换所有 my_packet
     my_packet::type_id::set_type_override(
         my_extended_packet::get_type()
     );
@@ -146,16 +82,11 @@ end
 
 // 实例覆盖
 initial begin
-    // 只覆盖特定路径的实例
     my_packet::type_id::set_inst_override(
         my_extended_packet::get_type(),
         "env.agent.sequencer.*"
     );
 end
-
-// 使用工厂创建的对象会自动使用覆盖类型
-my_packet pkt;
-pkt = my_packet::type_id::create("pkt");  // 实际创建 my_extended_packet
 ```
 
 ---
@@ -168,36 +99,20 @@ pkt = my_packet::type_id::create("pkt");  // 实际创建 my_extended_packet
 class my_driver extends uvm_driver #(my_packet);
     `uvm_component_utils(my_driver)
     
-    virtual interface vif;  // 虚拟接口
+    virtual interface vif;
     
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-    
-    // build_phase - 获取配置
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        // 从 config_db 获取接口
-        if (!uvm_config_db #(virtual interface)::get(
-            this, "", "vif", vif))
+        if (!uvm_config_db #(virtual interface)::get(this, "", "vif", vif))
             `uvm_fatal("NO_VIF", "Interface not found")
     endfunction
     
-    // run_phase - 主要逻辑
     virtual task run_phase(uvm_phase phase);
         forever begin
-            seq_item_port.get_next_item(req);  // 从 sequencer 获取事务
-            drive_item(req);                   // 驱动到接口
-            seq_item_port.item_done();         // 通知完成
+            seq_item_port.get_next_item(req);
+            drive_item(req);
+            seq_item_port.item_done();
         end
-    endtask
-    
-    virtual task drive_item(my_packet pkt);
-        vif.valid <= 1;
-        vif.addr  <= pkt.addr;
-        vif.data  <= pkt.data;
-        @(posedge vif.clk);
-        vif.valid <= 0;
     endtask
 endclass
 ```
@@ -208,50 +123,20 @@ endclass
 class my_monitor extends uvm_monitor;
     `uvm_component_utils(my_monitor)
     
-    uvm_analysis_port #(my_packet) ap;  // 分析端口
+    uvm_analysis_port #(my_packet) ap;
     virtual interface vif;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-    
-    virtual function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        ap = new("ap", this);
-        // 获取接口...
-    endfunction
     
     virtual task run_phase(uvm_phase phase);
         forever begin
             my_packet pkt;
-            @(posedge vif.clk);
-            if (vif.valid) begin
-                pkt = my_packet::type_id::create("pkt");
-                pkt.addr = vif.addr;
-                pkt.data = vif.data;
-                ap.write(pkt);  // 发送给订阅者
-            end
+            // 收集事务
+            ap.write(pkt);
         end
     endtask
 endclass
 ```
 
-### 3.3 Sequencer
-
-```systemverilog
-class my_sequencer extends uvm_sequencer #(my_packet);
-    `uvm_component_utils(my_sequencer)
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-endclass
-
-// 简化版：直接使用 uvm_sequencer #(my_packet)
-typedef uvm_sequencer #(my_packet) my_sequencer;
-```
-
-### 3.4 Agent
+### 3.3 Agent
 
 ```systemverilog
 class my_agent extends uvm_agent;
@@ -262,10 +147,6 @@ class my_agent extends uvm_agent;
     my_monitor   monitor;
     
     uvm_analysis_port #(my_packet) ap;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
     
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
@@ -282,8 +163,7 @@ class my_agent extends uvm_agent;
     
     virtual function void connect_phase(uvm_phase phase);
         super.connect_phase(phase);
-        
-        monitor.ap.connect(ap);  // 连接 monitor 端口
+        monitor.ap.connect(ap);
         
         if (is_active == UVM_ACTIVE)
             driver.seq_item_port.connect(sequencer.seq_item_export);
@@ -291,7 +171,7 @@ class my_agent extends uvm_agent;
 endclass
 ```
 
-### 3.5 Scoreboard
+### 3.4 Scoreboard
 
 ```systemverilog
 class my_scoreboard extends uvm_scoreboard;
@@ -299,82 +179,9 @@ class my_scoreboard extends uvm_scoreboard;
     
     uvm_analysis_imp #(my_packet, my_scoreboard) ap;
     
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-        ap = new("ap", this);
-    endfunction
-    
     virtual function void write(my_packet pkt);
-        // 检查逻辑
         check_packet(pkt);
     endfunction
-    
-    virtual function void check_packet(my_packet pkt);
-        // 比较预期值和实际值
-        if (pkt.data !== expected_data)
-            `uvm_error("CHECK_FAIL", $sformatf(
-                "Expected %h, got %h", expected_data, pkt.data))
-    endfunction
-endclass
-```
-
-### 3.6 Environment
-
-```systemverilog
-class my_env extends uvm_env;
-    `uvm_component_utils(my_env)
-    
-    my_agent     agent;
-    my_scoreboard scoreboard;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-    
-    virtual function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        agent = my_agent::type_id::create("agent", this);
-        scoreboard = my_scoreboard::type_id::create("scoreboard", this);
-    endfunction
-    
-    virtual function void connect_phase(uvm_phase phase);
-        super.connect_phase(phase);
-        agent.ap.connect(scoreboard.ap);
-    endfunction
-endclass
-```
-
-### 3.7 Test
-
-```systemverilog
-class my_test extends uvm_test;
-    `uvm_component_utils(my_test)
-    
-    my_env env;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-    
-    virtual function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        env = my_env::type_id::create("env", this);
-        
-        // 配置 agent 为 ACTIVE 模式
-        uvm_config_db #(uvm_active_passive_enum)::set(
-            this, "env.agent", "is_active", UVM_ACTIVE);
-    endfunction
-    
-    virtual task run_phase(uvm_phase phase);
-        my_sequence seq;
-        
-        phase.raise_objection(this);
-        
-        seq = my_sequence::type_id::create("seq");
-        seq.start(env.agent.sequencer);
-        
-        phase.drop_objection(this);
-    endtask
 endclass
 ```
 
@@ -385,96 +192,43 @@ endclass
 ### 4.1 Phase 列表
 
 ```
-                     ┌──────────────────────────────────┐
-                     │        Common Phases             │
-                     ├──────────────────────────────────┤
-                     │  1. build_phase                  │
-                     │  2. connect_phase                │
-                     │  3. end_of_elaboration_phase     │
-                     │  4. start_of_simulation_phase    │
-                     ├──────────────────────────────────┤
-                     │        Run-Time Phases           │
-                     ├──────────────────────────────────┤
-                     │  5. pre_reset_phase              │
-                     │  6. reset_phase                  │
-                     │  7. post_reset_phase             │
-                     │  8. pre_configure_phase          │
-                     │  9. configure_phase              │
-                     │  10. post_configure_phase        │
-                     │  11. pre_main_phase              │
-                     │  12. main_phase          ◄──── 主要测试
-                     │  13. post_main_phase             │
-                     │  14. pre_shutdown_phase          │
-                     │  15. shutdown_phase              │
-                     │  16. post_shutdown_phase         │
-                     ├──────────────────────────────────┤
-                     │        Cleanup Phases            │
-                     ├──────────────────────────────────┤
-                     │  17. extract_phase               │
-                     │  18. check_phase                 │
-                     │  19. report_phase                │
-                     │  20. final_phase                 │
-                     └──────────────────────────────────┘
+Common Phases:
+  1. build_phase
+  2. connect_phase
+  3. end_of_elaboration_phase
+  4. start_of_simulation_phase
+
+Run-Time Phases:
+  5. pre_reset_phase
+  6. reset_phase
+  7. post_reset_phase
+  8. pre_configure_phase
+  9. configure_phase
+  10. post_configure_phase
+  11. pre_main_phase
+  12. main_phase           ◄──── 主要测试
+  13. post_main_phase
+  14. pre_shutdown_phase
+  15. shutdown_phase
+  16. post_shutdown_phase
+
+Cleanup Phases:
+  17. extract_phase
+  18. check_phase
+  19. report_phase
+  20. final_phase
 ```
 
-### 4.2 Phase 使用示例
+### 4.2 Phase Objection
 
 ```systemverilog
-class my_component extends uvm_component;
-    // 构建阶段
-    virtual function void build_phase(uvm_phase phase);
-        super.build_phase(phase);
-        // 创建子组件，获取配置
-    endfunction
-    
-    virtual function void connect_phase(uvm_phase phase);
-        super.connect_phase(phase);
-        // 连接端口
-    endfunction
-    
-    // 运行阶段
-    virtual task reset_phase(uvm_phase phase);
-        phase.raise_objection(this);
-        // 复位操作
-        phase.drop_objection(this);
-    endtask
-    
-    virtual task main_phase(uvm_phase phase);
-        phase.raise_objection(this);
-        // 主要测试逻辑
-        phase.drop_objection(this);
-    endtask
-    
-    // 清理阶段
-    virtual function void report_phase(uvm_phase phase);
-        super.report_phase(phase);
-        // 打印测试结果
-        `uvm_info("REPORT", "Test completed", UVM_LOW)
-    endfunction
-endclass
-```
-
-### 4.3 Phase Objection
-
-```systemverilog
-// 在 phase 开始时 raise objection
 virtual task main_phase(uvm_phase phase);
     phase.raise_objection(this);
     
     // 测试逻辑
-    run_test_sequence();
     
-    // 确保所有事务完成
-    wait_all_done();
-    
-    // 在 phase 结束时 drop objection
     phase.drop_objection(this);
 endtask
-
-// 设置超时
-initial begin
-    uvm_top.set_timeout(100ms);  // 最大仿真时间
-end
 ```
 
 ---
@@ -489,25 +243,10 @@ class my_packet extends uvm_sequence_item;
     
     rand bit [31:0] addr;
     rand bit [31:0] data;
-    rand bit [3:0]  burst;
     
-    // 约束
     constraint addr_c {
         addr inside {[32'h0000_1000:32'h0000_1FFF]};
     }
-    
-    constraint burst_c {
-        burst inside {1, 2, 4, 8};
-    }
-    
-    function new(string name = "my_packet");
-        super.new(name);
-    endfunction
-    
-    virtual function string convert2string();
-        return $sformatf("addr=%h, data=%h, burst=%0d",
-            addr, data, burst);
-    endfunction
 endclass
 ```
 
@@ -517,39 +256,13 @@ endclass
 class my_sequence extends uvm_sequence #(my_packet);
     `uvm_object_utils(my_sequence)
     
-    function new(string name = "my_sequence");
-        super.new(name);
-    endfunction
-    
     virtual task body();
         my_packet pkt;
         
         repeat(10) begin
             pkt = my_packet::type_id::create("pkt");
-            start_item(pkt);          // 请求仲裁
-            assert(pkt.randomize());  // 随机化
-            finish_item(pkt);         // 发送给 driver
-        end
-    endtask
-endclass
-
-// 带参数的 sequence
-class burst_sequence extends uvm_sequence #(my_packet);
-    `uvm_object_utils(burst_sequence)
-    
-    int burst_count = 10;
-    
-    function new(string name = "burst_sequence");
-        super.new(name);
-    endfunction
-    
-    virtual task body();
-        my_packet pkt;
-        
-        for (int i = 0; i < burst_count; i++) begin
-            pkt = my_packet::type_id::create("pkt");
             start_item(pkt);
-            assert(pkt.randomize() with {burst == 4;});
+            assert(pkt.randomize());
             finish_item(pkt);
         end
     endtask
@@ -559,62 +272,14 @@ endclass
 ### 5.3 启动 Sequence
 
 ```systemverilog
-// 在 test 中启动
 virtual task run_phase(uvm_phase phase);
     my_sequence seq;
     
     phase.raise_objection(this);
-    
     seq = my_sequence::type_id::create("seq");
-    
-    // 方式1: 使用 start()
     seq.start(env.agent.sequencer);
-    
-    // 方式2: 使用 default_sequence
-    // uvm_config_db #(uvm_object_wrapper)::set(
-    //     this, "env.agent.sequencer.main_phase",
-    //     "default_sequence", my_sequence::get_type());
-    
     phase.drop_objection(this);
 endtask
-```
-
-### 5.4 Virtual Sequence
-
-```systemverilog
-// Virtual sequence 协调多个 sequencer
-class virtual_sequence extends uvm_sequence;
-    `uvm_object_utils(virtual_sequence)
-    
-    `uvm_declare_p_sequencer(virtual_sequencer)  // 声明 p_sequencer
-    
-    function new(string name = "virtual_sequence");
-        super.new(name);
-    endfunction
-    
-    virtual task body();
-        seq_a seq1;
-        seq_b seq2;
-        
-        // 并发启动多个 sequence
-        fork
-            seq1.start(p_sequencer.seqr_a);
-            seq2.start(p_sequencer.seqr_b);
-        join
-    endtask
-endclass
-
-// Virtual sequencer
-class virtual_sequencer extends uvm_sequencer;
-    `uvm_component_utils(virtual_sequencer)
-    
-    my_sequencer seqr_a;
-    my_sequencer seqr_b;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-    endfunction
-endclass
 ```
 
 ---
@@ -624,158 +289,70 @@ endclass
 ### 6.1 设置配置
 
 ```systemverilog
-// 在 test 或更上层设置
 virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     
-    // 设置接口
-    uvm_config_db #(virtual interface)::set(
-        this, "*", "vif", my_interface);
-    
-    // 设置参数
-    uvm_config_db #(int)::set(
-        this, "env.agent*", "timeout", 1000);
-    
-    // 设置对象
-    uvm_config_db #(my_config_obj)::set(
-        this, "*", "cfg", cfg_obj);
+    uvm_config_db #(virtual interface)::set(this, "*", "vif", my_interface);
+    uvm_config_db #(int)::set(this, "env.agent*", "timeout", 1000);
 endfunction
 ```
 
 ### 6.2 获取配置
 
 ```systemverilog
-// 在 component 中获取
 virtual function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     
-    // 获取接口
-    if (!uvm_config_db #(virtual interface)::get(
-        this, "", "vif", vif))
+    if (!uvm_config_db #(virtual interface)::get(this, "", "vif", vif))
         `uvm_fatal("NO_VIF", "Interface not found")
-    
-    // 获取参数
-    uvm_config_db #(int)::get(this, "", "timeout", timeout);
-    
-    // 获取对象
-    uvm_config_db #(my_config_obj)::get(this, "", "cfg", cfg);
 endfunction
-```
-
-### 6.3 配置覆盖
-
-```systemverilog
-// 层级化配置
-initial begin
-    // 全局设置（最低优先级）
-    uvm_config_db #(int)::set(null, "*", "value", 100);
-    
-    // 特定路径设置（较高优先级）
-    uvm_config_db #(int)::set(null, "uvm_test_top.env", "value", 200);
-    
-    // 特定组件设置（最高优先级）
-    uvm_config_db #(int)::set(null, "uvm_test_top.env.agent", "value", 300);
-end
 ```
 
 ---
 
 ## 7. TLM 通信
 
-### 7.1 TLM 端口类型
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     TLM 端口类型                             │
-├─────────────────────────────────────────────────────────────┤
-│  Port          │ Export           │ 用途                    │
-├────────────────┼──────────────────┼─────────────────────────┤
-│  uvm_port      │ uvm_export       │ 单向，1对1              │
-│  uvm_blocking_port │ uvm_blocking_export │ 阻塞操作        │
-│  uvm_nonblocking_port │ uvm_nonblocking_export │ 非阻塞    │
-├────────────────┼──────────────────┼─────────────────────────┤
-│  uvm_analysis_port │ uvm_analysis_imp │ 广播，1对多        │
-├────────────────┼──────────────────┼─────────────────────────┤
-│  uvm_seq_item_port │ uvm_seq_item_export │ sequencer通信   │
-└────────────────┴──────────────────┴─────────────────────────┘
-```
-
-### 7.2 Analysis Port 示例
+### 7.1 Analysis Port
 
 ```systemverilog
-// 生产者（Monitor）
+// 生产者
 class my_monitor extends uvm_monitor;
     uvm_analysis_port #(my_packet) ap;
-    
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-        ap = new("ap", this);
-    endfunction
     
     virtual task run_phase(uvm_phase phase);
         forever begin
             my_packet pkt;
-            // 收集事务
-            ap.write(pkt);  // 广播给所有订阅者
+            ap.write(pkt);  // 广播
         end
     endtask
 endclass
 
-// 消费者（Scoreboard）
+// 消费者
 class my_scoreboard extends uvm_scoreboard;
     uvm_analysis_imp #(my_packet, my_scoreboard) ap;
     
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-        ap = new("ap", this);
-    endfunction
-    
     virtual function void write(my_packet pkt);
-        // 处理接收到的事务
         check_packet(pkt);
     endfunction
 endclass
-
-// 连接
-virtual function void connect_phase(uvm_phase phase);
-    monitor.ap.connect(scoreboard.ap);
-endfunction
 ```
 
-### 7.3 TLM FIFO
+### 7.2 TLM FIFO
 
 ```systemverilog
 class my_component extends uvm_component;
     uvm_tlm_analysis_fifo #(my_packet) fifo;
     uvm_get_port #(my_packet) get_port;
     
-    function new(string name, uvm_component parent);
-        super.new(name, parent);
-        fifo = new("fifo", this);
-        get_port = new("get_port", this);
-    endfunction
-    
-    virtual function void connect_phase(uvm_phase phase);
-        get_port.connect(fifo.get_export);
-    endfunction
-    
     virtual task run_phase(uvm_phase phase);
         my_packet pkt;
         forever begin
-            get_port.get(pkt);  // 阻塞获取
+            get_port.get(pkt);
             process_packet(pkt);
         end
     endtask
 endclass
 ```
-
----
-
-## 参考书籍
-
-- UVM实战（张强）
-- UVM1.1应用指南及源码解析
-- IEEE 1800.2 UVM Standard
 
 ---
 

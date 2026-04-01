@@ -1,7 +1,7 @@
 {
   "agent:my_xiaohongshu:feishu:direct:ou_37b203a458603438e5676d6868566f74": {
     "sessionId": "30ae0348-ecbf-42f0-baf0-fca9a5922ac4",
-    "updatedAt": 1774998926976,
+    "updatedAt": 1775052044095,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -787,10 +787,10 @@
       "version": 0
     },
     "status": "done",
-    "startedAt": 1774998778447,
+    "startedAt": 1775052024315,
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1774998778431,
+      "generatedAt": 1775052024268,
       "sessionId": "30ae0348-ecbf-42f0-baf0-fca9a5922ac4",
       "sessionKey": "agent:my_xiaohongshu:feishu:direct:ou_37b203a458603438e5676d6868566f74",
       "provider": "custom-43-133-33-215-3000",
@@ -810,8 +810,8 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 43844,
-        "projectContextChars": 13195,
+        "chars": 43195,
+        "projectContextChars": 12546,
         "nonProjectContextChars": 30649
       },
       "injectedWorkspaceFiles": [
@@ -869,12 +869,6 @@
           "missing": true,
           "rawChars": 0,
           "injectedChars": 83,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
           "truncated": false
         },
         {
@@ -1167,7 +1161,7 @@
           },
           {
             "name": "web_search",
-            "summaryChars": 167,
+            "summaryChars": 173,
             "schemaChars": 248,
             "propertiesCount": 2
           },
@@ -1300,12 +1294,12 @@
     "modelProvider": "custom-43-133-33-215-3000",
     "model": "kimi-k2.5",
     "contextTokens": 262144,
-    "inputTokens": 272428,
-    "outputTokens": 2466,
+    "inputTokens": 33526,
+    "outputTokens": 53,
     "estimatedCostUsd": 0,
-    "totalTokens": 33186,
-    "endedAt": 1774998926966,
-    "runtimeMs": 148519
+    "totalTokens": 33526,
+    "endedAt": 1775052044056,
+    "runtimeMs": 19741
   },
   "agent:my_xiaohongshu:feishu:direct:ou_edfe9c0ba9bdcca895bd217189daa682": {
     "sessionId": "c3106a75-78fe-4b84-8fbc-4c53686a896b",
