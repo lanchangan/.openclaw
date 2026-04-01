@@ -1,7 +1,7 @@
 {
   "meta": {
     "lastTouchedVersion": "2026.3.28",
-    "lastTouchedAt": "2026-04-01T14:20:20.791Z"
+    "lastTouchedAt": "2026-04-01T15:03:07.865Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-29T00:03:56.595Z",
@@ -264,6 +264,27 @@
     {
       "agentId": "main",
       "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "398364a4e307-im-bot"
+      }
+    },
+    {
+      "agentId": "my_work_robot",
+      "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "4188150e893b-im-bot"
+      }
+    },
+    {
+      "agentId": "zx_assistant_01",
+      "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "57211b7661d4-im-bot"
+      }
+    },
+    {
+      "agentId": "main",
+      "match": {
         "channel": "feishu",
         "accountId": "default"
       }
@@ -424,7 +445,18 @@
       "resolveSenderNames": true
     },
     "openclaw-weixin": {
-      "channelConfigUpdatedAt": "2026-04-01T14:20:20.779Z"
+      "channelConfigUpdatedAt": "2026-04-01T15:03:07.854Z",
+      "accounts": {
+        "398364a4e307-im-bot": {
+          "name": "lws-main"
+        },
+        "4188150e893b-im-bot": {
+          "name": "chanan-dad"
+        },
+        "57211b7661d4-im-bot": {
+          "name": "zx-main"
+        }
+      }
     }
   },
   "gateway": {

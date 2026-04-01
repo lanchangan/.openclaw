@@ -1,7 +1,7 @@
 {
   "agent:my_work_robot:feishu:direct:ou_1ccae7b676709a68164395f25738e3cf": {
     "sessionId": "2093c5a8-21a0-4bd0-a456-2bdded453493",
-    "updatedAt": 1774998109432,
+    "updatedAt": 1775053948598,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -15,8 +15,8 @@
     "lastAccountId": "my_work_robot",
     "origin": {
       "label": "ou_1ccae7b676709a68164395f25738e3cf",
-      "provider": "feishu",
-      "surface": "feishu",
+      "provider": "webchat",
+      "surface": "webchat",
       "chatType": "direct",
       "from": "feishu:ou_1ccae7b676709a68164395f25738e3cf",
       "to": "user:ou_1ccae7b676709a68164395f25738e3cf",

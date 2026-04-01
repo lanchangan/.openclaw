@@ -1,11 +1,11 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.13",
-    "lastTouchedAt": "2026-03-14T16:41:35.177Z"
+    "lastTouchedVersion": "2026.3.28",
+    "lastTouchedAt": "2026-04-01T14:14:43.396Z"
   },
   "wizard": {
-    "lastRunAt": "2026-03-14T07:00:39.316Z",
-    "lastRunVersion": "2026.3.13",
+    "lastRunAt": "2026-03-29T00:03:56.595Z",
+    "lastRunVersion": "2026.3.24",
     "lastRunCommand": "onboard",
     "lastRunMode": "local"
   },
@@ -24,14 +24,14 @@
   "models": {
     "mode": "merge",
     "providers": {
-      "custom-llm-chudian-site": {
-        "baseUrl": "https://llm.chudian.site/v1",
-        "apiKey": "sk-ag-409a12b98c07a25dc7efc587468e1a6e",
+      "custom-43-133-33-215-3000": {
+        "baseUrl": "http://43.133.33.215:3000/v1",
+        "apiKey": "sk-FcJDj9NBQ620FKOgE7633e90951e44E5938501E2001f9058",
         "api": "openai-completions",
         "models": [
           {
-            "id": "minimax-m2.5",
-            "name": "minimax-m2.5 (Custom Provider)",
+            "id": "glm-5",
+            "name": "glm-5 (Custom Provider)",
             "reasoning": false,
             "input": [
               "text"
@@ -42,18 +42,120 @@
               "cacheRead": 0,
               "cacheWrite": 0
             },
-            "contextWindow": 190000,
+            "contextWindow": 200000,
             "maxTokens": 16000
-          }
-        ]
-      },
-      "custom-customll": {
-        "baseUrl": "https://llm.chudian.site/v1",
-        "api": "openai-completions",
-        "models": [
+          },
           {
-            "id": "custom-llm-chudian-site/minimax-m2.5",
-            "name": "custom-llm-chudian-site/minimax-m2.5"
+            "id": "tc-code-latest",
+            "name": "Auto",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 196608,
+            "maxTokens": 32768
+          },
+          {
+            "id": "hunyuan-2.0-instruct",
+            "name": "Tencent HY 2.0 Instruct",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 128000,
+            "maxTokens": 16000
+          },
+          {
+            "id": "hunyuan-2.0-thinking",
+            "name": "Tencent HY 2.0 Think",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 128000,
+            "maxTokens": 32000
+          },
+          {
+            "id": "hunyuan-t1",
+            "name": "Hunyuan-T1",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 64000,
+            "maxTokens": 32000
+          },
+          {
+            "id": "hunyuan-turbos",
+            "name": "hunyuan-turbos",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 32000,
+            "maxTokens": 16000
+          },
+          {
+            "id": "minimax-m2.5",
+            "name": "MiniMax-M2.5",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 196608,
+            "maxTokens": 32768
+          },
+          {
+            "id": "kimi-k2.5",
+            "name": "Kimi-K2.5",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 32768
           }
         ]
       }
@@ -62,36 +164,25 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "custom-customll/custom-llm-chudian-site/minimax-m2.7",
+        "primary": "custom-43-133-33-215-3000/glm-5",
         "fallbacks": []
       },
       "models": {
-          "custom-llm-chudian-site/minimax-m2.7": {
-          "alias": "minimax2.7"
-        },
-        "custom-llm-chudian-site/qwen3.5-plus": {
-          "alias": "qwen"
-        },
-        "custom-llm-chudian-site/glm-5": {
+        "custom-43-133-33-215-3000/glm-5": {
           "alias": "glm5"
         },
-        "custom-llm-chudian-site/doubao-seed-2.0-pro": {
-          "alias": "doubao-pro"
+        "custom-43-133-33-215-3000/tc-code-latest": {
+          "alias": "auto"
         },
-        "custom-llm-chudian-site/deepseek-v3.2": {
-          "alias": "deepseek"
+        "custom-43-133-33-215-3000/hunyuan-2.0-instruct": {},
+        "custom-43-133-33-215-3000/hunyuan-2.0-thinking": {},
+        "custom-43-133-33-215-3000/hunyuan-t1": {},
+        "custom-43-133-33-215-3000/hunyuan-turbos": {},
+        "custom-43-133-33-215-3000/minimax-m2.5": {
+          "alias": "minimax"
         },
-        "custom-llm-chudian-site/kimi-k2.5": {
+        "custom-43-133-33-215-3000/kimi-k2.5": {
           "alias": "kimi"
-        },
-        "custom-llm-chudian-site/doubao-seed-2.0-code": {
-          "alias": "doubao-code"
-        },
-        "custom-llm-chudian-site/glm-4.7": {
-          "alias": "glm4.7"
-        },
-        "custom-llm-chudian-site/minimax-m2.5": {
-          "alias": "minimax2.5"
         }
       },
       "workspace": "C:\\Users\\LWS\\.openclaw\\workspace",
@@ -103,49 +194,63 @@
     "list": [
       {
         "id": "main",
-        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
+        "model": "custom-43-133-33-215-3000/glm-5"
       },
       {
         "id": "my_robot_01",
         "name": "my_robot_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_robot_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_robot_01\\agent",
-        "model": "custom-llm-chudian-site/minimax-m2.7"
+        "model": "minimax"
       },
       {
         "id": "my_xiaohongshu",
         "name": "my_xiaohongshu",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_xiaohongshu",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_xiaohongshu\\agent",
-        "model": "custom-llm-chudian-site/minimax-m2.7"
+        "model": "kimi"
+      },
+      {
+        "id": "my_kuailexia",
+        "name": "my_kuailexia",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_kuailexia",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_kuailexia\\agent",
+        "model": "kimi"
       },
       {
         "id": "my_work_robot",
         "name": "my_work_robot",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_work_robot",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_work_robot\\agent",
-        "model": "custom-llm-chudian-site/glm-5"
+        "model": "glm5"
+      },
+      {
+        "id": "bro_chengbenxia",
+        "name": "bro_chengbenxia",
+        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-bro-chengbenxia",
+        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\bro_chengbenxia\\agent",
+        "model": "kimi"
       },
       {
         "id": "zx_assistant_01",
         "name": "zx_assistant_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_assistant_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_assistant_01\\agent",
-        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
+        "model": "minimax"
       },
       {
         "id": "zx_jiankangxia",
         "name": "zx_jiankangxia",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_jiankangxia",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_jiankangxia\\agent",
-        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
+        "model": "kimi"
       },
       {
         "id": "zx_robot_01",
         "name": "zx_robot_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_robot_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_robot_01\\agent",
-        "model": "custom-llm-chudian-site/doubao-seed-2.0-pro"
+        "model": "minimax"
       }
     ]
   },
@@ -175,6 +280,20 @@
       "match": {
         "channel": "feishu",
         "accountId": "my_xiaohongshu"
+      }
+    },
+    {
+      "agentId": "my_kuailexia",
+      "match": {
+        "channel": "feishu",
+        "accountId": "my_kuailexia"
+      }
+    },
+    {
+      "agentId": "bro_chengbenxia",
+      "match": {
+        "channel": "feishu",
+        "accountId": "bro_chengbenxia"
       }
     },
     {
@@ -237,6 +356,9 @@
         },
         "session-memory": {
           "enabled": true
+        },
+        "self-improvement": {
+          "enabled": true
         }
       }
     }
@@ -261,14 +383,21 @@
           "appId": "cli_a94d96f701385cd3",
           "appSecret": "THGGJtd687mOc5O2uSq8neg4fpSpwc8g"
         },
+        "my_kuailexia": {
+          "appId": "cli_a921d618c0b85bdf",
+          "appSecret": "ZR6ZHMvKW7HiIfkjl42LfhE1nmBnHRLG"
+        },
+        "bro_chengbenxia": {
+          "appId": "cli_a9415da270389bc6",
+          "appSecret": "OjxvNqWNrFts3valgJ77cdKadDx1LncI"
+        },
         "zx_xiaohongshu": {
           "appId": "cli_a94df37921e29cc2",
           "appSecret": "mR3WCNbdyH7GyLn5BdGnOheCp6AG3eFu"
         },
         "my_work_robot": {
           "appId": "cli_a9340a6fd922dcc6",
-          "appSecret": "iEXatjRUBk8cCfedbOBlibZ6ZkYCJeN0",
-          "userAccessToken": true
+          "appSecret": "iEXatjRUBk8cCfedbOBlibZ6ZkYCJeN0"
         },
         "zx_assistant_01": {
           "appId": "cli_a934126ad938dbc6",
@@ -283,9 +412,16 @@
           "appSecret": "jUjnf9I9LKkG2GhXHGsPWc1z0hbM4JkJ"
         }
       },
-      "groupAllowFrom": "[oc_959ee261398abd06dd44199eb5ec0f82]",
+      "groupAllowFrom": [
+        "oc_959ee261398abd06dd44199eb5ec0f82"
+      ],
       "appId": "cli_a92dc000da789cc2",
-      "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ"
+      "appSecret": "uRStntqXMbvPZLoAF7XYufH2RIDxExxZ",
+      "webhookPath": "/feishu/events",
+      "dmPolicy": "pairing",
+      "reactionNotifications": "own",
+      "typingIndicator": true,
+      "resolveSenderNames": true
     }
   },
   "gateway": {
@@ -364,11 +500,17 @@
   "plugins": {
     "allow": [
       "feishu",
-      "lossless-claw"
+      "lossless-claw",
+      "openclaw-weixin"
     ],
     "entries": {
       "feishu": {
-        "enabled": true
+        "enabled": true,
+        "config": {}
+      },
+      "openclaw-weixin": {
+        "enabled": true,
+        "config": {}
       }
     },
     "installs": {
@@ -384,6 +526,19 @@
         "shasum": "39128ff918f8d3387331818cbe3f8b24a82e4c0d",
         "resolvedAt": "2026-03-14T06:53:23.360Z",
         "installedAt": "2026-03-14T06:53:25.436Z"
+      },
+      "openclaw-weixin": {
+        "source": "npm",
+        "spec": "@tencent-weixin/openclaw-weixin",
+        "installPath": "C:\\Users\\LWS\\.openclaw\\extensions\\openclaw-weixin",
+        "version": "2.1.2",
+        "resolvedName": "@tencent-weixin/openclaw-weixin",
+        "resolvedVersion": "2.1.2",
+        "resolvedSpec": "@tencent-weixin/openclaw-weixin@2.1.2",
+        "integrity": "sha512-eUvuBeJrJdI7T7tXNksTpE2Dm+HAwILyvnOB9YEMMBU8AzN5cVnPSIf0TMx2D+jFsW2pZzCAYy9fWQ6S1+VqFw==",
+        "shasum": "a3ddab0a1947b0e08f53495fa6bc40591077bda7",
+        "resolvedAt": "2026-04-01T14:10:20.672Z",
+        "installedAt": "2026-04-01T14:14:16.154Z"
       }
     }
   }
