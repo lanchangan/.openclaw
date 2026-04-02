@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1774998042126,
+      "updatedAtMs": 1775171173504,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -18,26 +18,29 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：使用 web_search 搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：使用 web_search 搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：使用 web_search 搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：使用 web_search 搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：使用 web_search 搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\n3. 获取文档链接\n4. 发送飞书卡片消息，附上文档链接\n\n**搜索工具要求**：\n- 必须使用 web_search (Tavily)，返回的链接是真实 URL\n- 不要使用百度搜索（返回的是跳转链接）\n- 确保每条新闻的链接是可直接访问的完整域名\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接\n- 格式：📰 [新闻标题] - [一句话摘要]\n        🔗 来源：[网站名称] | [完整URL，必须是可直接访问的链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过飞书发送给主人 ou_e7a32d874706bf82f2d409b0427b7e9e。",
-        "model": "glm-5",
-        "thinking": "low",
-        "timeoutSeconds": 600
+        "message": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：使用 web_search 搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：使用 web_search 搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：使用 web_search 搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：使用 web_search 搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：使用 web_search 搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\n3. 获取文档链接\n\n**搜索工具要求**：\n- 必须使用 web_search (Tavily)，返回的链接是真实 URL\n- 不要使用百度搜索（返回的是跳转链接）\n- 确保每条新闻的链接是可直接访问的完整域名\n\n输出要求：\n- 使用简洁的微信卡片/文字格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在消息最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接\n- 格式：📰 [新闻标题] - [一句话摘要]\n        🔗 来源：[网站名称] | [完整URL，必须是可直接访问的链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n**重要**：完成后使用 message 工具通过 openclaw-weixin 渠道发送给微信用户，微信ID：398364a4e307-im-bot",
+        "model": "kimi",
+        "thinking": "medium",
+        "timeoutSeconds": 600,
+        "lightContext": true
       },
       "delivery": {
         "mode": "announce",
-        "channel": "feishu",
-        "to": "ou_e7a32d874706bf82f2d409b0427b7e9e",
+        "channel": "openclaw-weixin",
+        "to": "lws-main",
+        "accountId": "398364a4e307-im-bot",
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1775084400000,
-        "lastRunAtMs": 1774998000017,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 42109,
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775170800022,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 373482,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": true
+        "consecutiveErrors": 1,
+        "lastDelivered": true,
+        "lastError": "⚠️ ✉️ Message failed"
       },
       "deleteAfterRun": false
     },
@@ -115,6 +118,87 @@
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
+      }
+    },
+    {
+      "id": "d4a253e6-6d1c-4895-be6b-32eb97d4ab43",
+      "agentId": "main",
+      "sessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "name": "每日新闻与市场早报 copy",
+      "enabled": true,
+      "deleteAfterRun": false,
+      "createdAtMs": 1775085885968,
+      "updatedAtMs": 1775171262361,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 7 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：使用 web_search 搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：使用 web_search 搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：使用 web_search 搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：使用 web_search 搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：使用 web_search 搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\n3. 获取文档链接\n\n**搜索工具要求**：\n- 必须使用 web_search (Tavily)，返回的链接是真实 URL\n- 不要使用百度搜索（返回的是跳转链接）\n- 确保每条新闻的链接是可直接访问的完整域名\n\n输出要求：\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接\n- 格式：📰 [新闻标题] - [一句话摘要]\n        🔗 来源：[网站名称] | [完整URL，必须是可直接访问的链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过openclaw-weixin发送给名为lws-main的微信账户",
+        "model": "minimax",
+        "thinking": "medium",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "openclaw-weixin",
+        "to": "398364a4e307-im-bot",
+        "bestEffort": true
+      },
+      "state": {
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775171173504,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 88857,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ ✉️ Message failed"
+      }
+    },
+    {
+      "id": "f58dd516-3d6b-4379-8fa5-2515f1bab4cf",
+      "agentId": "main",
+      "sessionKey": "agent:main:feishu:direct:ou_e7a32d874706bf82f2d409b0427b7e9e",
+      "name": "每日新闻与市场早报 copy 2",
+      "enabled": true,
+      "deleteAfterRun": false,
+      "createdAtMs": 1775086311016,
+      "updatedAtMs": 1775171351783,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 7 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "执行每日新闻与市场早报任务：\n\n0. 查询西安今日天气，生成天气简报，重点给出穿衣建议，提醒是否需要带伞\n\n1. 国际新闻TOP5：使用 web_search 搜索\"国际新闻\"、\"世界新闻\"、\"global news\"，筛选最重要的10条新闻\n\n2. 国内新闻TOP5：使用 web_search 搜索\"国内新闻\"、\"中国新闻\"，筛选最重要的10条新闻\n\n3. 半导体行业新闻：使用 web_search 搜索\"半导体行业新闻\"、\"WiFi芯片\"、\"芯片验证\"、\"ESP32\"、\"乐鑫\"，输出10条行业新闻摘要\n\n4. 乐鑫科技(688018)股票分析：获取最新股价、涨跌幅、成交量，搜索公司公告、研报、最新消息，给出持有/卖出的建议\n\n5. 股票推荐TOP5：使用 web_search 搜索\"股票推荐\"、\"买入评级\"、\"券商推荐股票\"，推荐10个值得关注的股票及理由\n\n6. 基金推荐TOP5：使用 web_search 搜索\"基金推荐\"、\"优质基金\"、\"基金排行\"，推荐10个值得买入的基金及理由\n\n7. openclaw，claude code及其同类产品的最新进展\n\n**重要步骤**：\n1. 使用 feishu_doc create 创建飞书文档\n2. 使用 feishu_doc write 将完整内容写入文档（这一步必须执行！）\n3. 获取文档链接\n4. 发送飞书卡片消息，附上文档链接\n\n**搜索工具要求**：\n- 必须使用 web_search (Tavily)，返回的链接是真实 URL\n- 不要使用百度搜索（返回的是跳转链接）\n- 确保每条新闻的链接是可直接访问的完整域名\n\n输出要求：\n- 使用飞书卡片格式\n- 同时将所有信息整理成一个飞书文档，将飞书文档链接附在飞书卡片最后\n- 每个部分用清晰标题分隔\n- 重要信息加粗\n- 股票/基金推荐包含代码/名称+推荐理由\n- 每条新闻/信息必须附上来源和链接\n- 格式：📰 [新闻标题] - [一句话摘要]\n        🔗 来源：[网站名称] | [完整URL，必须是可直接访问的链接]\n- 如果某条信息无法找到确切来源，标注\"来源待确认\"\n\n完成后通过飞书发送给主人 lws-main",
+        "model": "minimax",
+        "thinking": "medium",
+        "timeoutSeconds": 600
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "openclaw-weixin",
+        "to": "lws-main",
+        "bestEffort": true
+      },
+      "state": {
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775171262361,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 89422,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
       }
     }
   ]

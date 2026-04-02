@@ -1,0 +1,54 @@
+<!--game.wxml - 游戏页面 -->
+<view class="game-container">
+  <!-- 游戏信息栏 -->
+  <view class="game-info">
+    <view class="player-info {{currentPlayer === 1 ? 'active' : ''}}">
+      <view class="chess-icon black"></view>
+      <text class="player-name">{{player1Name}}</text>
+      <text class="player-status" wx:if="{{currentPlayer === 1}}">思考中...</text>
+    </view>
+    <view class="game-status">
+      <text class="status-text">{{statusText}}</text>
+    </view>
+    <view class="player-info {{currentPlayer === 2 ? 'active' : ''}}">
+      <view class="chess-icon white"></view>
+      <text class="player-name">{{player2Name}}</text>
+      <text class="player-status" wx:if="{{currentPlayer === 2}}">思考中...</text>
+    </view>
+  </view>
+
+  <!-- 棋盘区域 -->
+  <view class="board-wrapper">
+    <canvas 
+      type="2d"
+      id="chessBoard" 
+      class="chess-board"
+      bindtouchend="onTouchEnd"
+    ></canvas>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <button class="action-btn" bindtap="undoMove" disabled="{{!canUndo}}">
+      <text>↩️ 悔棋</text>
+    </button>
+    <button class="action-btn primary" bindtap="restartGame">
+      <text>🔄 重新开始</text>
+    </button>
+    <button class="action-btn" bindtap="backHome">
+      <text>🏠 返回首页</text>
+    </button>
+  </view>
+</view>
+
+<!-- 游戏结束弹窗 -->
+<view class="result-modal" wx:if="{{gameOver}}">
+  <view class="result-content">
+    <view class="result-icon">{{winner === 1 ? '⚫' : '⚪'}}</view>
+    <text class="result-title">{{resultText}}</text>
+    <view class="result-actions">
+      <button class="result-btn primary" bindtap="restartGame">再来一局</button>
+      <button class="result-btn" bindtap="backHome">返回首页</button>
+    </view>
+  </view>
+</view>
