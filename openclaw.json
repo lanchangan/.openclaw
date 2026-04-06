@@ -164,7 +164,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "custom-43-133-33-215-3000/minimax-m2.5",
+        "primary": "custom-43-133-33-215-3000/glm-5",
         "fallbacks": []
       },
       "models": {
@@ -194,14 +194,14 @@
     "list": [
       {
         "id": "main",
-        "model": "minimax"
+        "model": "custom-43-133-33-215-3000/glm-5"
       },
       {
         "id": "my_robot_01",
         "name": "my_robot_01",
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-my_robot_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_robot_01\\agent",
-        "model": "kimi"
+        "model": "minimax"
       },
       {
         "id": "my_xiaohongshu",
@@ -251,13 +251,6 @@
         "workspace": "C:\\Users\\LWS\\.openclaw\\workspace-zx_robot_01",
         "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\zx_robot_01\\agent",
         "model": "minimax"
-      },
-      {
-        "id": "my_project_xia",
-        "name": "my_project_xia",
-        "workspace": "C:\\Users\\LWS\\.openclaw\\workspace_my_project_xia",
-        "agentDir": "C:\\Users\\LWS\\.openclaw\\agents\\my_project_xia\\agent",
-        "model": "glm5"
       }
     ]
   },
@@ -358,13 +351,6 @@
         "channel": "feishu",
         "accountId": "zx_robot_01"
       }
-    },
-    {
-      "agentId": "my_project_xia",
-      "match": {
-        "channel": "feishu",
-        "accountId": "my_project_xia"
-      }
     }
   ],
   "commands": {
@@ -445,10 +431,6 @@
         "zx_robot_01": {
           "appId": "cli_a93fc496a2b89bde",
           "appSecret": "jUjnf9I9LKkG2GhXHGsPWc1z0hbM4JkJ"
-        },
-        "my_project_xia": {
-          "appId": "cli_a944e8d19b39dcdb",
-          "appSecret": "6s075AzIpNSY26kWXrLaIvrX7asueRFx"
         }
       },
       "groupAllowFrom": [

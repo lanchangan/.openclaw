@@ -98,40 +98,6 @@
       "frozenResultCapturedAt": 1774924268596,
       "endedHookEmittedAt": 1774924573719,
       "cleanupCompletedAt": 1774924573720
-    },
-    "d507c21e-f50a-4274-9917-5642a8d002e5": {
-      "runId": "d507c21e-f50a-4274-9917-5642a8d002e5",
-      "childSessionKey": "agent:bro_chengbenxia:subagent:25e8cb5a-949c-49df-bd9b-04cad01b3105",
-      "controllerSessionKey": "agent:bro_chengbenxia:feishu:direct:ou_e46fd9ed834e68e66098cc3401cd3fde",
-      "requesterSessionKey": "agent:bro_chengbenxia:feishu:direct:ou_e46fd9ed834e68e66098cc3401cd3fde",
-      "requesterOrigin": {
-        "channel": "feishu",
-        "to": "user:ou_e46fd9ed834e68e66098cc3401cd3fde",
-        "accountId": "bro_chengbenxia"
-      },
-      "requesterDisplayKey": "agent:bro_chengbenxia:feishu:direct:ou_e46fd9ed834e68e66098cc3401cd3fde",
-      "task": "读取Excel文件 C:\\Users\\LWS\\.openclaw\\workspace-bro-chengbenxia\\项目规划指标.xlsx，提取所有数据并以表格形式返回。使用Python pandas读取，如果pandas未安装请先安装。返回格式：每一行的数据列表。",
-      "cleanup": "keep",
-      "expectsCompletionMessage": true,
-      "spawnMode": "run",
-      "model": "kimi",
-      "workspaceDir": "C:\\Users\\LWS\\.openclaw\\workspace-bro-chengbenxia",
-      "runTimeoutSeconds": 120,
-      "createdAt": 1775125332706,
-      "startedAt": 1775125334617,
-      "sessionStartedAt": 1775125332706,
-      "accumulatedRuntimeMs": 0,
-      "cleanupHandled": true,
-      "retainAttachmentsOnKeep": false,
-      "endedAt": 1775125484044,
-      "outcome": {
-        "status": "timeout"
-      },
-      "endedReason": "subagent-complete",
-      "frozenResultText": "(no new output)\n\nProcess still running.",
-      "frozenResultCapturedAt": 1775125452893,
-      "endedHookEmittedAt": 1775125469967,
-      "cleanupCompletedAt": 1775125469967
     }
   }
 }

@@ -39,8 +39,7 @@
       }
     },
     "createdAtMs": 1773471646025,
-    "approvedAtMs": 1773539530553,
-    "displayName": "agent"
+    "approvedAtMs": 1773539530553
   },
   "164a9b92983935bb0461fd550f8368ced8e4b369b3d36dd23f2cec5da0e9d81b": {
     "deviceId": "164a9b92983935bb0461fd550f8368ced8e4b369b3d36dd23f2cec5da0e9d81b",
@@ -74,7 +73,7 @@
           "operator.pairing"
         ],
         "createdAtMs": 1773471671720,
-        "lastUsedAtMs": 1775132424238
+        "lastUsedAtMs": 1775056742637
       }
     },
     "createdAtMs": 1773471671720,
