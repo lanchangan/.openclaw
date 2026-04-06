@@ -1,7 +1,7 @@
 {
   "agent:my_work_robot:feishu:direct:ou_1ccae7b676709a68164395f25738e3cf": {
-    "sessionId": "aede81a4-428a-4280-b99d-02aa03d93fea",
-    "updatedAt": 1775172911652,
+    "sessionId": "a7dbe023-ab99-412a-b64e-7837aea9d60c",
+    "updatedAt": 1775486078640,
     "systemSent": true,
     "abortedLastRun": false,
     "chatType": "direct",
@@ -22,10 +22,10 @@
       "to": "user:ou_1ccae7b676709a68164395f25738e3cf",
       "accountId": "my_work_robot"
     },
-    "sessionFile": "C:\\Users\\LWS\\.openclaw\\agents\\my_work_robot\\sessions\\aede81a4-428a-4280-b99d-02aa03d93fea.jsonl",
+    "sessionFile": "C:\\Users\\LWS\\.openclaw\\agents\\my_work_robot\\sessions\\a7dbe023-ab99-412a-b64e-7837aea9d60c.jsonl",
     "compactionCount": 0,
     "skillsSnapshot": {
-      "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>feishu-doc</name>\n    <description>Feishu document read/write operations. Activate when user mentions Feishu docs, cloud docs, or docx links.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-doc\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-drive</name>\n    <description>Feishu cloud storage file management. Activate when user mentions cloud space, folders, drive.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-drive\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-perm</name>\n    <description>Feishu permission management for documents and files. Activate when user mentions sharing, permissions, collaborators.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-perm\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-wiki</name>\n    <description>Feishu knowledge base navigation. Activate when user mentions knowledge base, wiki, or wiki links.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-wiki\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>clawhub</name>\n    <description>Use the ClawHub CLI to search, install, update, and publish agent skills from clawhub.com. Use when you need to fetch new skills on the fly, sync installed skills to latest or a specific version, or publish new/updated skill folders with the npm-installed clawhub CLI.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\clawhub\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>coding-agent</name>\n    <description>Delegate coding tasks to Codex, Claude Code, or Pi agents via background process. Use when: (1) building/creating new features or apps, (2) reviewing PRs (spawn in temp dir), (3) refactoring large codebases, (4) iterative coding that needs file exploration. NOT for: simple one-liner fixes (just edit), reading code (use read tool), thread-bound ACP harness requests in chat (for example spawn/run Codex or Claude Code in a Discord thread; use sessions_spawn with runtime:&quot;acp&quot;), or any work in ~/clawd workspace (never spawn agents here). Claude Code: use --print --permission-mode bypassPermissions (no PTY). Codex/Pi/OpenCode: pty:true required.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\coding-agent\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Host security hardening and risk-tolerance configuration for OpenClaw deployments. Use when a user asks for security audits, firewall/SSH/update hardening, risk posture, exposure review, OpenClaw cron scheduling for periodic checks, or version status checks on a machine running OpenClaw (laptop, workstation, Pi, VPS).</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\healthcheck\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>model-usage</name>\n    <description>Use CodexBar CLI local cost usage to summarize per-model usage for Codex or Claude, including the current (most recent) model or a full model breakdown. Trigger when asked for model-level usage/cost data from codexbar, or when you need a scriptable per-model summary from codexbar cost JSON.</description>\n    <location>~/.openclaw\\skills\\model-usage\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw node connection and pairing failures for Android, iOS, and macOS companion apps. Use when QR/setup code/manual connect fails, local Wi-Fi works but VPS/tailnet does not, or errors mention pairing required, unauthorized, bootstrap token invalid or expired, gateway.bind, gateway.remote.url, Tailscale, or plugins.entries.device-pair.config.publicUrl.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\node-connect\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>openai-whisper-api</name>\n    <description>Transcribe audio via OpenAI Audio Transcriptions API (Whisper).</description>\n    <location>~/.openclaw\\skills\\openai-whisper-api\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude&apos;s capabilities with specialized knowledge, workflows, or tool integrations.</description>\n    <location>~/.openclaw\\skills\\skill-creator\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>slack</name>\n    <description>Use when you need to control Slack from Clawdbot via the slack tool, including reacting to messages or pinning/unpinning items in Slack channels or DMs.</description>\n    <location>~/.openclaw\\skills\\slack\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>summarize</name>\n    <description>智能内容摘要工具，支持长文本、文档、网页、聊天记录的摘要生成。支持要点提取、关键词提炼、摘要长度自定义。当用户需要总结内容、提取要点、精简长文时使用。</description>\n    <location>~/.openclaw\\skills\\summarize\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-frames</name>\n    <description>Extract frames or short clips from videos using ffmpeg.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\video-frames\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather and forecasts via wttr.in or Open-Meteo. Use when: user asks about weather, temperature, or forecasts for any location. NOT for: historical weather data, severe weather alerts, or detailed meteorological analysis. No API key needed.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\weather\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>agent-browser</name>\n    <description>AI智能浏览器控制工具，支持自动访问网页、提取内容、填写表单、点击交互、截图等功能。帮助AI自动化完成网页操作、信息收集、数据爬取等任务。当需要访问网页、获取网页内容、进行网页交互时使用。</description>\n    <location>~/.openclaw\\skills\\agent-browser\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>bilibili-ai-subtitle</name>\n    <description>Download Bilibili AI-generated subtitles (auto-subtitles) for videos. Use when you need to quickly get subtitles from Bilibili videos that have AI-generated captions. Supports 9 languages: Chinese, English, Japanese, Spanish, Arabic, Portuguese, Korean, German, French. Language priority can be customized.</description>\n    <location>~/.openclaw\\skills\\bilibili-ai-subtitle\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>bilibili-subtitle-downloader</name>\n    <description>下载 Bilibili 视频字幕，将其进行分块以供 LLM（大语言模型）处理，并生成高质量的总结。当用户提供 Bilibili BV 号或 URL，并希望获取视频内容的总结、核心要点或详细的分解时使用。</description>\n    <location>~/.openclaw\\skills\\bilibili-subtitle-download-skill\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>copywriting</name>\n    <description>Write persuasive copy for landing pages, emails, ads, sales pages, and marketing materials. Use when you need to write headlines, CTAs, product descriptions, ad copy, email sequences, or any text meant to drive action. Covers copywriting formulas (AIDA, PAS, FAB), headline writing, emotional triggers, objection handling in copy, and A/B testing. Trigger on &quot;write copy&quot;, &quot;copywriting&quot;, &quot;landing page copy&quot;, &quot;headline&quot;, &quot;write a sales page&quot;, &quot;ad copy&quot;, &quot;email copy&quot;, &quot;persuasive writing&quot;, &quot;how to write [marketing text]&quot;.</description>\n    <location>~/.openclaw\\skills\\copywriting\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ecommerce-price-watcher</name>\n    <description>Track product prices across ecommerce sites and alert on offers or target-price hits. Use when a user wants to monitor one or many product URLs or item queries, compare current vs previous prices, detect discounts, and generate alert-ready summaries with product name, old/new price, percent drop, and direct link.</description>\n    <location>~/.openclaw\\skills\\ecommerce-price-watcher\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>elevenlabs-stt</name>\n    <description>Transcribe audio files using ElevenLabs Speech-to-Text (Scribe v2).</description>\n    <location>~/.openclaw\\skills\\elevenlabs-stt\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>find-skills</name>\n    <description>ClawHub技能搜索和发现工具，支持搜索、筛选、发现适合的技能。支持按功能、分类、评分、下载量筛选，提供技能详情、使用说明、安装指引。当用户需要找某个功能的技能、探索新技能时使用。</description>\n    <location>~/.openclaw\\skills\\find-skills\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>firecrawl</name>\n    <description>Web search and scraping via Firecrawl API. Use when you need to search the web, scrape websites (including JS-heavy pages), crawl entire sites, or extract structured data from web pages. Requires FIRECRAWL_API_KEY environment variable.</description>\n    <location>~/.openclaw\\skills\\firecrawl-search\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>free-groq-voice</name>\n    <description>FREE voice recognition using Groq&apos;s complimentary Whisper API. Transcribe audio messages to text in 50+ languages at no cost. Perfect for voice-to-text automation, meeting transcriptions, and accessibility features. Requires free Groq API key.</description>\n    <location>~/.openclaw\\skills\\free-groq-voice\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>freeride</name>\n    <description>Manages free AI models from OpenRouter for OpenClaw. Automatically ranks models by quality, configures fallbacks for rate-limit handling, and updates openclaw.json. Use when the user mentions free AI, OpenRouter, model switching, rate limits, or wants to reduce AI costs.</description>\n    <location>~/.openclaw\\skills\\free-ride\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>frontend-design</name>\n    <description>前端设计和UI/UX最佳实践指南，包含设计系统、组件设计、响应式布局、 accessibility、用户体验优化等内容。帮助开发者设计出美观、易用、高性能的前端界面。当前端设计界面、优化用户体验时使用。</description>\n    <location>~/.openclaw\\skills\\frontend-design\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>git-hub</name>\n    <description>GitHub集成工具，支持仓库管理、Issue处理、PR审查、发布管理、通知监控等功能。帮助开发者更高效地使用GitHub进行协作开发。当需要操作GitHub仓库、处理Issue、PR时使用。</description>\n    <location>~/.openclaw\\skills\\git-hub\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>humanizer</name>\n    <description>Remove signs of AI-generated writing from text. Use when editing or reviewing\ntext to make it sound more natural and human-written. Based on Wikipedia&apos;s\ncomprehensive &quot;Signs of AI writing&quot; guide. Detects and fixes patterns including:\ninflated symbolism, promotional language, superficial -ing analyses, vague\nattributions, em dash overuse, rule of three, AI vocabulary words, negative\nparallelisms, and excessive conjunctive phrases.\n</description>\n    <location>~/.openclaw\\skills\\humanizer\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>multi-search-engine</name>\n    <description>Multi search engine integration with 17 engines (8 CN + 9 Global). Supports advanced search operators, time filters, site search, privacy engines, and WolframAlpha knowledge queries. No API keys required.</description>\n    <location>~/.openclaw\\skills\\multi-search-engine\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>office-document-specialist-suite</name>\n    <description>Advanced suite for creating, editing, and analyzing Microsoft Office documents (Word, Excel, PowerPoint). Provides specialized tools for automated reporting and document management.</description>\n    <location>~/.openclaw\\skills\\office-document-specialist-suite\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tavily-search</name>\n    <description>Web search via Tavily API (alternative to Brave). Use when the user asks to search the web / look up sources / find links and Brave web_search is unavailable or undesired. Returns a small set of relevant results (title, url, snippet) and can optionally include short answer summaries.</description>\n    <location>~/.openclaw\\skills\\openclaw-tavily-search\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ppt-generator</name>\n    <description>专业PPT生成工具，支持从Markdown、文本大纲、结构化数据一键生成精美PPT。内置多种模板，支持自定义样式、图表、图片、动画，导出PPTX/PDF/HTML格式。安全本地运行，无网络请求，无数据泄露。</description>\n    <location>~/.openclaw\\skills\\ppt-generator\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>self-improvement</name>\n    <description>Captures learnings, errors, and corrections to enable continuous improvement. Use when: (1) A command or operation fails unexpectedly, (2) User corrects Claude (&apos;No, that&apos;s wrong...&apos;, &apos;Actually...&apos;), (3) User requests a capability that doesn&apos;t exist, (4) An external API or tool fails, (5) Claude realizes its knowledge is outdated or incorrect, (6) A better approach is discovered for a recurring task. Also review learnings before major tasks.</description>\n    <location>~/.openclaw\\skills\\self-improving-agent\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>self-optimization</name>\n    <description>自我优化技能，用于自动改进Agent自身的行为、优化工作流程、学习新技能和提升性能。包含：(1) 自动梳理记忆并更新长期记忆，(2) 定期评估执行效果并优化流程，(3) 自动学习新的工具和技能，(4) 自我诊断和修复问题。</description>\n    <location>~/.openclaw\\skills\\self-optimization\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-vetting</name>\n    <description>技能审核与安全检查工具。用于审核新安装的技能是否安全，检查恶意代码、权限滥用、隐私泄露等风险。</description>\n    <location>~/.openclaw\\skills\\skill-vetting\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ui-ux-pro-max</name>\n    <description>UI/UX design intelligence and implementation guidance for building polished interfaces. Use when the user asks for UI design, UX flows, information architecture, visual style direction, design systems/tokens, component specs, copy/microcopy, accessibility, or to generate/critique/refine frontend UI (HTML/CSS/JS, React, Next.js, Vue, Svelte, Tailwind). Includes workflows for (1) generating new UI layouts and styling, (2) improving existing UI/UX, (3) producing design-system tokens and component guidelines, and (4) turning UX recommendations into concrete code changes.</description>\n    <location>~/.openclaw\\skills\\ui-ux-pro-max\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>using-superpowers</name>\n    <description>技能高级使用指南，提供技能组合使用、工作流优化、高级功能教程。帮助用户充分发挥技能的最大潜力，提升工作效率。当用户需要学习技能的高级用法、优化工作流时使用。</description>\n    <location>~/.openclaw\\skills\\using-superpowers\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>vercel-react-best-practices</name>\n    <description>Vercel + React开发最佳实践指南，包含项目搭建、性能优化、部署配置、错误处理等完整的开发规范。帮助开发者快速构建高质量的React应用并部署到Vercel。当开发React项目、部署到Vercel时使用。</description>\n    <location>~/.openclaw\\skills\\vercel-react-best-practices\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-to-feishu-transcript</name>\n    <description>将视频自动转录为文字并上传到飞书文档。支持本地视频文件或链接，使用Whisper本地转录，\n自动去除AI味道，一键生成自然流畅的文字记录并上传至飞书文档。\n</description>\n    <location>~/.openclaw\\skills\\video-to-feishu-transcript\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>voice-transcribe</name>\n    <description>Transcribe audio files using OpenAI&apos;s gpt-4o-mini-transcribe model with vocabulary hints and text replacements. Requires uv (https://docs.astral.sh/uv/).</description>\n    <location>~/.openclaw\\skills\\voice-transcribe\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>Word / DOCX</name>\n    <description>Create, inspect, and edit Microsoft Word documents and DOCX files with reliable styles, numbering, tracked changes, tables, sections, and compatibility checks. Use when (1) the task is about Word or `.docx`; (2) the file includes tracked changes, comments, fields, tables, templates, or page layout constraints; (3) the document must survive round-trip editing without formatting drift.</description>\n    <location>~/.openclaw\\skills\\word-docx\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>xianyu-auto-reply</name>\n    <description>闲鱼自动回复助手。帮用户配置并运行闲鱼（Goofish）消息自动回复服务。用户只需提供浏览器 Cookie，即可后台持续监听闲鱼消息并用 AI 智能回复买家。当用户提到闲鱼、咸鱼、Goofish、二手交易自动回复、闲鱼客服机器人、闲鱼消息监控、闲鱼挂机回复等关键词时触发此 skill。即使用户只是说&apos;帮我自动回复闲鱼消息&apos;或&apos;我想让闲鱼自动回买家&apos;，也应该触发。</description>\n    <location>~/.openclaw\\skills\\xianyu-auto-reply\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>xiaohongshu-mcp</name>\n    <description>Automate Xiaohongshu (RedNote) content operations using a Python client for the xiaohongshu-mcp server. Use for: (1) Publishing image, text, and video content, (2) Searching for notes and trends, (3) Analyzing post details and comments, (4) Managing user profiles and content feeds. Triggers: xiaohongshu automation, rednote content, publish to xiaohongshu, xiaohongshu search, social media management.\n</description>\n    <location>~/.openclaw\\skills\\xiaohongshu-mcp\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>youtube-watcher</name>\n    <description>Fetch and read transcripts from YouTube videos. Use when you need to summarize a video, answer questions about its content, or extract information from it.</description>\n    <location>~/.openclaw\\skills\\youtube-watcher\\SKILL.md</location>\n  </skill>\n</available_skills>",
+      "prompt": "\n\nThe following skills provide specialized instructions for specific tasks.\nUse the read tool to load a skill's file when the task matches its description.\nWhen a skill file references a relative path, resolve it against the skill directory (parent of SKILL.md / dirname of the path) and use that absolute path in tool commands.\n\n<available_skills>\n  <skill>\n    <name>feishu-doc</name>\n    <description>Feishu document read/write operations. Activate when user mentions Feishu docs, cloud docs, or docx links.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-doc\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-drive</name>\n    <description>Feishu cloud storage file management. Activate when user mentions cloud space, folders, drive.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-drive\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-perm</name>\n    <description>Feishu permission management for documents and files. Activate when user mentions sharing, permissions, collaborators.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-perm\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>feishu-wiki</name>\n    <description>Feishu knowledge base navigation. Activate when user mentions knowledge base, wiki, or wiki links.\n</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\dist\\extensions\\feishu\\skills\\feishu-wiki\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>clawhub</name>\n    <description>Use the ClawHub CLI to search, install, update, and publish agent skills from clawhub.com. Use when you need to fetch new skills on the fly, sync installed skills to latest or a specific version, or publish new/updated skill folders with the npm-installed clawhub CLI.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\clawhub\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>coding-agent</name>\n    <description>Delegate coding tasks to Codex, Claude Code, or Pi agents via background process. Use when: (1) building/creating new features or apps, (2) reviewing PRs (spawn in temp dir), (3) refactoring large codebases, (4) iterative coding that needs file exploration. NOT for: simple one-liner fixes (just edit), reading code (use read tool), thread-bound ACP harness requests in chat (for example spawn/run Codex or Claude Code in a Discord thread; use sessions_spawn with runtime:&quot;acp&quot;), or any work in ~/clawd workspace (never spawn agents here). Claude Code: use --print --permission-mode bypassPermissions (no PTY). Codex/Pi/OpenCode: pty:true required.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\coding-agent\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>healthcheck</name>\n    <description>Host security hardening and risk-tolerance configuration for OpenClaw deployments. Use when a user asks for security audits, firewall/SSH/update hardening, risk posture, exposure review, OpenClaw cron scheduling for periodic checks, or version status checks on a machine running OpenClaw (laptop, workstation, Pi, VPS).</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\healthcheck\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>model-usage</name>\n    <description>Use CodexBar CLI local cost usage to summarize per-model usage for Codex or Claude, including the current (most recent) model or a full model breakdown. Trigger when asked for model-level usage/cost data from codexbar, or when you need a scriptable per-model summary from codexbar cost JSON.</description>\n    <location>~/.openclaw\\skills\\model-usage\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>node-connect</name>\n    <description>Diagnose OpenClaw node connection and pairing failures for Android, iOS, and macOS companion apps. Use when QR/setup code/manual connect fails, local Wi-Fi works but VPS/tailnet does not, or errors mention pairing required, unauthorized, bootstrap token invalid or expired, gateway.bind, gateway.remote.url, Tailscale, or plugins.entries.device-pair.config.publicUrl.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\node-connect\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>openai-whisper-api</name>\n    <description>Transcribe audio via OpenAI Audio Transcriptions API (Whisper).</description>\n    <location>~/.openclaw\\skills\\openai-whisper-api\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-creator</name>\n    <description>Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude&apos;s capabilities with specialized knowledge, workflows, or tool integrations.</description>\n    <location>~/.openclaw\\skills\\skill-creator\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>slack</name>\n    <description>Use when you need to control Slack from Clawdbot via the slack tool, including reacting to messages or pinning/unpinning items in Slack channels or DMs.</description>\n    <location>~/.openclaw\\skills\\slack\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>summarize</name>\n    <description>智能内容摘要工具，支持长文本、文档、网页、聊天记录的摘要生成。支持要点提取、关键词提炼、摘要长度自定义。当用户需要总结内容、提取要点、精简长文时使用。</description>\n    <location>~/.openclaw\\skills\\summarize\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-frames</name>\n    <description>Extract frames or short clips from videos using ffmpeg.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\video-frames\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>weather</name>\n    <description>Get current weather and forecasts via wttr.in or Open-Meteo. Use when: user asks about weather, temperature, or forecasts for any location. NOT for: historical weather data, severe weather alerts, or detailed meteorological analysis. No API key needed.</description>\n    <location>~/AppData\\Roaming\\npm\\node_modules\\openclaw\\skills\\weather\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>agent-browser</name>\n    <description>AI智能浏览器控制工具，支持自动访问网页、提取内容、填写表单、点击交互、截图等功能。帮助AI自动化完成网页操作、信息收集、数据爬取等任务。当需要访问网页、获取网页内容、进行网页交互时使用。</description>\n    <location>~/.openclaw\\skills\\agent-browser\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>bilibili-ai-subtitle</name>\n    <description>Download Bilibili AI-generated subtitles (auto-subtitles) for videos. Use when you need to quickly get subtitles from Bilibili videos that have AI-generated captions. Supports 9 languages: Chinese, English, Japanese, Spanish, Arabic, Portuguese, Korean, German, French. Language priority can be customized.</description>\n    <location>~/.openclaw\\skills\\bilibili-ai-subtitle\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>bilibili-subtitle-downloader</name>\n    <description>下载 Bilibili 视频字幕，将其进行分块以供 LLM（大语言模型）处理，并生成高质量的总结。当用户提供 Bilibili BV 号或 URL，并希望获取视频内容的总结、核心要点或详细的分解时使用。</description>\n    <location>~/.openclaw\\skills\\bilibili-subtitle-download-skill\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>brainstorming</name>\n    <description>You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.</description>\n    <location>~/.openclaw\\skills\\brainstorming\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>copywriting</name>\n    <description>Write persuasive copy for landing pages, emails, ads, sales pages, and marketing materials. Use when you need to write headlines, CTAs, product descriptions, ad copy, email sequences, or any text meant to drive action. Covers copywriting formulas (AIDA, PAS, FAB), headline writing, emotional triggers, objection handling in copy, and A/B testing. Trigger on &quot;write copy&quot;, &quot;copywriting&quot;, &quot;landing page copy&quot;, &quot;headline&quot;, &quot;write a sales page&quot;, &quot;ad copy&quot;, &quot;email copy&quot;, &quot;persuasive writing&quot;, &quot;how to write [marketing text]&quot;.</description>\n    <location>~/.openclaw\\skills\\copywriting\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ecommerce-price-watcher</name>\n    <description>Track product prices across ecommerce sites and alert on offers or target-price hits. Use when a user wants to monitor one or many product URLs or item queries, compare current vs previous prices, detect discounts, and generate alert-ready summaries with product name, old/new price, percent drop, and direct link.</description>\n    <location>~/.openclaw\\skills\\ecommerce-price-watcher\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>elevenlabs-stt</name>\n    <description>Transcribe audio files using ElevenLabs Speech-to-Text (Scribe v2).</description>\n    <location>~/.openclaw\\skills\\elevenlabs-stt\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>find-skills</name>\n    <description>ClawHub技能搜索和发现工具，支持搜索、筛选、发现适合的技能。支持按功能、分类、评分、下载量筛选，提供技能详情、使用说明、安装指引。当用户需要找某个功能的技能、探索新技能时使用。</description>\n    <location>~/.openclaw\\skills\\find-skills\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>firecrawl</name>\n    <description>Web search and scraping via Firecrawl API. Use when you need to search the web, scrape websites (including JS-heavy pages), crawl entire sites, or extract structured data from web pages. Requires FIRECRAWL_API_KEY environment variable.</description>\n    <location>~/.openclaw\\skills\\firecrawl-search\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>free-groq-voice</name>\n    <description>FREE voice recognition using Groq&apos;s complimentary Whisper API. Transcribe audio messages to text in 50+ languages at no cost. Perfect for voice-to-text automation, meeting transcriptions, and accessibility features. Requires free Groq API key.</description>\n    <location>~/.openclaw\\skills\\free-groq-voice\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>freeride</name>\n    <description>Manages free AI models from OpenRouter for OpenClaw. Automatically ranks models by quality, configures fallbacks for rate-limit handling, and updates openclaw.json. Use when the user mentions free AI, OpenRouter, model switching, rate limits, or wants to reduce AI costs.</description>\n    <location>~/.openclaw\\skills\\free-ride\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>frontend-design</name>\n    <description>前端设计和UI/UX最佳实践指南，包含设计系统、组件设计、响应式布局、 accessibility、用户体验优化等内容。帮助开发者设计出美观、易用、高性能的前端界面。当前端设计界面、优化用户体验时使用。</description>\n    <location>~/.openclaw\\skills\\frontend-design\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>git-hub</name>\n    <description>GitHub集成工具，支持仓库管理、Issue处理、PR审查、发布管理、通知监控等功能。帮助开发者更高效地使用GitHub进行协作开发。当需要操作GitHub仓库、处理Issue、PR时使用。</description>\n    <location>~/.openclaw\\skills\\git-hub\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>humanizer</name>\n    <description>Remove signs of AI-generated writing from text. Use when editing or reviewing\ntext to make it sound more natural and human-written. Based on Wikipedia&apos;s\ncomprehensive &quot;Signs of AI writing&quot; guide. Detects and fixes patterns including:\ninflated symbolism, promotional language, superficial -ing analyses, vague\nattributions, em dash overuse, rule of three, AI vocabulary words, negative\nparallelisms, and excessive conjunctive phrases.\n</description>\n    <location>~/.openclaw\\skills\\humanizer\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>multi-search-engine</name>\n    <description>Multi search engine integration with 17 engines (8 CN + 9 Global). Supports advanced search operators, time filters, site search, privacy engines, and WolframAlpha knowledge queries. No API keys required.</description>\n    <location>~/.openclaw\\skills\\multi-search-engine\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>office-document-specialist-suite</name>\n    <description>Advanced suite for creating, editing, and analyzing Microsoft Office documents (Word, Excel, PowerPoint). Provides specialized tools for automated reporting and document management.</description>\n    <location>~/.openclaw\\skills\\office-document-specialist-suite\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>tavily-search</name>\n    <description>Web search via Tavily API (alternative to Brave). Use when the user asks to search the web / look up sources / find links and Brave web_search is unavailable or undesired. Returns a small set of relevant results (title, url, snippet) and can optionally include short answer summaries.</description>\n    <location>~/.openclaw\\skills\\openclaw-tavily-search\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ppt-generator</name>\n    <description>专业PPT生成工具，支持从Markdown、文本大纲、结构化数据一键生成精美PPT。内置多种模板，支持自定义样式、图表、图片、动画，导出PPTX/PDF/HTML格式。安全本地运行，无网络请求，无数据泄露。</description>\n    <location>~/.openclaw\\skills\\ppt-generator\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>self-improvement</name>\n    <description>Captures learnings, errors, and corrections to enable continuous improvement. Use when: (1) A command or operation fails unexpectedly, (2) User corrects Claude (&apos;No, that&apos;s wrong...&apos;, &apos;Actually...&apos;), (3) User requests a capability that doesn&apos;t exist, (4) An external API or tool fails, (5) Claude realizes its knowledge is outdated or incorrect, (6) A better approach is discovered for a recurring task. Also review learnings before major tasks.</description>\n    <location>~/.openclaw\\skills\\self-improving-agent\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>self-optimization</name>\n    <description>自我优化技能，用于自动改进Agent自身的行为、优化工作流程、学习新技能和提升性能。包含：(1) 自动梳理记忆并更新长期记忆，(2) 定期评估执行效果并优化流程，(3) 自动学习新的工具和技能，(4) 自我诊断和修复问题。</description>\n    <location>~/.openclaw\\skills\\self-optimization\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>skill-vetting</name>\n    <description>技能审核与安全检查工具。用于审核新安装的技能是否安全，检查恶意代码、权限滥用、隐私泄露等风险。</description>\n    <location>~/.openclaw\\skills\\skill-vetting\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>Brainstorm</name>\n    <description>Generate ideas fast. Adapt depth and structure to what the user actually needs.</description>\n    <location>~/.openclaw\\skills\\tonic-brainstorm\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>ui-ux-pro-max</name>\n    <description>UI/UX design intelligence and implementation guidance for building polished interfaces. Use when the user asks for UI design, UX flows, information architecture, visual style direction, design systems/tokens, component specs, copy/microcopy, accessibility, or to generate/critique/refine frontend UI (HTML/CSS/JS, React, Next.js, Vue, Svelte, Tailwind). Includes workflows for (1) generating new UI layouts and styling, (2) improving existing UI/UX, (3) producing design-system tokens and component guidelines, and (4) turning UX recommendations into concrete code changes.</description>\n    <location>~/.openclaw\\skills\\ui-ux-pro-max\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>using-superpowers</name>\n    <description>技能高级使用指南，提供技能组合使用、工作流优化、高级功能教程。帮助用户充分发挥技能的最大潜力，提升工作效率。当用户需要学习技能的高级用法、优化工作流时使用。</description>\n    <location>~/.openclaw\\skills\\using-superpowers\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>vercel-react-best-practices</name>\n    <description>Vercel + React开发最佳实践指南，包含项目搭建、性能优化、部署配置、错误处理等完整的开发规范。帮助开发者快速构建高质量的React应用并部署到Vercel。当开发React项目、部署到Vercel时使用。</description>\n    <location>~/.openclaw\\skills\\vercel-react-best-practices\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>video-to-feishu-transcript</name>\n    <description>将视频自动转录为文字并上传到飞书文档。支持本地视频文件或链接，使用Whisper本地转录，\n自动去除AI味道，一键生成自然流畅的文字记录并上传至飞书文档。\n</description>\n    <location>~/.openclaw\\skills\\video-to-feishu-transcript\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>voice-transcribe</name>\n    <description>Transcribe audio files using OpenAI&apos;s gpt-4o-mini-transcribe model with vocabulary hints and text replacements. Requires uv (https://docs.astral.sh/uv/).</description>\n    <location>~/.openclaw\\skills\\voice-transcribe\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>war-room</name>\n    <description>Multi-agent war room for brainstorming, system design, architecture review, product specs, business strategy, or any complex problem. Use when a user wants to run a structured multi-agent session with specialist roles, when they mention &quot;war room&quot;, when they need to brainstorm a project from scratch, design a system with multiple perspectives, stress-test decisions with a devil&apos;s advocate, or produce a comprehensive blueprint/spec. Works for software, hardware, content, business — any domain.</description>\n    <location>~/.openclaw\\skills\\war-room\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>Word / DOCX</name>\n    <description>Create, inspect, and edit Microsoft Word documents and DOCX files with reliable styles, numbering, tracked changes, tables, sections, and compatibility checks. Use when (1) the task is about Word or `.docx`; (2) the file includes tracked changes, comments, fields, tables, templates, or page layout constraints; (3) the document must survive round-trip editing without formatting drift.</description>\n    <location>~/.openclaw\\skills\\word-docx\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>xianyu-auto-reply</name>\n    <description>闲鱼自动回复助手。帮用户配置并运行闲鱼（Goofish）消息自动回复服务。用户只需提供浏览器 Cookie，即可后台持续监听闲鱼消息并用 AI 智能回复买家。当用户提到闲鱼、咸鱼、Goofish、二手交易自动回复、闲鱼客服机器人、闲鱼消息监控、闲鱼挂机回复等关键词时触发此 skill。即使用户只是说&apos;帮我自动回复闲鱼消息&apos;或&apos;我想让闲鱼自动回买家&apos;，也应该触发。</description>\n    <location>~/.openclaw\\skills\\xianyu-auto-reply\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>xiaohongshu-mcp</name>\n    <description>Automate Xiaohongshu (RedNote) content operations using a Python client for the xiaohongshu-mcp server. Use for: (1) Publishing image, text, and video content, (2) Searching for notes and trends, (3) Analyzing post details and comments, (4) Managing user profiles and content feeds. Triggers: xiaohongshu automation, rednote content, publish to xiaohongshu, xiaohongshu search, social media management.\n</description>\n    <location>~/.openclaw\\skills\\xiaohongshu-mcp\\SKILL.md</location>\n  </skill>\n  <skill>\n    <name>youtube-watcher</name>\n    <description>Fetch and read transcripts from YouTube videos. Use when you need to summarize a video, answer questions about its content, or extract information from it.</description>\n    <location>~/.openclaw\\skills\\youtube-watcher\\SKILL.md</location>\n  </skill>\n</available_skills>",
       "skills": [
         {
           "name": "feishu-doc"
@@ -86,6 +86,9 @@
           "name": "bilibili-subtitle-downloader"
         },
         {
+          "name": "brainstorming"
+        },
+        {
           "name": "copywriting"
         },
         {
@@ -138,6 +141,9 @@
           "name": "skill-vetting"
         },
         {
+          "name": "Brainstorm"
+        },
+        {
           "name": "ui-ux-pro-max"
         },
         {
@@ -151,6 +157,9 @@
         },
         {
           "name": "voice-transcribe"
+        },
+        {
+          "name": "war-room"
         },
         {
           "name": "Word / DOCX"
@@ -420,6 +429,20 @@
           "disableModelInvocation": false
         },
         {
+          "name": "brainstorming",
+          "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+          "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\brainstorming\\SKILL.md",
+          "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\brainstorming",
+          "sourceInfo": {
+            "path": "C:\\Users\\LWS\\.openclaw\\skills\\brainstorming\\SKILL.md",
+            "source": "openclaw-managed",
+            "scope": "temporary",
+            "origin": "top-level",
+            "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\brainstorming"
+          },
+          "disableModelInvocation": false
+        },
+        {
           "name": "copywriting",
           "description": "Write persuasive copy for landing pages, emails, ads, sales pages, and marketing materials. Use when you need to write headlines, CTAs, product descriptions, ad copy, email sequences, or any text meant to drive action. Covers copywriting formulas (AIDA, PAS, FAB), headline writing, emotional triggers, objection handling in copy, and A/B testing. Trigger on \"write copy\", \"copywriting\", \"landing page copy\", \"headline\", \"write a sales page\", \"ad copy\", \"email copy\", \"persuasive writing\", \"how to write [marketing text]\".",
           "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\copywriting\\SKILL.md",
@@ -658,6 +681,20 @@
           "disableModelInvocation": false
         },
         {
+          "name": "Brainstorm",
+          "description": "Generate ideas fast. Adapt depth and structure to what the user actually needs.",
+          "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\tonic-brainstorm\\SKILL.md",
+          "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\tonic-brainstorm",
+          "sourceInfo": {
+            "path": "C:\\Users\\LWS\\.openclaw\\skills\\tonic-brainstorm\\SKILL.md",
+            "source": "openclaw-managed",
+            "scope": "temporary",
+            "origin": "top-level",
+            "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\tonic-brainstorm"
+          },
+          "disableModelInvocation": false
+        },
+        {
           "name": "ui-ux-pro-max",
           "description": "UI/UX design intelligence and implementation guidance for building polished interfaces. Use when the user asks for UI design, UX flows, information architecture, visual style direction, design systems/tokens, component specs, copy/microcopy, accessibility, or to generate/critique/refine frontend UI (HTML/CSS/JS, React, Next.js, Vue, Svelte, Tailwind). Includes workflows for (1) generating new UI layouts and styling, (2) improving existing UI/UX, (3) producing design-system tokens and component guidelines, and (4) turning UX recommendations into concrete code changes.",
           "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\ui-ux-pro-max\\SKILL.md",
@@ -728,6 +765,20 @@
           "disableModelInvocation": false
         },
         {
+          "name": "war-room",
+          "description": "Multi-agent war room for brainstorming, system design, architecture review, product specs, business strategy, or any complex problem. Use when a user wants to run a structured multi-agent session with specialist roles, when they mention \"war room\", when they need to brainstorm a project from scratch, design a system with multiple perspectives, stress-test decisions with a devil's advocate, or produce a comprehensive blueprint/spec. Works for software, hardware, content, business — any domain.",
+          "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\war-room\\SKILL.md",
+          "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\war-room",
+          "sourceInfo": {
+            "path": "C:\\Users\\LWS\\.openclaw\\skills\\war-room\\SKILL.md",
+            "source": "openclaw-managed",
+            "scope": "temporary",
+            "origin": "top-level",
+            "baseDir": "C:\\Users\\LWS\\.openclaw\\skills\\war-room"
+          },
+          "disableModelInvocation": false
+        },
+        {
           "name": "Word / DOCX",
           "description": "Create, inspect, and edit Microsoft Word documents and DOCX files with reliable styles, numbering, tracked changes, tables, sections, and compatibility checks. Use when (1) the task is about Word or `.docx`; (2) the file includes tracked changes, comments, fields, tables, templates, or page layout constraints; (3) the document must survive round-trip editing without formatting drift.",
           "filePath": "C:\\Users\\LWS\\.openclaw\\skills\\word-docx\\SKILL.md",
@@ -790,8 +841,8 @@
     "model": "glm-5",
     "systemPromptReport": {
       "source": "run",
-      "generatedAt": 1775122070275,
-      "sessionId": "3d42a649-f063-4201-a550-a1a267932fe0",
+      "generatedAt": 1775346040648,
+      "sessionId": "52715ea9-af69-4ace-b53e-7c7245441443",
       "sessionKey": "agent:my_work_robot:feishu:direct:ou_1ccae7b676709a68164395f25738e3cf",
       "provider": "custom-43-133-33-215-3000",
       "model": "glm-5",
@@ -810,9 +861,9 @@
         "sandboxed": false
       },
       "systemPrompt": {
-        "chars": 48248,
-        "projectContextChars": 17594,
-        "nonProjectContextChars": 30654
+        "chars": 45824,
+        "projectContextChars": 13938,
+        "nonProjectContextChars": 31886
       },
       "injectedWorkspaceFiles": [
         {
@@ -872,45 +923,11 @@
           "truncated": false
         },
         {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
-          "truncated": false
-        },
-        {
-          "path": "SELF_IMPROVEMENT_REMINDER.md",
-          "rawChars": 616,
-          "injectedChars": 616,
+          "name": "MEMORY.md",
+          "path": "C:\\Users\\LWS\\.openclaw\\workspace-my_work_robot\\MEMORY.md",
+          "missing": false,
+          "rawChars": 826,
+          "injectedChars": 826,
           "truncated": false
         },
         {
@@ -921,7 +938,7 @@
         }
       ],
       "skills": {
-        "promptChars": 17231,
+        "promptChars": 18463,
         "entries": [
           {
             "name": "feishu-doc",
@@ -996,6 +1013,10 @@
             "blockChars": 283
           },
           {
+            "name": "brainstorming",
+            "blockChars": 346
+          },
+          {
             "name": "copywriting",
             "blockChars": 756
           },
@@ -1064,6 +1085,10 @@
             "blockChars": 195
           },
           {
+            "name": "Brainstorm",
+            "blockChars": 227
+          },
+          {
             "name": "ui-ux-pro-max",
             "blockChars": 721
           },
@@ -1082,6 +1107,10 @@
           {
             "name": "voice-transcribe",
             "blockChars": 312
+          },
+          {
+            "name": "war-room",
+            "blockChars": 650
           },
           {
             "name": "Word / DOCX",
@@ -1330,9 +1359,9 @@
         ]
       }
     },
-    "totalTokensFresh": true,
+    "totalTokensFresh": false,
     "status": "running",
-    "startedAt": 1775172911568,
+    "startedAt": 1775486078435,
     "cacheRead": 0,
     "cacheWrite": 0
   },

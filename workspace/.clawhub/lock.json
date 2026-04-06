@@ -132,6 +132,14 @@
     "brainstorming": {
       "version": "0.1.0",
       "installedAt": 1775151303461
+    },
+    "sw-war-room": {
+      "version": "1.0.0",
+      "installedAt": 1775173200282
+    },
+    "tonic-brainstorm": {
+      "version": "1.0.0",
+      "installedAt": 1775173202562
     }
   }
 }
