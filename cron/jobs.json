@@ -8,7 +8,7 @@
       "name": "每日新闻与市场早报",
       "enabled": true,
       "createdAtMs": 1774099033259,
-      "updatedAtMs": 1775430029394,
+      "updatedAtMs": 1775171173504,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -32,16 +32,15 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1775516400000,
-        "lastRunAtMs": 1775430000018,
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775170800022,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 29376,
+        "lastDurationMs": 373482,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 4,
+        "consecutiveErrors": 1,
         "lastDelivered": true,
-        "lastErrorReason": "timeout",
-        "lastError": "503 当前分组 default 下对于模型 minimax-m2.5 无可用渠道 (request id: 202604060700298756620292817313)"
+        "lastError": "⚠️ ✉️ Message failed"
       },
       "deleteAfterRun": false
     },
@@ -52,7 +51,7 @@
       "name": "装修任务检查-周五",
       "enabled": true,
       "createdAtMs": 1774099033274,
-      "updatedAtMs": 1775210580045,
+      "updatedAtMs": 1774605681643,
       "schedule": {
         "kind": "cron",
         "expr": "0 18 * * 5",
@@ -73,15 +72,14 @@
         "to": "ou_e7a32d874706bf82f2d409b0427b7e9e"
       },
       "state": {
-        "nextRunAtMs": 1775815200000,
-        "lastRunAtMs": 1775210400024,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 180021,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1775210400000,
+        "lastRunAtMs": 1774605600017,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 81626,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     },
     {
@@ -91,7 +89,7 @@
       "name": "装修任务检查-周一",
       "enabled": true,
       "createdAtMs": 1774099033292,
-      "updatedAtMs": 1775433630065,
+      "updatedAtMs": 1774828932348,
       "schedule": {
         "kind": "cron",
         "expr": "0 8 * * 1",
@@ -112,16 +110,14 @@
         "to": "ou_e7a32d874706bf82f2d409b0427b7e9e"
       },
       "state": {
-        "nextRunAtMs": 1776038400000,
-        "lastRunAtMs": 1775433600015,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 30050,
+        "nextRunAtMs": 1775433600000,
+        "lastRunAtMs": 1774828800024,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 132324,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": true,
-        "lastError": "503 当前分组 default 下对于模型 minimax-m2.5 无可用渠道 (request id: 2026040608002924915511531568174)",
-        "lastErrorReason": "timeout"
+        "consecutiveErrors": 0,
+        "lastDelivered": true
       }
     },
     {
@@ -132,7 +128,7 @@
       "enabled": true,
       "deleteAfterRun": false,
       "createdAtMs": 1775085885968,
-      "updatedAtMs": 1775430054085,
+      "updatedAtMs": 1775171262361,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -154,16 +150,15 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1775516400000,
-        "lastRunAtMs": 1775430029394,
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775171173504,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 24691,
+        "lastDurationMs": 88857,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 2,
-        "lastErrorReason": "timeout",
-        "lastError": "503 当前分组 default 下对于模型 minimax-m2.5 无可用渠道 (request id: 2026040607005380356217790627029)"
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -174,7 +169,7 @@
       "enabled": true,
       "deleteAfterRun": false,
       "createdAtMs": 1775086311016,
-      "updatedAtMs": 1775430078599,
+      "updatedAtMs": 1775171351783,
       "schedule": {
         "kind": "cron",
         "expr": "0 7 * * *",
@@ -196,16 +191,14 @@
         "bestEffort": true
       },
       "state": {
-        "nextRunAtMs": 1775516400000,
-        "lastRunAtMs": 1775430054085,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 24514,
+        "nextRunAtMs": 1775257200000,
+        "lastRunAtMs": 1775171262361,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 89422,
         "lastDelivered": true,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 2,
-        "lastErrorReason": "timeout",
-        "lastError": "503 当前分组 default 下对于模型 minimax-m2.5 无可用渠道 (request id: 2026040607011832939525415222726)"
+        "consecutiveErrors": 0
       }
     }
   ]
